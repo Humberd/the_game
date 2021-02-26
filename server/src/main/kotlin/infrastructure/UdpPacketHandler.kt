@@ -37,9 +37,6 @@ class UdpPacketHandler(private val gameActionHandler: GameActionHandler) {
             }
             else -> println("Unknown packet type")
         }
-
-
-
     }
 
     private fun getPacketType(arr: UByteArray): Int {
