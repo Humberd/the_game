@@ -8,20 +8,20 @@ func _ready():
 
 func _physics_process(delta):
 	
-	translate(getInput())
-	pass;
+	var mask = getInput()
+	if mask != 0:
+		ActionSender.sendPositionChange(mask)
 	
-func getInput() -> Vector2:
-	var velocity = Vector2();
-	var speed = 2;
+func getInput() -> int:
+	var mask = 0;
 	
 	if Input.is_action_pressed("up"):
-		velocity.y -= 1;
+		mask = mask | 0x01
 	if Input.is_action_pressed("down"):
-		velocity.y += 1;
+		mask = mask | 0x04
 	if Input.is_action_pressed("right"):
-		velocity.x += 1;
+		mask = mask | 0x02
 	if Input.is_action_pressed("left"):
-		velocity.x -= 1;
+		mask = mask | 0x08
 		
-	return velocity * speed;
+	return mask;

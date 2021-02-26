@@ -30,6 +30,11 @@ config/name="Client"
 run/main_scene="res://main_scene.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+UdpClient="*res://scripts/global/udp_client.gd"
+ActionSender="*res://scripts/global/action_sender.gd"
+
 [input]
 
 up={

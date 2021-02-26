@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.4.31"
 }
@@ -11,4 +13,11 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += listOf(
+        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+        "-Xinline-classes"
+    )
 }
