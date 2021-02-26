@@ -19,10 +19,6 @@ config/name="Client"
 run/main_scene="res://main_scene.tscn"
 config/icon="res://icon.png"
 
-[autoload]
-
-Main="*res://scripts/main.gd"
-
 [rendering]
 
 environment/default_environment="res://default_env.tres"
