@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("org.mini2Dx:gdx-math:1.9.13")
 }
 
 tasks.withType<KotlinCompile>().configureEach {

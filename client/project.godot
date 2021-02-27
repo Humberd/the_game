@@ -10,18 +10,12 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Node2D",
-"class": "CreatureController",
+"class": "MainPlayerController",
 "language": "GDScript",
-"path": "res://scripts/creature_controller.gd"
-}, {
-"base": "Node2D",
-"class": "PlayerController",
-"language": "GDScript",
-"path": "res://scripts/player_controller.gd"
+"path": "res://scripts/main_player_controller.gd"
 } ]
 _global_script_class_icons={
-"CreatureController": "",
-"PlayerController": ""
+"MainPlayerController": ""
 }
 
 [application]

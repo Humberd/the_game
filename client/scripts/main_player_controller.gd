@@ -1,9 +1,9 @@
 extends Node2D
 
-class_name PlayerController
+class_name MainPlayerController
 
 func _ready():
-	print("Hello from Player Controller");
+	print("Hello from Main Player Controller");
 	position = Vector2(100,100)
 
 func _physics_process(delta):

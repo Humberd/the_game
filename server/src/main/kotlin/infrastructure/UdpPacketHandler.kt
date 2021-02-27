@@ -2,44 +2,89 @@ package infrastructure
 
 import core.GameActionHandler
 import core.types.DirectionByte
+import core.types.PID
 import infrastructure.ingress.IngressPacket
 import infrastructure.ingress.IngressPacketType
+import utils.toHex
+import utils.uByte
+import utils.uInt
+import java.lang.Exception
+import java.nio.BufferUnderflowException
+import java.nio.ByteBuffer
 import java.util.*
 
-class UdpPacketHandler(private val gameActionHandler: GameActionHandler) {
+class UdpPacketHandler(
+    private val gameActionHandler: GameActionHandler,
+    private val udpClientStore: UdpClientStore
+) {
 
     /**
-     * First 3 bytes are 0x69 0x69 0x69 as a handshake
+     * First 4 bytes are 0x69 0x69 0x69 0x69 as a handshake
      */
-    fun handle(packet: UByteArray, length: Int) {
+    fun handle(packet: ByteBuffer, client: UdpClient) {
+        val clientId = client.getIdentifier()
+
         println(
-            "Handling packet (${length}) ${
-                Arrays.toString(packet.toByteArray().sliceArray(0..length - 1))
-            }"
+            "Packet from $clientId (${packet.limit()})${packet.array().sliceArray(0..packet.limit() - 1).toHex()}"
         )
 
-        if (packet.size < 5) {
-            println("Invalid packet")
+        if (packet.limit() < 5) {
+            println("Invalid packet size")
 
             return
         }
 
-        if (packet[0] != (0x69).toUByte() && packet[1] != (0x69).toUByte() && packet[2] != (0x69).toUByte()) {
+        if (packet.int != 0x69696969) {
             println("Invalid handshake")
 
             return
         }
 
-        val packetType = getPacketType(packet)
-        when (packetType) {
-            IngressPacketType.POSITION_CHANGE -> {
-                gameActionHandler.handle(IngressPacket.PositionChange(DirectionByte(packet[5])))
+
+        try {
+            when (getPacketType(packet)) {
+                IngressPacketType.CONNECTION_HELLO -> {
+                    udpClientStore.remove(clientId)
+                    gameActionHandler.handle(IngressPacket.ConnectionHello())
+                }
+                IngressPacketType.DISCONNECT -> {
+                    udpClientStore.remove(clientId)
+                    gameActionHandler.handle(IngressPacket.Disconnect(udpClientStore.getPID(clientId)))
+                }
+                IngressPacketType.AUTH_LOGIN -> {
+                    val pid = PID(packet.uInt())
+                    udpClientStore.setPID(clientId, pid)
+
+                    gameActionHandler.handle(
+                        IngressPacket.AuthLogin(
+                            pid
+                        )
+                    )
+                }
+                IngressPacketType.POSITION_CHANGE -> {
+                    gameActionHandler.handle(
+                        IngressPacket.PositionChange(
+                            pid = getPID(client),
+                            direction = DirectionByte(packet.uByte())
+                        )
+                    )
+                }
+                else -> println("Unknown packet type")
             }
-            else -> println("Unknown packet type")
+        } catch (e: BufferUnderflowException) {
+            println("Invalid frame size")
+        } catch (e: Exception) {
+            println(e)
+        } catch (e: Error) {
+            println(e)
         }
     }
 
-    private fun getPacketType(arr: UByteArray): Int {
-        return arr[3].toInt().shl(8) and 0xFF00 or arr[4].toInt() and 0xFF
+    private fun getPacketType(buffer: ByteBuffer): Int {
+        return buffer.short.toInt()
+    }
+
+    private fun getPID(client: UdpClient): PID {
+        return udpClientStore.getPID(client.getIdentifier()) ?: throw Error("Unknown PID")
     }
 }

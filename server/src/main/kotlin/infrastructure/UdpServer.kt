@@ -2,6 +2,7 @@ package infrastructure
 
 import java.net.DatagramPacket
 import java.net.DatagramSocket
+import java.nio.ByteBuffer
 
 class UdpServer(private val packetHandler: UdpPacketHandler) : Thread() {
     private val socket: DatagramSocket
@@ -19,7 +20,9 @@ class UdpServer(private val packetHandler: UdpPacketHandler) : Thread() {
             val packet = DatagramPacket(buffer, buffer.size)
             socket.receive(packet)
 
-            packetHandler.handle(buffer.toUByteArray(), packet.length)
+            val byteBuffer = ByteBuffer.wrap(buffer, 0, packet.length)
+
+            packetHandler.handle(byteBuffer, UdpClient(packet.socketAddress, packet.port))
         }
 
         socket.close()

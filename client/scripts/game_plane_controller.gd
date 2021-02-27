@@ -4,7 +4,7 @@ extends ViewportContainer
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-var player_node: Node2D;
+var main_player: MainPlayerController;
 
 
 # Called when the node enters the scene tree for the first time.
@@ -13,11 +13,10 @@ func _ready():
 
 	var plane = $Viewport/Plane;
 	var viewport = $Viewport;
-	
-	createBackground(plane, viewport);
-	loadPlayerNode(plane);
 
-	
+	createBackground(plane, viewport);
+	loginMainPlayer(plane)
+
 func createBackground(plane: Node2D, viewport: Viewport):
 	var sprite = Sprite.new();
 	sprite.texture = load("res://assets/background.png");
@@ -25,23 +24,32 @@ func createBackground(plane: Node2D, viewport: Viewport):
 	sprite.centered = false;
 	sprite.region_enabled = true;
 	sprite.region_rect = Rect2(Vector2(0, 0), Vector2(viewport.size.x, viewport.size.y));
-	sprite.modulate = Color("515948")
-	
-	plane.add_child(sprite);
+	sprite.modulate = Color("ababab")
 
-func loadPlayerNode(plane: Node2D):
+	plane.add_child(sprite);
+	
+func loginMainPlayer(plane: Node2D):
+	ActionSender.sendAuthLogin(1)
+	
+#	loadMainPlayer(plane);
+	
+
+func loadMainPlayer(plane: Node2D):
 	var sprite = Sprite.new();
 	sprite.texture = load("res://assets/player_avatar.png");
 	sprite.name = "Sprite";
 	sprite.centered = true;
 	sprite.scale = Vector2(0.35, 0.35);
 
+	var script = load("res://scripts/main_player_controller.gd");
+
 	var node = Node2D.new();
 	node.add_child(sprite);
 	node.name = "Player";
-	node.set_script(load("res://scripts/player_controller.gd"));
-	
-	plane.add_child(node);
+	node.set_script(script);
+
+	plane.add_child(node)
+	main_player = node;
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
