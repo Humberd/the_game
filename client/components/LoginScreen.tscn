@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scripts/login_screen/login_button.gd" type="Script" id=1]
+[ext_resource path="res://scripts/login_screen/login_screen_controller.gd" type="Script" id=2]
+
+[node name="LoginScreen" type="Control"]
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 447.093
+margin_top = 79.4597
+margin_right = 490.093
+margin_bottom = 93.4597
+rect_scale = Vector2( 3, 3 )
+text = "LOGIN"
+
+[node name="Player1" type="Button" parent="."]
+margin_left = 422.762
+margin_top = 193.114
+margin_right = 602.762
+margin_bottom = 296.114
+text = "Player 1"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+playerId = 1
+
+[node name="Player2" type="Button" parent="."]
+margin_left = 423.822
+margin_top = 345.677
+margin_right = 603.822
+margin_bottom = 448.677
+text = "Player 2"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+playerId = 2

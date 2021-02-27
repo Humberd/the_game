@@ -30,6 +30,10 @@ class GameState(
         }
         player.position.mulAdd(vector, player.movementSpeed)
 
+        notifyEveryone {
+            notifier.notifyPlayerPositionUpdate(it, player)
+        }
+
         return ActionResult.OK
     }
 
