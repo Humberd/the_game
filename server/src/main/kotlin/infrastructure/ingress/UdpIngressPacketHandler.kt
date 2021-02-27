@@ -1,19 +1,18 @@
-package infrastructure
+package infrastructure.ingress
 
 import core.GameActionHandler
 import core.types.DirectionByte
 import core.types.PID
-import infrastructure.ingress.IngressPacket
-import infrastructure.ingress.IngressPacketType
+import infrastructure.UdpClient
+import infrastructure.UdpClientStore
 import utils.toHex
 import utils.uByte
 import utils.uInt
 import java.lang.Exception
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
-import java.util.*
 
-class UdpPacketHandler(
+class UdpIngressPacketHandler(
     private val gameActionHandler: GameActionHandler,
     private val udpClientStore: UdpClientStore
 ) {
@@ -53,7 +52,7 @@ class UdpPacketHandler(
                 }
                 IngressPacketType.AUTH_LOGIN -> {
                     val pid = PID(packet.uInt())
-                    udpClientStore.setPID(clientId, pid)
+                    udpClientStore.setPID(client, pid)
 
                     gameActionHandler.handle(
                         IngressPacket.AuthLogin(

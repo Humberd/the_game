@@ -1,0 +1,32 @@
+package infrastructure.egress
+
+import core.types.PID
+import infrastructure.UdpClientStore
+import java.util.concurrent.ConcurrentLinkedQueue
+
+class UdpEgressPacketHandler(
+    private val udpClientStore: UdpClientStore
+) {
+    private val queue = ConcurrentLinkedQueue<EgressPacketFrame>()
+
+    fun hasItems(): Boolean {
+        return !queue.isEmpty()
+    }
+
+    fun readHead(): EgressPacketFrame {
+        return queue.remove()
+    }
+
+    fun requestSend(to: PID, dataPacket: EgressDataPacket) {
+        println("Requesting data send to ${to} -> ${dataPacket}")
+        val client = udpClientStore.getClient(to)
+        if (client == null) {
+            println("Client not found")
+            return
+        }
+
+
+        queue.add(EgressPacketFrame(client, dataPacket))
+    }
+
+}

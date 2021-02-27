@@ -1,6 +1,7 @@
 package core
 
 import infrastructure.ingress.IngressPacket
+import org.mini2Dx.gdx.math.Vector2
 
 class GameActionHandler(
     private val gameState: GameState
@@ -14,11 +15,14 @@ class GameActionHandler(
 
     fun handle(action: IngressPacket.AuthLogin) {
         println(action)
-        gameState.addPlayer(PlayerCharacter(action.pid))
+        val playerCharacter = PlayerCharacter(action.pid)
+        playerCharacter.position = Vector2(100f, 100f)
+
+        gameState.addPlayer(playerCharacter)
     }
 
     fun handle(action: IngressPacket.ConnectionHello) {
-        println("Connection hello 🖐")
+        println(action)
     }
 
     fun handle(action: IngressPacket.Disconnect) {

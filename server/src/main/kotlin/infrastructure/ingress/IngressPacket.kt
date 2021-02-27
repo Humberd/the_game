@@ -11,7 +11,7 @@ object IngressPacketType {
 }
 
 sealed class IngressPacket {
-    class ConnectionHello: IngressPacket()
+    data class ConnectionHello(val message: String = "Connection hello 🖐"): IngressPacket()
     data class Disconnect(val pid: PID?): IngressPacket()
     data class AuthLogin(val pid: PID): IngressPacket()
     data class PositionChange(val pid: PID, val direction: DirectionByte): IngressPacket()
