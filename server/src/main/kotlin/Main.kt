@@ -6,10 +6,13 @@ import infrastructure.egress.UdpEgressPacketHandler
 import infrastructure.egress.UpdEgressServer
 import infrastructure.ingress.UdpIngressPacketHandler
 import infrastructure.ingress.UdpIngressServer
+import mu.KotlinLogging
 import java.net.DatagramSocket
 
+private val logger = KotlinLogging.logger {}
+
 fun main() {
-    println("Hello from server")
+    logger.info { "Hello from server" }
 
     val udpClientStore = UdpClientStore()
     val egressPacketHandler = UdpEgressPacketHandler(udpClientStore)

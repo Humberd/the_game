@@ -1,20 +1,24 @@
 package core
 
 import infrastructure.ingress.IngressPacket
+import mu.KotlinLogging
 import org.mini2Dx.gdx.math.Vector2
+
+private val logger = KotlinLogging.logger {}
 
 class GameActionHandler(
     private val gameState: GameState
 ) {
     fun handle(action: IngressPacket.PositionChange) {
-        println(action)
+        logger.debug { action }
 
         val direction = action.direction.toDirection().toVector2()
         gameState.movePlayerBy(action.pid, direction)
     }
 
     fun handle(action: IngressPacket.AuthLogin) {
-        println(action)
+        logger.debug { action }
+
         val playerCharacter = PlayerCharacter(action.pid)
         playerCharacter.position = Vector2(100f, 100f)
 
@@ -22,11 +26,12 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.ConnectionHello) {
-        println(action)
+        logger.debug { action }
+
     }
 
     fun handle(action: IngressPacket.Disconnect) {
-        println(action)
+        logger.debug { action }
 
         if (action.pid == null) {
             return
