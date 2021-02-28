@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/game_plane_controller.gd"
 }, {
-"base": "BaseButton",
-"class": "LoginButton",
-"language": "GDScript",
-"path": "res://scripts/login_screen/login_button.gd"
-}, {
 "base": "Node2D",
 "class": "MainPlayerController",
 "language": "GDScript",
@@ -26,7 +21,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "GamePlaneController": "",
-"LoginButton": "",
 "MainPlayerController": ""
 }
 
@@ -38,10 +32,10 @@ config/icon="res://icon.png"
 
 [autoload]
 
-UdpClient="*res://scripts/global/udp_client.gd"
-ActionSender="*res://scripts/global/action_sender.gd"
 Globals="*res://scripts/global/globals.gd"
 ActionReceiver="*res://scripts/global/action_receiver.gd"
+UdpClientMono="*res://scripts/global/UdpClientMono.cs"
+ActionSenderMono="*res://scripts/global/egress/ActionSenderMono.cs"
 
 [input]
 

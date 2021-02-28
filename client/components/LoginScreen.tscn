@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://scripts/login_screen/login_button.gd" type="Script" id=1]
+[ext_resource path="res://scripts/login_screen/LoginButton.cs" type="Script" id=1]
 [ext_resource path="res://scripts/login_screen/login_screen_controller.gd" type="Script" id=2]
 
 [node name="LoginScreen" type="Control"]
@@ -27,7 +27,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-playerId = 1
+_pid = 1
 
 [node name="Player2" type="Button" parent="."]
 margin_left = 423.822
@@ -39,4 +39,4 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-playerId = 2
+_pid = 2

@@ -2,4 +2,10 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="scripts\global\receive" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\global\action_sender.gd" />
+  </ItemGroup>
 </Project>

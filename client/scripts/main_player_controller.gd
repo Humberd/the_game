@@ -7,14 +7,14 @@ func _ready():
 	position = Vector2(100,100)
 
 func _physics_process(delta):
-	
+
 	var mask = getInput()
 	if mask != 0:
-		ActionSender.sendPositionChange(mask)
-	
+		ActionSenderMono.sendPositionChange(mask)
+
 func getInput() -> int:
 	var mask = 0;
-	
+
 	if Input.is_action_pressed("up"):
 		mask = mask | 0x01
 	if Input.is_action_pressed("down"):
@@ -23,5 +23,5 @@ func getInput() -> int:
 		mask = mask | 0x02
 	if Input.is_action_pressed("left"):
 		mask = mask | 0x08
-		
+
 	return mask;

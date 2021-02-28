@@ -23,9 +23,9 @@ class UdpIngressPacketHandler(
     fun handle(packet: ByteBuffer, client: UdpClient) {
         val clientId = client.getIdentifier()
 
-        println(
-            "Packet from $clientId (${packet.limit()})${packet.array().sliceArray(0..packet.limit() - 1).toHex()}"
-        )
+//        println(
+//            "Packet from $clientId (${packet.limit()})${packet.array().sliceArray(0..packet.limit() - 1).toHex()}"
+//        )
 
         if (packet.limit() < 5) {
             println("Invalid packet size")
