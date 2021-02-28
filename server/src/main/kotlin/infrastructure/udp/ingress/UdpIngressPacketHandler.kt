@@ -1,21 +1,35 @@
-package infrastructure.ingress
+package infrastructure.udp.ingress
 
 import core.GameActionHandler
 import core.types.DirectionByte
 import core.types.PID
-import infrastructure.UdpClient
-import infrastructure.UdpClientStore
-import utils.toHex
+import infrastructure.udp.UdpConnectionPersistor
+import infrastructure.udp.UdpClient
+import infrastructure.udp.UdpClientStore
 import utils.uByte
 import utils.uInt
 import java.lang.Exception
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
 
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
+
 class UdpIngressPacketHandler(
     private val gameActionHandler: GameActionHandler,
-    private val udpClientStore: UdpClientStore
+    private val udpClientStore: UdpClientStore,
+    private val udpConnectionPersistor: UdpConnectionPersistor
 ) {
+
+    init {
+        udpConnectionPersistor.onRemoved {
+            val clientId = it.getIdentifier()
+            val pid = udpClientStore.getPID(clientId)
+            udpClientStore.remove(clientId)
+            gameActionHandler.handle(IngressPacket.Disconnect(pid))
+        }
+    }
 
     /**
      * First 4 bytes are 0x69 0x69 0x69 0x69 as a handshake
@@ -28,17 +42,15 @@ class UdpIngressPacketHandler(
 //        )
 
         if (packet.limit() < 5) {
-            println("Invalid packet size")
-
+            logger.warn { "Invalid packet size: ${packet.limit()}" }
             return
         }
 
-        if (packet.int != 0x69696969) {
-            println("Invalid handshake")
-
+        val handshake = packet.int
+        if (handshake != 0x69696969) {
+            logger.warn { "Invalid handshake: $handshake" }
             return
         }
-
 
         try {
             when (getPacketType(packet)) {
@@ -49,6 +61,9 @@ class UdpIngressPacketHandler(
                 IngressPacketType.DISCONNECT -> {
                     udpClientStore.remove(clientId)
                     gameActionHandler.handle(IngressPacket.Disconnect(udpClientStore.getPID(clientId)))
+                }
+                IngressPacketType.PING_REQUEST -> {
+                    udpConnectionPersistor.register(client)
                 }
                 IngressPacketType.AUTH_LOGIN -> {
                     val pid = PID(packet.uInt())
@@ -71,11 +86,11 @@ class UdpIngressPacketHandler(
                 else -> println("Unknown packet type")
             }
         } catch (e: BufferUnderflowException) {
-            println("Invalid frame size")
+            logger.error { "Invalid frame size" }
         } catch (e: Exception) {
-            println(e)
+            logger.error(e) {}
         } catch (e: Error) {
-            println(e)
+            logger.error(e) {}
         }
     }
 

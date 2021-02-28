@@ -1,33 +1,19 @@
 package core
 
-import infrastructure.ingress.IngressPacket
+import core.maps.GameMapId
+import infrastructure.database.Database
+import infrastructure.udp.ingress.IngressPacket
 import mu.KotlinLogging
 import org.mini2Dx.gdx.math.Vector2
 
 private val logger = KotlinLogging.logger {}
 
 class GameActionHandler(
-    private val gameState: GameState
+    private val gamesManager: GamesManager,
+    private val database: Database
 ) {
-    fun handle(action: IngressPacket.PositionChange) {
-        logger.debug { action }
-
-        val direction = action.direction.toDirection().toVector2()
-        gameState.movePlayerBy(action.pid, direction)
-    }
-
-    fun handle(action: IngressPacket.AuthLogin) {
-        logger.debug { action }
-
-        val playerCharacter = PlayerCharacter(action.pid)
-        playerCharacter.position = Vector2(100f, 100f)
-
-        gameState.addPlayer(playerCharacter)
-    }
-
     fun handle(action: IngressPacket.ConnectionHello) {
         logger.debug { action }
-
     }
 
     fun handle(action: IngressPacket.Disconnect) {
@@ -37,6 +23,27 @@ class GameActionHandler(
             return
         }
 
-        gameState.removePlayer(action.pid)
+        gamesManager.removePlayer(action.pid)
+    }
+
+    fun handle(action: IngressPacket.AuthLogin) {
+        logger.debug { action }
+
+        val dbPlayer = database.getPlayer(action.pid)
+        val playerCharacter = PlayerCharacter(
+            id = dbPlayer.id,
+            name = dbPlayer.name,
+            health = dbPlayer.health,
+            position = Vector2(100f, 100f)
+        )
+
+        gamesManager.addPlayer(playerCharacter, GameMapId(1u))
+    }
+
+    fun handle(action: IngressPacket.PositionChange) {
+        logger.debug { action }
+
+        val direction = action.direction.toDirection().toVector2()
+        gamesManager.movePlayerBy(action.pid, direction)
     }
 }

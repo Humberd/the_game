@@ -22,9 +22,14 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.2.3")
 }
 
+kotlin {
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("InlineClasses")
+    }
+}
+
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xinline-classes"
+        "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
     )
 }

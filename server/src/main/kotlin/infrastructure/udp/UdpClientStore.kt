@@ -1,4 +1,4 @@
-package infrastructure
+package infrastructure.udp
 
 import core.types.PID
 

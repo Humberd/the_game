@@ -1,7 +1,7 @@
-package infrastructure.egress
+package infrastructure.udp.egress
 
 import core.types.PID
-import infrastructure.UdpClientStore
+import infrastructure.udp.UdpClientStore
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class UdpEgressPacketHandler(

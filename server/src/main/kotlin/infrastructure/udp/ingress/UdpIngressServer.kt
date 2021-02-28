@@ -1,6 +1,6 @@
-package infrastructure.ingress
+package infrastructure.udp.ingress
 
-import infrastructure.UdpClient
+import infrastructure.udp.UdpClient
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.nio.ByteBuffer

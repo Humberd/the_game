@@ -1,9 +1,8 @@
 package core
 
 import core.types.PID
-import infrastructure.egress.EgressDataPacket
-import infrastructure.egress.UdpEgressPacketHandler
-import org.mini2Dx.gdx.math.Vector2
+import infrastructure.udp.egress.EgressDataPacket
+import infrastructure.udp.egress.UdpEgressPacketHandler
 
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler

@@ -1,9 +1,9 @@
-package infrastructure.egress
+package infrastructure.udp.egress
 
 import core.types.PID
-import infrastructure.egress.EgressPacketType.PLAYER_DISCONNECT
-import infrastructure.egress.EgressPacketType.PLAYER_POSITION_UPDATE
-import infrastructure.egress.EgressPacketType.PLAYER_UPDATE
+import infrastructure.udp.egress.EgressPacketType.PLAYER_DISCONNECT
+import infrastructure.udp.egress.EgressPacketType.PLAYER_POSITION_UPDATE
+import infrastructure.udp.egress.EgressPacketType.PLAYER_UPDATE
 import org.mini2Dx.gdx.math.Vector2
 import utils.putUInt
 import java.nio.ByteBuffer

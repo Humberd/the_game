@@ -1,4 +1,4 @@
-package infrastructure.egress
+package infrastructure.udp.egress
 
 import java.net.DatagramSocket
 

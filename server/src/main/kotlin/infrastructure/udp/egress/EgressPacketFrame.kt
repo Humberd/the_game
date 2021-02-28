@@ -1,6 +1,6 @@
-package infrastructure.egress
+package infrastructure.udp.egress
 
-import infrastructure.UdpClient
+import infrastructure.udp.UdpClient
 import java.net.DatagramPacket
 
 data class EgressPacketFrame(
