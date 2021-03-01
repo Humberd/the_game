@@ -1,4 +1,5 @@
 import core.GameActionHandler
+import core.GameLoop
 import core.GamesManager
 import core.StateChangeNotifier
 import infrastructure.udp.UdpClientStore
@@ -24,14 +25,17 @@ fun main() {
     val stateChangeNotifier = StateChangeNotifier(egressPacketHandler)
     val gameState = GamesManager(stateChangeNotifier)
     val gameActionHandler = GameActionHandler(gameState, database)
+    val gameLoop = GameLoop(gameActionHandler)
 
     val udpConnectionPersistor = UdpConnectionPersistor()
-    val ingressPacketHandler = UdpIngressPacketHandler(gameActionHandler, udpClientStore, udpConnectionPersistor)
+    val ingressPacketHandler = UdpIngressPacketHandler(gameLoop, udpClientStore, udpConnectionPersistor)
 
     val socket = DatagramSocket(4445)
     val udpEgressServer = UpdEgressServer(socket, egressPacketHandler)
     val udpIngressServer = UdpIngressServer(socket, ingressPacketHandler)
 
+    gameLoop.start()
+    udpConnectionPersistor.start()
     udpEgressServer.start()
     udpIngressServer.start()
 }

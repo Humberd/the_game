@@ -1,27 +1,27 @@
 package infrastructure.udp
 
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.PriorityBlockingQueue
+import mu.KotlinLogging
 
 private val TIMEOUT = 1000 * 5 // 5 seconds
 
-class UdpConnectionPersistor : Thread("PingController") {
+private val logger = KotlinLogging.logger {}
+
+class UdpConnectionPersistor : Thread("UdpConnectionPersistor") {
     private var callback: (UdpClient) -> Unit = {}
-    private val players = PriorityBlockingQueue<Pair>(10) { o1, o2 ->
-        o1.time.compareTo(o2.time)
-    }
-    private val lut = ConcurrentHashMap<UdpClient, Pair>()
+    private val lut = ConcurrentHashMap<UdpClient, Long>()
 
     override fun run() {
+        logger.info { "Starting Udp Connection Persistor" }
+
         while (true) {
             val currentTime = System.currentTimeMillis()
 
-            if (currentTime - players.peek().time > TIMEOUT) {
-                val player = players.poll()
-                lut.remove(player.udpClient)
-                callback.invoke(player.udpClient)
-
-                continue
+            lut.forEach { client, lastPingTime ->
+                if (currentTime - lastPingTime > TIMEOUT) {
+                    lut.remove(client)
+                    callback.invoke(client)
+                }
             }
 
             sleep(1000)
@@ -29,20 +29,10 @@ class UdpConnectionPersistor : Thread("PingController") {
     }
 
     fun register(client: UdpClient) {
-        val oldPair = lut[client]
-        if (oldPair != null) {
-            oldPair.time = System.currentTimeMillis()
-            return
-        }
-
-        val newPair = Pair(client, System.currentTimeMillis())
-        lut.put(client, newPair)
-        players.put(newPair)
+        lut.set(client, System.currentTimeMillis())
     }
 
     fun onRemoved(callback: (UdpClient) -> Unit) {
         this.callback = callback
     }
-
-    inner class Pair(val udpClient: UdpClient, var time: Long)
 }

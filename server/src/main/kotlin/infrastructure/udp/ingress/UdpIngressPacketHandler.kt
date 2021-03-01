@@ -1,6 +1,7 @@
 package infrastructure.udp.ingress
 
 import core.GameActionHandler
+import core.GameLoop
 import core.types.DirectionByte
 import core.types.PID
 import infrastructure.udp.UdpConnectionPersistor
@@ -17,7 +18,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger {}
 
 class UdpIngressPacketHandler(
-    private val gameActionHandler: GameActionHandler,
+    private val gameLoop: GameLoop,
     private val udpClientStore: UdpClientStore,
     private val udpConnectionPersistor: UdpConnectionPersistor
 ) {
@@ -27,7 +28,7 @@ class UdpIngressPacketHandler(
             val clientId = it.getIdentifier()
             val pid = udpClientStore.getPID(clientId)
             udpClientStore.remove(clientId)
-            gameActionHandler.handle(IngressPacket.Disconnect(pid))
+            gameLoop.requestAction(IngressPacket.Disconnect(pid))
         }
     }
 
@@ -55,12 +56,11 @@ class UdpIngressPacketHandler(
         try {
             when (getPacketType(packet)) {
                 IngressPacketType.CONNECTION_HELLO -> {
-                    udpClientStore.remove(clientId)
-                    gameActionHandler.handle(IngressPacket.ConnectionHello())
+                    gameLoop.requestAction(IngressPacket.ConnectionHello())
                 }
                 IngressPacketType.DISCONNECT -> {
                     udpClientStore.remove(clientId)
-                    gameActionHandler.handle(IngressPacket.Disconnect(udpClientStore.getPID(clientId)))
+                    gameLoop.requestAction(IngressPacket.Disconnect(udpClientStore.getPID(clientId)))
                 }
                 IngressPacketType.PING_REQUEST -> {
                     udpConnectionPersistor.register(client)
@@ -69,14 +69,14 @@ class UdpIngressPacketHandler(
                     val pid = PID(packet.uInt())
                     udpClientStore.setPID(client, pid)
 
-                    gameActionHandler.handle(
+                    gameLoop.requestAction(
                         IngressPacket.AuthLogin(
                             pid
                         )
                     )
                 }
                 IngressPacketType.POSITION_CHANGE -> {
-                    gameActionHandler.handle(
+                    gameLoop.requestAction(
                         IngressPacket.PositionChange(
                             pid = getPID(client),
                             direction = DirectionByte(packet.uByte())
@@ -91,6 +91,10 @@ class UdpIngressPacketHandler(
             logger.error(e) {}
         } catch (e: Error) {
             logger.error(e) {}
+        }
+
+        if (packet.position() < packet.capacity()) {
+            logger.error { "Packet was not completely read from -> ${IngressPacketType.POSITION_CHANGE}" }
         }
     }
 
