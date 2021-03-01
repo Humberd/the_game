@@ -29,3 +29,13 @@ fun ByteBuffer.putUShort(value: UShort) {
 fun ByteBuffer.putUInt(value: UInt) {
     this.putInt(value.toInt())
 }
+
+fun ByteBuffer.putString(value: String) {
+    if (value.length > 500) {
+        throw Error("String too long ${value.slice(0..50)}")
+    }
+
+    val utf8Bytes = value.encodeToByteArray()
+    putUShort(utf8Bytes.size.toUShort())
+    put(utf8Bytes)
+}

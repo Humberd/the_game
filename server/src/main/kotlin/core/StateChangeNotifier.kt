@@ -10,8 +10,10 @@ class StateChangeNotifier(
     fun notifyPlayerUpdate(to: PID, playerCharacter: PlayerCharacter) {
         egressPacketHandler.requestSend(
             to, EgressDataPacket.PlayerUpdate(
-                playerCharacter.id,
-                position = playerCharacter.position
+                pid = playerCharacter.id,
+                position = playerCharacter.position,
+                health = playerCharacter.health,
+                name = playerCharacter.name
             )
         )
     }

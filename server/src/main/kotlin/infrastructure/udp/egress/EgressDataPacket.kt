@@ -1,10 +1,12 @@
 package infrastructure.udp.egress
 
+import core.PlayerName
 import core.types.PID
 import infrastructure.udp.egress.EgressPacketType.PLAYER_DISCONNECT
 import infrastructure.udp.egress.EgressPacketType.PLAYER_POSITION_UPDATE
 import infrastructure.udp.egress.EgressPacketType.PLAYER_UPDATE
 import org.mini2Dx.gdx.math.Vector2
+import utils.putString
 import utils.putUInt
 import java.nio.ByteBuffer
 
@@ -31,12 +33,16 @@ sealed class EgressDataPacket(
 
     data class PlayerUpdate(
         val pid: PID,
-        val position: Vector2
+        val position: Vector2,
+        val health: UInt,
+        val name: PlayerName,
     ) : EgressDataPacket(PLAYER_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(pid.value)
             buffer.putFloat(position.x)
             buffer.putFloat(position.y)
+            buffer.putUInt(health)
+            buffer.putString(name.value)
         }
     }
 
