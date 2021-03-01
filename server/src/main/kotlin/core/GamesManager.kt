@@ -14,7 +14,7 @@ class GamesManager(
 
     init {
         GameMapGenerator.generateMap1(20, 20).also { map ->
-            controllers[map.id] = GameMapController(map)
+            controllers[map.id] = GameMapController(notifier, map)
         }
     }
 
@@ -42,10 +42,4 @@ class GamesManager(
     private fun getMapController(gameMapId: GameMapId): GameMapController {
         return controllers[gameMapId] ?: throw Error("GameMapController not found for ${gameMapId}")
     }
-
-//    private inline fun notifyEveryone(callback: (PID) -> Unit) {
-//        players.values.forEach {
-//            callback.invoke(it.id)
-//        }
-//    }
 }
