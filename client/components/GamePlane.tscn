@@ -1,11 +1,11 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://scripts/game_plane_controller.gd" type="Script" id=3]
+[ext_resource path="res://scripts/GamePlaneController.cs" type="Script" id=1]
 
 [node name="GamePlaneViewport" type="ViewportContainer"]
 margin_right = 600.0
 margin_bottom = 600.0
-script = ExtResource( 3 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

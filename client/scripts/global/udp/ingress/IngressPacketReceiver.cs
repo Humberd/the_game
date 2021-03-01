@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using Client.scripts.extensions;
+using Client.scripts.extensions.bigendian;
 
-namespace Client.scripts.global.ingress
+namespace Client.scripts.global.udp.ingress
 {
     public class IngressPacketReceiver
     {
@@ -9,7 +11,9 @@ namespace Client.scripts.global.ingress
 
         public void Handle(byte[] packet)
         {
-            var buffer = new BinaryReader(new MemoryStream(packet));
+            // Console.WriteLine(Utils.ByteArrayToString(packet));
+
+            var buffer = new BeBinaryReader(new MemoryStream(packet));
 
             if (buffer.ReadUInt32() != 0x42424242)
             {
@@ -37,7 +41,8 @@ namespace Client.scripts.global.ingress
                 }
                 default:
                 {
-                    throw new Exception($"Packet type not supported {packetType:X2}");
+                    Console.WriteLine($"Packet type not supported 0x{packetType:X}");
+                    break;
                 }
             }
         }

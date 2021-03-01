@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Client.scripts.global.egress
+namespace Client.scripts.global.udp.egress
 {
     public class ActionSenderMono : Node
     {

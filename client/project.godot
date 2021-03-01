@@ -8,20 +8,9 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "ViewportContainer",
-"class": "GamePlaneController",
-"language": "GDScript",
-"path": "res://scripts/game_plane_controller.gd"
-}, {
-"base": "Node2D",
-"class": "MainPlayerController",
-"language": "GDScript",
-"path": "res://scripts/main_player_controller.gd"
-} ]
+_global_script_classes=[  ]
 _global_script_class_icons={
-"GamePlaneController": "",
-"MainPlayerController": ""
+
 }
 
 [application]
@@ -32,10 +21,9 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Globals="*res://scripts/global/globals.gd"
-ActionReceiver="*res://scripts/global/action_receiver.gd"
-UdpClientMono="*res://scripts/global/UdpClientMono.cs"
-ActionSenderMono="*res://scripts/global/egress/ActionSenderMono.cs"
+UserService="*res://scripts/global/UserService.cs"
+UdpClientMono="*res://scripts/global/udp/UdpClientMono.cs"
+ActionSenderMono="*res://scripts/global/udp/egress/ActionSenderMono.cs"
 
 [input]
 

@@ -3,7 +3,7 @@ using Client.scripts.extensions;
 using Godot;
 using PID = System.UInt32;
 
-namespace Client.scripts.global.ingress
+namespace Client.scripts.global.udp.ingress
 {
     public enum IngressPacketType
     {

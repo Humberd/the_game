@@ -1,8 +1,8 @@
 using System;
-using Client.scripts.global.ingress;
+using Client.scripts.global.udp.ingress;
 using Godot;
 
-namespace Client.scripts.global
+namespace Client.scripts.global.udp
 {
 	public class UdpClientMono : Node
 	{
@@ -37,7 +37,7 @@ namespace Client.scripts.global
 			rng.Randomize();
 			var port = rng.RandiRange(999, 9999);
 
-			if (_udp.Listen(port, "*", 256) != Error.Ok)
+			if (_udp.Listen(port, "*", 512) != Error.Ok)
 			{
 				Console.WriteLine("Error listening on port: " + port);
 			}
@@ -49,7 +49,6 @@ namespace Client.scripts.global
 
 		public void Send(byte[] data)
 		{
-			Console.WriteLine(data);
 			_udp.PutPacket(data);
 		}
 
