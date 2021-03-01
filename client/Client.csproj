@@ -3,7 +3,4 @@
     <TargetFramework>net472</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup>
-    <Content Include="scripts\global\action_sender.gd" />
-  </ItemGroup>
 </Project>
