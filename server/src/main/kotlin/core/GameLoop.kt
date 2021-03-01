@@ -19,8 +19,10 @@ class GameLoop(
         while (true) {
             if (!queue.isEmpty()) {
                 val packet = queue.poll()
-                val _foo = when (packet) {
-                    is IngressPacket.ConnectionHello -> gameActionHandler.handle(packet)
+                logger.debug { packet }
+                @Suppress("UNUSED_VARIABLE")
+                val foo = when (packet) {
+                    is IngressPacket.ConnectionHello -> Unit
                     is IngressPacket.Disconnect -> gameActionHandler.handle(packet)
                     is IngressPacket.AuthLogin -> gameActionHandler.handle(packet)
                     is IngressPacket.PositionChange -> gameActionHandler.handle(packet)

@@ -8,4 +8,8 @@ data class UdpClient(
     fun getIdentifier(): String {
         return "${address}"
     }
+
+    override fun toString(): String {
+        return getIdentifier()
+    }
 }

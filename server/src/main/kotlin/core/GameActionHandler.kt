@@ -12,13 +12,7 @@ class GameActionHandler(
     private val gamesManager: GamesManager,
     private val database: Database
 ) {
-    fun handle(action: IngressPacket.ConnectionHello) {
-        logger.debug { action }
-    }
-
     fun handle(action: IngressPacket.Disconnect) {
-        logger.debug { action }
-
         if (action.pid == null) {
             return
         }
@@ -27,8 +21,6 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.AuthLogin) {
-        logger.debug { action }
-
         val dbPlayer = database.getPlayer(action.pid)
         val playerCharacter = PlayerCharacter(
             id = dbPlayer.id,
@@ -41,8 +33,6 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.PositionChange) {
-        logger.debug { action }
-
         val direction = action.direction.toDirection().toVector2()
         gamesManager.movePlayerBy(action.pid, direction)
     }
