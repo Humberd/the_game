@@ -15,6 +15,10 @@ class GameMapController(
         players[player.id] = player
 
         notifyEveryone { notifier.notifyPlayerUpdate(it, player) }
+
+        getPlayersOtherThan(player.id).forEach {
+            notifier.notifyPlayerUpdate(player.id, it)
+        }
     }
 
     fun removePlayer(pid: PID) {
@@ -32,6 +36,10 @@ class GameMapController(
 
     private fun getPlayer(pid: PID): PlayerCharacter {
         return players[pid] ?: throw Error("PlayerController not found for ${pid}")
+    }
+
+    private fun getPlayersOtherThan(pid: PID): List<PlayerCharacter> {
+        return players.values.filter { it.id != pid }
     }
 
     fun notifyEveryone(callback: (pid: PID) ->  Unit) {
