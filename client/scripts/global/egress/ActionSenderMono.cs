@@ -16,11 +16,12 @@ namespace Client.scripts.global.egress
         public override void _ExitTree()
         {
             Send(new EgressDataPacket.Disconnect());
+            Instance = null;
         }
 
         public void Send(EgressDataPacket data)
         {
-            UdpClientMono.Instance.send(data.Pack());
+            UdpClientMono.Instance.Send(data.Pack());
         }
     }
 }

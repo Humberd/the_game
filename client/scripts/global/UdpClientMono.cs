@@ -1,10 +1,12 @@
 using System;
+using Client.scripts.global.ingress;
 using Godot;
 
 namespace Client.scripts.global
 {
 	public class UdpClientMono : Node
 	{
+		private readonly IngressPacketReceiver _ingressPacketReceiver = new IngressPacketReceiver();
 		private readonly PacketPeerUDP _udp = new PacketPeerUDP();
 
 		public static UdpClientMono Instance;
@@ -16,11 +18,16 @@ namespace Client.scripts.global
 			Instance = this;
 		}
 
+		public override void _ExitTree()
+		{
+			Instance = null;
+		}
+
 		public override void _Process(float delta)
 		{
-			if (_udp.GetAvailablePacketCount() > 0)
+			while (_udp.GetAvailablePacketCount() != 0)
 			{
-				Console.WriteLine(_udp.GetPacket());
+				_ingressPacketReceiver.Handle(_udp.GetPacket());
 			}
 		}
 
@@ -40,12 +47,7 @@ namespace Client.scripts.global
 			}
 		}
 
-		public void send(string data)
-		{
-			_udp.PutPacket(data.ToAscii());
-		}
-
-		public void send(byte[] data)
+		public void Send(byte[] data)
 		{
 			Console.WriteLine(data);
 			_udp.PutPacket(data);
