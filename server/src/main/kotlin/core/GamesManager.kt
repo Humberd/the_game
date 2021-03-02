@@ -2,7 +2,7 @@ package core
 
 import core.maps.GameMapController
 import core.maps.GameMapGenerator
-import core.maps.GameMapId
+import core.types.GameMapId
 import core.types.PID
 import org.mini2Dx.gdx.math.Vector2
 

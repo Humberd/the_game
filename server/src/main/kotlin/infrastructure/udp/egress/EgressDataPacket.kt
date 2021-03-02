@@ -2,27 +2,29 @@ package infrastructure.udp.egress
 
 import core.PlayerName
 import core.types.PID
-import infrastructure.udp.egress.EgressPacketType.PLAYER_DISCONNECT
-import infrastructure.udp.egress.EgressPacketType.PLAYER_POSITION_UPDATE
-import infrastructure.udp.egress.EgressPacketType.PLAYER_UPDATE
+import core.types.SpriteId
+import infrastructure.udp.egress.EgressPacketType.*
 import org.mini2Dx.gdx.math.Vector2
 import utils.putString
+import utils.putUByte
 import utils.putUInt
+import utils.putUShort
 import java.nio.ByteBuffer
 
-object EgressPacketType {
-    const val PLAYER_UPDATE = 0x20
-    const val PLAYER_DISCONNECT = 0x21
-    const val PLAYER_POSITION_UPDATE = 0x22
+enum class EgressPacketType(val value: Int) {
+    PLAYER_UPDATE(0x20),
+    PLAYER_DISCONNECT(0x21),
+    PLAYER_POSITION_UPDATE(0x22),
+    TERRAIN_UPDATE(0x23);
 }
 
 sealed class EgressDataPacket(
-    private val type: Int
+    private val type: EgressPacketType
 ) {
     fun pack(): ByteArray {
         val buffer = ByteBuffer.allocate(256)
         buffer.put(byteArrayOf(0x42, 0x42, 0x42, 0x42))
-        buffer.putShort(type.toShort())
+        buffer.putShort(type.value.toShort())
 
         packData(buffer)
 
@@ -62,6 +64,26 @@ sealed class EgressDataPacket(
             buffer.putUInt(pid.value)
             buffer.putFloat(position.x)
             buffer.putFloat(position.y)
+        }
+    }
+
+    data class TerrainUpdate(
+        val windowWidth: UByte,
+        val windowHeight: UByte,
+        val windowGridStartPositionX: Short,
+        val windowGridStartPositionY: Short,
+        val spriteIds: Array<SpriteId>
+    ): EgressDataPacket(TERRAIN_UPDATE) {
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putUByte(windowWidth)
+            buffer.putUByte(windowHeight)
+            buffer.putShort(windowGridStartPositionX)
+            buffer.putShort(windowGridStartPositionY)
+
+            buffer.putUShort(spriteIds.size.toUShort())
+            spriteIds.forEach {
+                buffer.putUShort(it.value)
+            }
         }
     }
 }

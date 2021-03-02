@@ -15,10 +15,11 @@ class GameMapController(
         players[player.id] = player
 
         notifyEveryone { notifier.notifyPlayerUpdate(it, player) }
-
         getPlayersOtherThan(player.id).forEach {
             notifier.notifyPlayerUpdate(player.id, it)
         }
+
+        notifier.notifyTerrainUpdate(player, map)
     }
 
     fun removePlayer(pid: PID) {
@@ -32,6 +33,7 @@ class GameMapController(
         player.position.mulAdd(vector, player.movementSpeed)
 
         notifyEveryone { notifier.notifyPlayerPositionUpdate(it, player) }
+        notifier.notifyTerrainUpdate(player, map)
     }
 
     private fun getPlayer(pid: PID): PlayerCharacter {

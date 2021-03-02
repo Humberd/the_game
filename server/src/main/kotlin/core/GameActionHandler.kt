@@ -1,6 +1,6 @@
 package core
 
-import core.maps.GameMapId
+import core.types.GameMapId
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
 import mu.KotlinLogging

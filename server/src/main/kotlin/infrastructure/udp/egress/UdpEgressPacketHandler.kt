@@ -22,7 +22,7 @@ class UdpEgressPacketHandler(
         return queue.remove()
     }
 
-    fun requestSend(to: PID, dataPacket: EgressDataPacket) {
+    fun notify(to: PID, dataPacket: EgressDataPacket) {
         logger.debug { "Requesting data send to ${to} -> ${dataPacket}" }
         val client = udpClientStore.getClient(to)
         if (client == null) {
