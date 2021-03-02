@@ -56,7 +56,7 @@ class UdpIngressPacketHandler(
         }
 
         val packetTypeValue = packet.short.toInt()
-        val packetType =  IngressPacketType.from(packetTypeValue)
+        val packetType = IngressPacketType.from(packetTypeValue)
         try {
             val foo = when (packetType) {
                 IngressPacketType.CONNECTION_HELLO -> {
@@ -81,12 +81,7 @@ class UdpIngressPacketHandler(
                     )
                 }
                 IngressPacketType.POSITION_CHANGE -> {
-                    gameLoop.requestAction(
-                        IngressPacket.PositionChange(
-                            pid = getPID(client),
-                            direction = DirectionByte(packet.uByte())
-                        )
-                    )
+                    gameLoop.requestAction(IngressPacket.PositionChange.from(packet, getPID(client)))
                 }
                 null -> {
                     logger.warn { "Unknown packet type ${packetTypeValue}" }
