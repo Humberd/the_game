@@ -9,7 +9,8 @@ namespace Client.scripts.global.udp.ingress
     {
         PLAYER_UPDATE = 0x20,
         PLAYER_DISCONNECT = 0x21,
-        PLAYER_POSITION_UPDATE = 0x22
+        PLAYER_POSITION_UPDATE = 0x22,
+        TERRAIN_UPDATE = 0x23
     }
 
     public class IngressDataPacket
@@ -44,7 +45,7 @@ namespace Client.scripts.global.udp.ingress
         {
             public readonly PID Pid;
 
-            public PlayerDisconnect(uint pid)
+            private PlayerDisconnect(uint pid)
             {
                 Pid = pid;
             }
@@ -62,7 +63,7 @@ namespace Client.scripts.global.udp.ingress
             public readonly PID Pid;
             public readonly Vector2 Position;
 
-            public PlayerPositionUpdate(uint pid, Vector2 position)
+            private PlayerPositionUpdate(uint pid, Vector2 position)
             {
                 Pid = pid;
                 Position = position;
@@ -74,6 +75,49 @@ namespace Client.scripts.global.udp.ingress
                     pid: buffer.ReadUInt32(),
                     position: new Vector2(buffer.ReadSingle(), buffer.ReadSingle())
                 );
+            }
+        }
+
+        public class TerrainUpdate : IngressDataPacket
+        {
+            public readonly byte WindowWidth;
+            public readonly byte WindowHeight;
+            public readonly ushort WindowGridStartPositionX;
+            public readonly ushort WindowGridStartPositionY;
+            public readonly ushort[] SpriteIds;
+
+            private TerrainUpdate(byte windowWidth, byte windowHeight, ushort windowGridStartPositionX,
+                ushort windowGridStartPositionY, ushort[] spriteIds)
+            {
+                WindowWidth = windowWidth;
+                WindowHeight = windowHeight;
+                WindowGridStartPositionX = windowGridStartPositionX;
+                WindowGridStartPositionY = windowGridStartPositionY;
+                SpriteIds = spriteIds;
+            }
+
+            public static TerrainUpdate From(BinaryReader buffer)
+            {
+                return new TerrainUpdate(
+                    windowWidth: buffer.ReadByte(),
+                    windowHeight: buffer.ReadByte(),
+                    windowGridStartPositionX: buffer.ReadUInt16(),
+                    windowGridStartPositionY: buffer.ReadUInt16(),
+                    spriteIds: Array(buffer)
+                );
+            }
+
+            private static ushort[] Array(BinaryReader buffer)
+            {
+                var length = buffer.ReadUInt16();
+                var result = new ushort[length];
+
+                for (var i = 0; i < length; i++)
+                {
+                    result[i] = buffer.ReadUInt16();
+                }
+
+                return result;
             }
         }
     }

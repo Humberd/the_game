@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Client.scripts.components.creature;
+using Client.scripts.components.terrain;
 using Client.scripts.global.udp.ingress;
 using Client.scripts.global;
 using Godot;
@@ -9,6 +10,7 @@ namespace Client.scripts
 {
     public class GamePlaneController : ViewportContainer
     {
+        public TerrainController TerrainController;
         public PlayerController MainPlayer;
         public Dictionary<uint, CreatureController> OtherPlayers = new Dictionary<uint, CreatureController>();
 
@@ -22,6 +24,7 @@ namespace Client.scripts
             var plane = GetNode("Viewport/Plane") as Node2D;
             var viewport = GetNode("Viewport") as Viewport;
             CreateBackground(plane, viewport);
+            CreateTerrain(plane);
         }
 
         public override void _ExitTree()
@@ -42,6 +45,12 @@ namespace Client.scripts
             };
 
             plane.AddChild(sprite);
+        }
+
+        private void CreateTerrain(Node2D plane)
+        {
+            TerrainController = new TerrainController();
+            plane.AddChild(TerrainController);
         }
 
         public void SpawnPlayer(IngressDataPacket.PlayerUpdate action)
@@ -95,6 +104,11 @@ namespace Client.scripts
             {
                 Console.WriteLine($"Player ${pid} not found");
             }
+        }
+
+        public void DrawTerrain(IngressDataPacket.TerrainUpdate action)
+        {
+            TerrainController.DrawTerrain(action);
         }
     }
 }
