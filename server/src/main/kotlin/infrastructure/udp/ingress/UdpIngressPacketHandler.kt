@@ -55,9 +55,10 @@ class UdpIngressPacketHandler(
             return
         }
 
-        val packetType = getPacketType(packet)
+        val packetTypeValue = packet.short.toInt()
+        val packetType =  IngressPacketType.from(packetTypeValue)
         try {
-            when (packetType) {
+            val foo = when (packetType) {
                 IngressPacketType.CONNECTION_HELLO -> {
                     gameLoop.requestAction(IngressPacket.ConnectionHello())
                 }
@@ -87,7 +88,9 @@ class UdpIngressPacketHandler(
                         )
                     )
                 }
-                else -> println("Unknown packet type")
+                null -> {
+                    logger.warn { "Unknown packet type ${packetTypeValue}" }
+                }
             }
         } catch (e: BufferUnderflowException) {
             logger.error { "Invalid frame size" }
@@ -99,13 +102,11 @@ class UdpIngressPacketHandler(
             logger.error(e) {}
         }
 
-        if (packet.position() < packet.limit()) {
-            logger.error { "Packet was not completely read from -> 0x${Integer.toHexString(packetType).padStart(2, '0')}" }
-        }
-    }
+        println(packetType)
 
-    private fun getPacketType(buffer: ByteBuffer): Int {
-        return buffer.short.toInt()
+        if (packet.position() < packet.limit()) {
+            logger.error { "Packet was not completely read from -> ${packetType ?: "unknown packet"}" }
+        }
     }
 
     private fun getPID(client: UdpClient): PID {
