@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Godot;
+﻿using Godot;
 using Font = Godot.Font;
 
 namespace Client.scripts.components.terrain
@@ -24,7 +23,7 @@ namespace Client.scripts.components.terrain
             {
                 Size = _vecSize
             };
-            Name = $"TileController({_gridCoordinates.x}, {_gridCoordinates.y})";
+            Name = $"Tile({_gridCoordinates.x}, {_gridCoordinates.y})";
         }
 
         public override void _Ready()
@@ -36,6 +35,16 @@ namespace Client.scripts.components.terrain
         {
             DrawRect(new Rect2(Vector2.Zero, _vecSize), Colors.RebeccaPurple, false);
             DrawString(_font, new Vector2(0, _size / 2), $"{_gridCoordinates.x}, {_gridCoordinates.y}");
+        }
+
+        public void SetTile(ushort spriteId)
+        {
+            Texture = (Texture) ResourceLoader.Load($"res://assets/tiles/{spriteId}.png");
+        }
+
+        public void UnsetTile()
+        {
+            Texture = null;
         }
     }
 }

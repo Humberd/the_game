@@ -92,8 +92,6 @@ class UdpIngressPacketHandler(
             logger.error(e) {}
         }
 
-        println(packetType)
-
         if (packet.position() < packet.limit()) {
             logger.error { "Packet was not completely read from -> ${packetType ?: "unknown packet"}" }
         }

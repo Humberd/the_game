@@ -13,5 +13,5 @@ class PlayerCharacter(
     var position: WorldPosition
 ) {
     var movementSpeed = 2f
-    val viewRadius: UByte = 3u
+    val viewRadius: UByte = 2u
 }

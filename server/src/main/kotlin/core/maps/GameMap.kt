@@ -5,6 +5,7 @@ import core.types.GameMapId
 import core.types.SpriteId
 import core.types.WorldPosition
 import kotlin.math.ceil
+import kotlin.math.floor
 
 
 class GameMap(
@@ -26,12 +27,12 @@ class GameMap(
         val y: Coordinate
     )
 
-    fun getTilesAround(position: GridPosition, radius: Int): Array<Tile> {
+    fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>> {
         require(radius >= 0)
         val locX = position.x.value
         val locY = position.y.value
 
-        val result = ArrayList<Tile>(radius * 2 + 1)
+        println(position)
 
         val startX = (locX - radius).let {
             if (it < 0) 0 else it
@@ -46,19 +47,27 @@ class GameMap(
             if (it >= gridHeight) gridHeight - 1 else it
         }
 
-        for (x in startX..endX) {
-            for (y in startY..endY) {
-                result.add(grid[x][y])
+        val result = Array<Array<Tile?>>(endX - startX + 1) {
+            Array(endY - startY + 1) {
+                null
             }
         }
 
-        return result.toTypedArray()
+        println("$startX, $startY -> $endX, $endY")
+
+        for (x in startX..endX) {
+            for (y in startY..endY) {
+                result[x - startX][y - startY] = grid[x][y]
+            }
+        }
+
+        return result as Array<Array<Tile>>
     }
 
     fun toGridPosition(position: WorldPosition): GridPosition {
         return GridPosition(
-            x = Coordinate(ceil(((position.x + worldOffset.x) / TILE_SIZE)).toInt()),
-            y = Coordinate(ceil(((position.y + worldOffset.y) / TILE_SIZE)).toInt())
+            x = Coordinate(floor(((position.x + worldOffset.x) / TILE_SIZE)).toInt()),
+            y = Coordinate(floor(((position.y + worldOffset.y) / TILE_SIZE)).toInt())
         )
     }
 }

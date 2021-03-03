@@ -1,4 +1,5 @@
-﻿using Client.scripts.global.udp.ingress;
+﻿using System;
+using Client.scripts.global.udp.ingress;
 using Godot;
 
 namespace Client.scripts.components.terrain
@@ -7,6 +8,8 @@ namespace Client.scripts.components.terrain
     {
         private static int GRID_SIZE = 20;
         private static int TILE_SIZE = 64;
+
+        private TileController[,] _tiles = new TileController[GRID_SIZE, GRID_SIZE];
 
         public override void _Ready()
         {
@@ -17,6 +20,7 @@ namespace Client.scripts.components.terrain
                 for (int y = 0; y < GRID_SIZE; y++)
                 {
                     var tile = new TileController(TILE_SIZE, new Vector2(x, y));
+                    _tiles[x, y] = tile;
                     AddChild(tile);
                 }
             }
@@ -24,37 +28,33 @@ namespace Client.scripts.components.terrain
 
         public void DrawTerrain(IngressDataPacket.TerrainUpdate action)
         {
-            var gridX = 0;
-            var gridY = 0;
-            for (var i = 0; i < action.SpriteIds.Length; i++)
-            {
-                var worldPosition = new Vector2(
-                    x: gridX * TILE_SIZE + action.WindowGridStartPositionX,
-                    y: gridY * TILE_SIZE + action.WindowGridStartPositionY
-                );
-                var spriteId = action.SpriteIds[i];
-                // DrawTile(spriteId, worldPosition);
+            var startX = action.WindowGridStartPositionX;
+            var startY = action.WindowGridStartPositionY;
 
-                gridY++;
-                if (gridY == action.WindowHeight)
+            var endX = startX + action.WindowWidth;
+            var endY = startY + action.WindowHeight;
+
+            ClearAllTiles();
+
+            for (int x = startX; x < endX; x++)
+            {
+                for (int y = startY; y < endY; y++)
                 {
-                    gridX++;
-                    gridY = 0;
+                    var offsetX = x - startX;
+                    var offsetY = y - startY;
+                    var index = offsetX * action.WindowHeight + offsetY;
+                    var spriteId = action.SpriteIds[index];
+                    _tiles[x, y].SetTile(spriteId);
                 }
             }
         }
 
-        private void DrawTile(ushort spriteId, Vector2 position)
+        private void ClearAllTiles()
         {
-            var tile = new Sprite
+            foreach (var tileController in _tiles)
             {
-                Texture = (Texture) ResourceLoader.Load($"res://assets/tiles/{spriteId}.png"),
-                Name = "Sprite",
-                Centered = true,
-                Position = position
-            };
-
-            AddChild(tile);
+                tileController.UnsetTile();
+            }
         }
     }
 }

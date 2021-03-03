@@ -39,16 +39,33 @@ class StateChangeNotifier(
 
     fun notifyTerrainUpdate(player: PlayerCharacter, map: GameMap) {
         val gridPosition = map.toGridPosition(player.position)
+        println(player.position)
         val tiles = map.getTilesAround(gridPosition, player.viewRadius.toInt())
 
         egressPacketHandler.notify(
             player.id,
             EgressDataPacket.TerrainUpdate(
-                windowWidth = player.viewRadius,
-                windowHeight = player.viewRadius,
-                windowGridStartPositionX = tiles[0].gridPosition.x.value.toShort(),
-                windowGridStartPositionY = tiles[0].gridPosition.y.value.toShort(),
-                spriteIds = tiles.map { it.spriteId }.toTypedArray()
+                windowWidth = tiles.size.toUByte(),
+                windowHeight = if (tiles.size > 0) tiles[0].size.toUByte() else 0u,
+                windowGridStartPositionX = tiles.let {
+                    if (it.size == 0) {
+                        return@let 0
+                    }
+                    if (it[0].size == 0) {
+                        return@let 0
+                    }
+                    it[0][0].gridPosition.x.value.toShort()
+                },
+                windowGridStartPositionY = tiles.let {
+                    if (it.size == 0) {
+                        return@let 0
+                    }
+                    if (it[0].size == 0) {
+                        return@let 0
+                    }
+                    it[0][0].gridPosition.y.value.toShort()
+                },
+                spriteIds = tiles.flatten().map { it.spriteId }.toTypedArray()
             )
         )
     }
