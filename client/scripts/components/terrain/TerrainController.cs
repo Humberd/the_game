@@ -5,7 +5,23 @@ namespace Client.scripts.components.terrain
 {
     public class TerrainController : Node2D
     {
+        private static int GRID_SIZE = 20;
         private static int TILE_SIZE = 64;
+
+        public override void _Ready()
+        {
+            Name = "TerrainController";
+
+            for (int x = 0; x < GRID_SIZE; x++)
+            {
+                for (int y = 0; y < GRID_SIZE; y++)
+                {
+                    var tile = new TileController(TILE_SIZE, new Vector2(x, y));
+                    AddChild(tile);
+                }
+            }
+        }
+
         public void DrawTerrain(IngressDataPacket.TerrainUpdate action)
         {
             var gridX = 0;
@@ -17,7 +33,7 @@ namespace Client.scripts.components.terrain
                     y: gridY * TILE_SIZE + action.WindowGridStartPositionY
                 );
                 var spriteId = action.SpriteIds[i];
-                DrawTile(spriteId, worldPosition);
+                // DrawTile(spriteId, worldPosition);
 
                 gridY++;
                 if (gridY == action.WindowHeight)
@@ -37,6 +53,7 @@ namespace Client.scripts.components.terrain
                 Centered = true,
                 Position = position
             };
+
             AddChild(tile);
         }
     }

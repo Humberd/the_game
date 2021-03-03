@@ -9,6 +9,13 @@ namespace Client.scripts.components.creature
         public override void _Ready()
         {
             Console.WriteLine("Hello from Main Player Controller C#");
+
+            var camera2D = new Camera2D
+            {
+                Current = true
+            };
+
+            AddChild(camera2D);
         }
 
         public override void _PhysicsProcess(float delta)

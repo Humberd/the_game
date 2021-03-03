@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Client.scripts.components.creature;
 using Client.scripts.components.terrain;
@@ -8,7 +8,7 @@ using Godot;
 
 namespace Client.scripts
 {
-    public class GamePlaneController : ViewportContainer
+    public class GamePlaneController : Node
     {
         public TerrainController TerrainController;
         public PlayerController MainPlayer;
@@ -21,36 +21,17 @@ namespace Client.scripts
             Instance = this;
             Console.WriteLine("Hello from GamePlaneController C#");
 
-            var plane = GetNode("Viewport/Plane") as Node2D;
-            var viewport = GetNode("Viewport") as Viewport;
-            CreateBackground(plane, viewport);
-            CreateTerrain(plane);
+            CreateTerrain();
         }
 
         public override void _ExitTree()
         {
             Instance = null;
         }
-
-        private void CreateBackground(Node2D plane, Viewport viewport)
-        {
-            var sprite = new Sprite
-            {
-                Texture = (Texture) ResourceLoader.Load("res://assets/background.png"),
-                Name = "Background",
-                Centered = false,
-                RegionEnabled = true,
-                RegionRect = new Rect2(Vector2.Zero, new Vector2(viewport.Size.x, viewport.Size.y)),
-                Modulate = new Color("ababab")
-            };
-
-            plane.AddChild(sprite);
-        }
-
-        private void CreateTerrain(Node2D plane)
+        private void CreateTerrain()
         {
             TerrainController = new TerrainController();
-            plane.AddChild(TerrainController);
+            AddChild(TerrainController);
         }
 
         public void SpawnPlayer(IngressDataPacket.PlayerUpdate action)

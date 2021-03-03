@@ -13,7 +13,6 @@ __meta__ = {
 }
 
 [node name="GamePlane" parent="Control" instance=ExtResource( 1 )]
-margin_left = 225.0
-margin_right = 825.0
+position = Vector2( 212, 0 )
 
 [node name="LoginScreen" parent="Control" instance=ExtResource( 2 )]
