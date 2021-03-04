@@ -1,6 +1,4 @@
-﻿using System;
-using Client.scripts.extensions;
-using Client.scripts.global.udp.ingress;
+﻿using Client.scripts.global.udp.ingress;
 
 namespace Client.scripts.global
 {
@@ -24,6 +22,11 @@ namespace Client.scripts.global
         public void Handle(IngressDataPacket.TerrainUpdate action)
         {
             GamePlaneController.Instance.DrawTerrain(action);
+        }
+
+        public void Handle(IngressDataPacket.TerrainItemsUpdate action)
+        {
+            GamePlaneController.Instance.DrawItems(action);
         }
     }
 }

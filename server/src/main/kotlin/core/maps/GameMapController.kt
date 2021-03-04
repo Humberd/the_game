@@ -20,6 +20,7 @@ class GameMapController(
         }
 
         notifier.notifyTerrainUpdate(player, map)
+        notifier.notifyTerrainItemsUpdate(player.id, map)
     }
 
     fun removePlayer(pid: PID) {

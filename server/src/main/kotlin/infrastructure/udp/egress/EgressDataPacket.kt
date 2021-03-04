@@ -1,21 +1,18 @@
 package infrastructure.udp.egress
 
 import core.PlayerName
-import core.types.PID
-import core.types.SpriteId
+import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
 import org.mini2Dx.gdx.math.Vector2
-import utils.putString
-import utils.putUByte
-import utils.putUInt
-import utils.putUShort
+import utils.*
 import java.nio.ByteBuffer
 
 enum class EgressPacketType(val value: Int) {
     PLAYER_UPDATE(0x20),
     PLAYER_DISCONNECT(0x21),
     PLAYER_POSITION_UPDATE(0x22),
-    TERRAIN_UPDATE(0x23);
+    TERRAIN_UPDATE(0x23),
+    TERRAIN_ITEMS_UPDATE(0x24)
 }
 
 sealed class EgressDataPacket(
@@ -24,7 +21,7 @@ sealed class EgressDataPacket(
     fun pack(): ByteArray {
         val buffer = ByteBuffer.allocate(256)
         buffer.put(byteArrayOf(0x42, 0x42, 0x42, 0x42))
-        buffer.putShort(type.value.toShort())
+        buffer.putUShort(type.value.toUShort())
 
         packData(buffer)
 
@@ -35,7 +32,7 @@ sealed class EgressDataPacket(
 
     data class PlayerUpdate(
         val pid: PID,
-        val position: Vector2,
+        val position: WorldPosition,
         val health: UInt,
         val name: PlayerName,
     ) : EgressDataPacket(PLAYER_UPDATE) {
@@ -58,8 +55,8 @@ sealed class EgressDataPacket(
 
     data class PlayerPositionUpdate(
         val pid: PID,
-        val position: Vector2
-    ): EgressDataPacket(PLAYER_POSITION_UPDATE) {
+        val position: WorldPosition
+    ) : EgressDataPacket(PLAYER_POSITION_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(pid.value)
             buffer.putFloat(position.x)
@@ -73,16 +70,33 @@ sealed class EgressDataPacket(
         val windowGridStartPositionX: Short,
         val windowGridStartPositionY: Short,
         val spriteIds: Array<SpriteId>
-    ): EgressDataPacket(TERRAIN_UPDATE) {
+    ) : EgressDataPacket(TERRAIN_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUByte(windowWidth)
             buffer.putUByte(windowHeight)
             buffer.putShort(windowGridStartPositionX)
             buffer.putShort(windowGridStartPositionY)
-
-            buffer.putUShort(spriteIds.size.toUShort())
-            spriteIds.forEach {
+            buffer.putArray(spriteIds) {
                 buffer.putUShort(it.value)
+            }
+        }
+    }
+
+    data class TerrainItemsUpdate(
+        val items: List<ItemData>
+    ) : EgressDataPacket(TERRAIN_ITEMS_UPDATE) {
+        data class ItemData(
+            val instanceId: InstanceId,
+            val itemId: ItemId,
+            val position: WorldPosition
+        )
+
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putList(items) {
+                buffer.putUInt(it.instanceId.value)
+                buffer.putUShort(it.itemId.value)
+                buffer.putFloat(it.position.x)
+                buffer.putFloat(it.position.y)
             }
         }
     }

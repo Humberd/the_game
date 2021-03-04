@@ -11,6 +11,7 @@ namespace Client.scripts
     public class GamePlaneController : Node
     {
         public TerrainController TerrainController;
+        public ItemsPlaneController ItemsPlaneController;
         public PlayerController MainPlayer;
         public Dictionary<uint, CreatureController> OtherPlayers = new Dictionary<uint, CreatureController>();
 
@@ -32,6 +33,8 @@ namespace Client.scripts
         {
             TerrainController = new TerrainController();
             AddChild(TerrainController);
+            ItemsPlaneController = new ItemsPlaneController();
+            AddChild(ItemsPlaneController);
         }
 
         public void SpawnPlayer(IngressDataPacket.PlayerUpdate action)
@@ -90,6 +93,11 @@ namespace Client.scripts
         public void DrawTerrain(IngressDataPacket.TerrainUpdate action)
         {
             TerrainController.DrawTerrain(action);
+        }
+
+        public void DrawItems(IngressDataPacket.TerrainItemsUpdate action)
+        {
+            ItemsPlaneController.DrawItems(action);
         }
     }
 }

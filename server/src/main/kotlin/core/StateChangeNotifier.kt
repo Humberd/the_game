@@ -69,4 +69,19 @@ class StateChangeNotifier(
             )
         )
     }
+
+    fun notifyTerrainItemsUpdate(to: PID, map: GameMap) {
+        egressPacketHandler.notify(
+            to,
+            EgressDataPacket.TerrainItemsUpdate(
+                items = map.getItems().map {
+                    EgressDataPacket.TerrainItemsUpdate.ItemData(
+                        instanceId = it.instanceId,
+                        itemId = it.itemDef.id,
+                        position = it.position
+                    )
+                }
+            )
+        )
+    }
 }

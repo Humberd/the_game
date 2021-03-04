@@ -10,7 +10,8 @@ namespace Client.scripts.global.udp.ingress
         PLAYER_UPDATE = 0x20,
         PLAYER_DISCONNECT = 0x21,
         PLAYER_POSITION_UPDATE = 0x22,
-        TERRAIN_UPDATE = 0x23
+        TERRAIN_UPDATE = 0x23,
+        TERRAIN_ITEMS_UPDATE = 0x24
     }
 
     public class IngressDataPacket
@@ -103,21 +104,43 @@ namespace Client.scripts.global.udp.ingress
                     windowHeight: buffer.ReadByte(),
                     windowGridStartPositionX: buffer.ReadUInt16(),
                     windowGridStartPositionY: buffer.ReadUInt16(),
-                    spriteIds: Array(buffer)
+                    spriteIds: buffer.ReadServerArray(() => buffer.ReadUInt16())
                 );
             }
+        }
 
-            private static ushort[] Array(BinaryReader buffer)
+        public class TerrainItemsUpdate : IngressDataPacket
+        {
+            public readonly ItemData[] Items;
+
+            public readonly struct ItemData
             {
-                var length = buffer.ReadUInt16();
-                var result = new ushort[length];
+                public readonly uint InstanceId;
+                public readonly ushort ItemId;
+                public readonly Vector2 Position;
 
-                for (var i = 0; i < length; i++)
+                public ItemData(uint instanceId, ushort itemId, Vector2 position)
                 {
-                    result[i] = buffer.ReadUInt16();
+                    InstanceId = instanceId;
+                    ItemId = itemId;
+                    Position = position;
                 }
+            }
 
-                return result;
+            private TerrainItemsUpdate(ItemData[] items)
+            {
+                Items = items;
+            }
+
+            public static TerrainItemsUpdate From(BinaryReader buffer)
+            {
+                return new TerrainItemsUpdate(
+                    items: buffer.ReadServerArray(() => new ItemData(
+                        instanceId: buffer.ReadUInt32(),
+                        itemId: buffer.ReadUInt16(),
+                        position: new Vector2(buffer.ReadSingle(), buffer.ReadSingle())
+                    ))
+                );
             }
         }
     }

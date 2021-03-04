@@ -44,6 +44,10 @@ namespace Client.scripts.global.udp.ingress
                     _ingressPacketHandler.Handle(IngressDataPacket.TerrainUpdate.From(buffer));
                     break;
                 }
+                case IngressPacketType.TERRAIN_ITEMS_UPDATE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.TerrainItemsUpdate.From(buffer));
+
+                    break;
                 default:
                 {
                     Console.WriteLine($"Packet type not supported 0x{packetType:X}");

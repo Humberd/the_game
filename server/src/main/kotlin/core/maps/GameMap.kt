@@ -1,10 +1,6 @@
 package core.maps
 
-import core.types.Coordinate
-import core.types.GameMapId
-import core.types.SpriteId
-import core.types.WorldPosition
-import kotlin.math.ceil
+import core.types.*
 import kotlin.math.floor
 
 
@@ -13,13 +9,20 @@ class GameMap(
     val gridWidth: Int,
     val gridHeight: Int,
     val worldOffset: WorldPosition,
-    private val grid: Array<Array<Tile>>
+    private val grid: Array<Array<Tile>>,
+    private val items: List<Item>
 ) {
     val TILE_SIZE = 64
 
     data class Tile(
         val spriteId: SpriteId,
         val gridPosition: GridPosition
+    )
+
+    data class Item(
+        val instanceId: InstanceId,
+        val itemDef: ItemDef,
+        val position: WorldPosition
     )
 
     data class GridPosition(
@@ -69,5 +72,9 @@ class GameMap(
             x = Coordinate(floor(((position.x + worldOffset.x) / TILE_SIZE)).toInt()),
             y = Coordinate(floor(((position.y + worldOffset.y) / TILE_SIZE)).toInt())
         )
+    }
+
+    fun getItems(): List<Item> {
+        return items
     }
 }

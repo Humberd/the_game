@@ -53,6 +53,7 @@ class UdpIngressPacketHandler(
         val packetTypeValue = packet.short.toInt()
         val packetType = IngressPacketType.from(packetTypeValue)
         try {
+            @Suppress("UNUSED_VARIABLE")
             val foo = when (packetType) {
                 IngressPacketType.CONNECTION_HELLO -> {
                     gameLoop.requestAction(IngressPacket.ConnectionHello())

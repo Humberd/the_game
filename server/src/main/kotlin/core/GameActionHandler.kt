@@ -26,7 +26,6 @@ class GameActionHandler(
             id = dbPlayer.id,
             name = dbPlayer.name,
             health = dbPlayer.health,
-            position = Vector2(100f, 100f)
         )
 
         gamesManager.addPlayer(playerCharacter, GameMapId(1u))

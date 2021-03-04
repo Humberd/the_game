@@ -39,3 +39,14 @@ fun ByteBuffer.putString(value: String) {
     putUShort(utf8Bytes.size.toUShort())
     put(utf8Bytes)
 }
+
+fun <T> ByteBuffer.putArray(value: Array<T>, itemPut: (T) -> Unit) {
+    putUShort(value.size.toUShort())
+    value.forEach { itemPut.invoke(it) }
+}
+
+fun <T> ByteBuffer.putList(value: Collection<T>, itemPut: (T) -> Unit) {
+    putUShort(value.size.toUShort())
+    value.forEach { itemPut.invoke(it) }
+}
+

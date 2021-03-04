@@ -10,8 +10,8 @@ class PlayerCharacter(
     val id: PID,
     val name: PlayerName,
     val health: UInt,
-    var position: WorldPosition
+    var position: WorldPosition = Vector2(400f, 400f)
 ) {
-    var movementSpeed = 2f
-    val viewRadius: UByte = 2u
+    var movementSpeed = 4f
+    val viewRadius: UByte = 5u
 }

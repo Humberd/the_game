@@ -26,11 +26,6 @@ namespace Client.scripts.components.terrain
             Name = $"Tile({_gridCoordinates.x}, {_gridCoordinates.y})";
         }
 
-        public override void _Ready()
-        {
-
-        }
-
         public override void _Draw()
         {
             DrawRect(new Rect2(Vector2.Zero, _vecSize), Colors.RebeccaPurple, false);
