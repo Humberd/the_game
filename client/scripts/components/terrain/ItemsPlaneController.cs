@@ -15,7 +15,7 @@ namespace Client.scripts.components.terrain
             foreach (var idToRemove in idsToRemove.ToList())
             {
                 var itemControllerToRemove = _items[idToRemove];
-                RemoveChild(itemControllerToRemove);
+                itemControllerToRemove.QueueFree();
                 _items.Remove(idToRemove);
             }
 

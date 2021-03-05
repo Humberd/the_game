@@ -69,7 +69,7 @@ namespace Client.scripts
                 }
 
                 OtherPlayers.Remove(pid);
-                RemoveChild(player);
+                player.QueueFree();
             }
             else
             {

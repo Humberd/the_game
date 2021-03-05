@@ -13,7 +13,7 @@ namespace Client.scripts.login_screen
         {
             UserService.Instance.PlayerId = _pid;
             ActionSenderMono.Instance.Send(new EgressDataPacket.AuthLogin(_pid));
-            GetParent().GetParent().RemoveChild(GetParent());
+            GetParent().QueueFree();
         }
     }
 }
