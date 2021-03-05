@@ -3,6 +3,7 @@ package core.maps
 import core.PlayerCharacter
 import core.StateChangeNotifier
 import core.types.PID
+import core.types.WorldPosition
 import org.mini2Dx.gdx.math.Vector2
 
 class GameMapController(
@@ -14,13 +15,12 @@ class GameMapController(
     fun addPlayer(player: PlayerCharacter) {
         players[player.id] = player
 
-        notifyEveryone { notifier.notifyPlayerUpdate(it, player) }
-        getPlayersOtherThan(player.id).forEach {
-            notifier.notifyPlayerUpdate(player.id, it)
+        getPlayersOtherThan(player.id).forEach { otherPlayer ->
+            notifier.notifyPlayerUpdate(player.id, otherPlayer)
         }
+        notifyEveryone { otherPID -> notifier.notifyPlayerUpdate(otherPID, player) }
 
-        notifier.notifyTerrainUpdate(player, map)
-        notifier.notifyTerrainItemsUpdate(player.id, map)
+        movePlayerTo(player, Vector2(400f, 400f))
     }
 
     fun removePlayer(pid: PID) {
@@ -31,10 +31,25 @@ class GameMapController(
 
     fun movePlayerBy(pid: PID, vector: Vector2) {
         val player = getPlayer(pid)
-        player.position.mulAdd(vector, player.movementSpeed)
 
-        notifyEveryone { notifier.notifyPlayerPositionUpdate(it, player) }
-        notifier.notifyTerrainUpdate(player, map)
+        val newPosition = player.position.cpy().mulAdd(vector, player.movementSpeed)
+        movePlayerTo(player, newPosition)
+    }
+
+    fun movePlayerTo(player: PlayerCharacter, vector: WorldPosition) {
+        val lastGridPosition = player.lastUpdate.gridPosition
+
+        player.position.set(vector)
+        player.lastUpdate.gridPosition = GameMap.toGridPosition(player.position)
+        val currentGridPosition = player.lastUpdate.gridPosition
+
+        if (lastGridPosition != currentGridPosition) {
+            player.lastUpdate.tileSlice = map.getTilesAround(currentGridPosition, player.viewRadius.toInt())
+            notifier.notifyTerrainUpdate(player)
+            notifier.notifyTerrainItemsUpdate(player)
+        }
+
+        notifyEveryone { otherPID -> notifier.notifyPlayerPositionUpdate(otherPID, player) }
     }
 
     private fun getPlayer(pid: PID): PlayerCharacter {
@@ -45,7 +60,7 @@ class GameMapController(
         return players.values.filter { it.id != pid }
     }
 
-    fun notifyEveryone(callback: (pid: PID) ->  Unit) {
+    fun notifyEveryone(callback: (pid: PID) -> Unit) {
         players.keys.forEach { pid -> callback.invoke(pid) }
     }
 }

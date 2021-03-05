@@ -10,14 +10,46 @@ class GameMap(
     val gridHeight: Int,
     val worldOffset: WorldPosition,
     private val grid: Array<Array<Tile>>,
-    private val items: List<Item>
+    items: List<Item>
 ) {
-    val TILE_SIZE = 64
+
+    companion object {
+        val TILE_SIZE = 64
+
+        fun toGridPosition(position: WorldPosition): GridPosition {
+            return GridPosition(
+                x = Coordinate(floor(((position.x) / TILE_SIZE)).toInt()),
+                y = Coordinate(floor(((position.y) / TILE_SIZE)).toInt())
+            )
+        }
+    }
+
+    init {
+        items.forEach {
+            val (x, y) = toGridPosition(it.position)
+            grid[x.value][y.value].putItem(it)
+        }
+    }
 
     data class Tile(
         val spriteId: SpriteId,
-        val gridPosition: GridPosition
-    )
+        val gridPosition: GridPosition,
+        private val items: HashMap<InstanceId, Item> = hashMapOf()
+    ) {
+        fun putItem(item: Item) {
+            items[item.instanceId] = item
+        }
+
+        fun removeItem(instanceId: InstanceId) {
+            items.remove(instanceId)
+        }
+
+        fun writeItemsTo(buffer: ArrayList<Item>) {
+            items.values.forEach {
+                buffer.add(it)
+            }
+        }
+    }
 
     data class Item(
         val instanceId: InstanceId,
@@ -65,16 +97,5 @@ class GameMap(
         }
 
         return result as Array<Array<Tile>>
-    }
-
-    fun toGridPosition(position: WorldPosition): GridPosition {
-        return GridPosition(
-            x = Coordinate(floor(((position.x + worldOffset.x) / TILE_SIZE)).toInt()),
-            y = Coordinate(floor(((position.y + worldOffset.y) / TILE_SIZE)).toInt())
-        )
-    }
-
-    fun getItems(): List<Item> {
-        return items
     }
 }

@@ -37,10 +37,8 @@ class StateChangeNotifier(
         )
     }
 
-    fun notifyTerrainUpdate(player: PlayerCharacter, map: GameMap) {
-        val gridPosition = map.toGridPosition(player.position)
-        println(player.position)
-        val tiles = map.getTilesAround(gridPosition, player.viewRadius.toInt())
+    fun notifyTerrainUpdate(player: PlayerCharacter) {
+        val tiles = player.lastUpdate.tileSlice
 
         egressPacketHandler.notify(
             player.id,
@@ -70,11 +68,11 @@ class StateChangeNotifier(
         )
     }
 
-    fun notifyTerrainItemsUpdate(to: PID, map: GameMap) {
+    fun notifyTerrainItemsUpdate(player: PlayerCharacter) {
         egressPacketHandler.notify(
-            to,
+            player.id,
             EgressDataPacket.TerrainItemsUpdate(
-                items = map.getItems().map {
+                items = player.getVisibleItems().map {
                     EgressDataPacket.TerrainItemsUpdate.ItemData(
                         instanceId = it.instanceId,
                         itemId = it.itemDef.id,

@@ -113,7 +113,7 @@ namespace Client.scripts.global.udp.ingress
         {
             public readonly ItemData[] Items;
 
-            public readonly struct ItemData
+            public class ItemData
             {
                 public readonly uint InstanceId;
                 public readonly ushort ItemId;

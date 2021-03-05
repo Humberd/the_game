@@ -1,7 +1,7 @@
 package infrastructure.database
 
-import core.PlayerName
 import core.types.PID
+import core.types.PlayerName
 import infrastructure.database.types.PlayerCharacterDAO
 
 class Database {

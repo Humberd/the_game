@@ -1,9 +1,7 @@
 package infrastructure.udp.egress
 
-import core.PlayerName
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
-import org.mini2Dx.gdx.math.Vector2
 import utils.*
 import java.nio.ByteBuffer
 

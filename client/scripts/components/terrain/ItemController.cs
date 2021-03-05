@@ -10,14 +10,15 @@ namespace Client.scripts.components.terrain
 
         public ItemController(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)
         {
-            _instanceId = itemData.InstanceId;
-            _itemId = itemData.ItemId;
-            Position = itemData.Position;
+            Update(itemData);
             Centered = true;
         }
 
-        public override void _Ready()
+        public void Update(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)
         {
+            _instanceId = itemData.InstanceId;
+            _itemId = itemData.ItemId;
+            Position = itemData.Position;
             // fixme: itemId is not a spriteId.
             Texture = (Texture) ResourceLoader.Load($"res://assets/resources/items/sprites/{_itemId}.png");
         }

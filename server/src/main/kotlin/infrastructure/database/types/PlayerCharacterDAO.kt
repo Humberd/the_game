@@ -1,7 +1,7 @@
 package infrastructure.database.types
 
-import core.PlayerName
 import core.types.PID
+import core.types.PlayerName
 
 data class PlayerCharacterDAO(
     val id: PID,
