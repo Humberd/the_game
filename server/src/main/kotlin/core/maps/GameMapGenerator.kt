@@ -21,7 +21,7 @@ object GameMapGenerator {
             id = GameMapId(1u),
             gridWidth = width,
             gridHeight = height,
-            worldOffset = Vector2.Zero,
+            worldOffset = Vector2(0f, 0f),
             grid = grid,
             listOf(
                 GameMap.Item(
