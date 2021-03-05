@@ -4,7 +4,6 @@ import core.types.GameMapId
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
 import mu.KotlinLogging
-import org.mini2Dx.gdx.math.Vector2
 
 private val logger = KotlinLogging.logger {}
 
@@ -34,5 +33,9 @@ class GameActionHandler(
     fun handle(action: IngressPacket.PositionChange) {
         val direction = action.direction.toDirection().toVector2()
         gamesManager.movePlayerBy(action.pid, direction)
+    }
+
+    fun handle(action: IngressPacket.TerrainItemDrag) {
+        gamesManager.dragItemOnTerrain(action.pid, action.itemInstanceId, action.targetPosition)
     }
 }

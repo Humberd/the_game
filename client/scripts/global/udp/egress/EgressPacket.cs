@@ -7,7 +7,8 @@ namespace Client.scripts.global.udp.egress
         CONNECTION_HELLO = 0x00,
         DISCONNECT = 0x01,
         AUTH_LOGIN = 0x05,
-        POSITION_CHANGE = 0x10
+        POSITION_CHANGE = 0x10,
+        TERRAIN_ITEM_DRAG = 0x11
     }
 
     public abstract class EgressDataPacket
@@ -84,6 +85,24 @@ namespace Client.scripts.global.udp.egress
             protected override void PackData(StreamPeerBuffer buffer)
             {
                 buffer.PutU8(_mask);
+            }
+        }
+
+        public class TerrainItemDrag : EgressDataPacket
+        {
+            private readonly uint _itemInstanceId;
+            private readonly Vector2 _targetPosition;
+            public TerrainItemDrag(uint itemInstanceId, Vector2 targetPosition) : base(EgressPacketType.TERRAIN_ITEM_DRAG)
+            {
+                _itemInstanceId = itemInstanceId;
+                _targetPosition = targetPosition;
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                buffer.PutU32(_itemInstanceId);
+                buffer.PutFloat(_targetPosition.x);
+                buffer.PutFloat(_targetPosition.y);
             }
         }
     }

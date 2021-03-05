@@ -10,9 +10,8 @@ class GameMap(
     val gridHeight: Int,
     val worldOffset: WorldPosition,
     private val grid: Array<Array<Tile>>,
-    items: List<Item>
+    val items: List<Item>
 ) {
-
     companion object {
         val TILE_SIZE = 64
 
@@ -37,10 +36,18 @@ class GameMap(
         private val items: HashMap<InstanceId, Item> = hashMapOf()
     ) {
         fun putItem(item: Item) {
+            if (items.containsKey(item.instanceId)) {
+                throw Error("Cannot put item to tile for ${item}, because it is already there.")
+            }
+
             items[item.instanceId] = item
         }
 
         fun removeItem(instanceId: InstanceId) {
+            if (!items.containsKey(instanceId)) {
+                throw Error("Cannot remove from tile for ${instanceId}, because it's not there")
+            }
+
             items.remove(instanceId)
         }
 
@@ -49,12 +56,18 @@ class GameMap(
                 buffer.add(it)
             }
         }
+
+        fun moveItemToTile(item: Item, targetTile: Tile) {
+            removeItem(item.instanceId)
+            targetTile.putItem(item)
+        }
+
     }
 
     data class Item(
         val instanceId: InstanceId,
         val itemDef: ItemDef,
-        val position: WorldPosition
+        var position: WorldPosition
     )
 
     data class GridPosition(
@@ -97,5 +110,15 @@ class GameMap(
         }
 
         return result as Array<Array<Tile>>
+    }
+
+    fun getTileAt(coords: GridPosition): Tile {
+        val (x, y) = coords
+
+        if (x.value >= gridWidth || y.value >= gridHeight) {
+            throw Error("Cannot get tile at ${coords}")
+        }
+
+        return grid[x.value][y.value]
     }
 }

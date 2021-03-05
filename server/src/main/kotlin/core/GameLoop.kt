@@ -7,7 +7,6 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-
 class GameLoop(
     private val gameActionHandler: GameActionHandler
 ) : Thread("GameLoop") {
@@ -20,12 +19,14 @@ class GameLoop(
             if (!queue.isEmpty()) {
                 val packet = queue.poll()
                 logger.debug { packet }
+
                 @Suppress("UNUSED_VARIABLE")
-                val foo = when (packet) {
+                val foo: Unit = when (packet) {
                     is IngressPacket.ConnectionHello -> Unit
                     is IngressPacket.Disconnect -> gameActionHandler.handle(packet)
                     is IngressPacket.AuthLogin -> gameActionHandler.handle(packet)
                     is IngressPacket.PositionChange -> gameActionHandler.handle(packet)
+                    is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(packet)
                 }
             }
             sleep(10)

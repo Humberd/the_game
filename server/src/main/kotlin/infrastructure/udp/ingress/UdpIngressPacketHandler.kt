@@ -79,6 +79,9 @@ class UdpIngressPacketHandler(
                 IngressPacketType.POSITION_CHANGE -> {
                     gameLoop.requestAction(IngressPacket.PositionChange.from(packet, getPID(client)))
                 }
+                IngressPacketType.TERRAIN_ITEM_DRAG -> {
+                    gameLoop.requestAction(IngressPacket.TerrainItemDrag.from(packet, getPID(client)))
+                }
                 null -> {
                     logger.warn { "Unknown packet type ${packetTypeValue}" }
                 }
