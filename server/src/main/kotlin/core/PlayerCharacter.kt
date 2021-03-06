@@ -15,7 +15,7 @@ class PlayerCharacter(
     var movementSpeed = 3f
     val viewRadius: UByte = 3u
 
-    val lastUpdate: LastUpdate;
+    val lastUpdate: LastUpdate
 
     init {
         lastUpdate = LastUpdate(

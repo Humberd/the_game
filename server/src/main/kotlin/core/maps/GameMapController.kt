@@ -9,6 +9,7 @@ import org.mini2Dx.gdx.math.Vector2
 
 
 import mu.KotlinLogging
+
 private val logger = KotlinLogging.logger {}
 
 class GameMapController(
@@ -60,6 +61,8 @@ class GameMapController(
         }
 
         notifyEveryone { otherPID -> notifier.notifyPlayerPositionUpdate(otherPID, player) }
+
+        checkItemsCollisions(player)
     }
 
     fun moveItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
@@ -81,6 +84,14 @@ class GameMapController(
         notifyEveryone { otherPID -> notifier.notifyTerrainItemsUpdate(getPlayer(otherPID)) }
     }
 
+    private fun checkItemsCollisions(player: PlayerCharacter) {
+        player.getVisibleItems().forEach { item ->
+            if (item.collidesWith(player.position)) {
+                item.actionHandler.onItemWalkedOn(this, player, item)
+            }
+        }
+    }
+
     private fun getPlayer(pid: PID): PlayerCharacter {
         return players[pid] ?: throw Error("PlayerController not found for ${pid}")
     }
@@ -93,7 +104,7 @@ class GameMapController(
         return players.values.filter { it.id != pid }
     }
 
-    fun notifyEveryone(callback: (pid: PID) -> Unit) {
+    private fun notifyEveryone(callback: (pid: PID) -> Unit) {
         players.keys.forEach { pid -> callback.invoke(pid) }
     }
 }

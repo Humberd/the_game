@@ -1,6 +1,7 @@
 package core.maps
 
 import com.beust.klaxon.Klaxon
+import core.types.CollisionRadius
 import core.types.ItemId
 import core.types.SpriteId
 import errors.UnknownItemId
@@ -9,7 +10,8 @@ data class ItemDef(
     val id: ItemId,
     val name: String,
     val spriteId: SpriteId,
-    val isMovable: Boolean
+    val isMovable: Boolean,
+    val collisionRadius: CollisionRadius = CollisionRadius(64u)
 )
 
 private data class JsonItemDef(

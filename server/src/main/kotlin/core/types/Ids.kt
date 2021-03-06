@@ -9,5 +9,6 @@ inline class Coordinate(val value: Int)
 inline class ItemId(val value: UShort)
 inline class InstanceId(val value: UInt)
 inline class PlayerName(val value: String)
+inline class CollisionRadius(val value: UShort)
 
 typealias WorldPosition = Vector2

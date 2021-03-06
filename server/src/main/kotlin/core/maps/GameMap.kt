@@ -1,6 +1,7 @@
 package core.maps
 
 import core.types.*
+import gameland.ItemActionHandler
 import kotlin.math.floor
 
 
@@ -67,8 +68,18 @@ class GameMap(
     data class Item(
         val instanceId: InstanceId,
         val itemDef: ItemDef,
-        var position: WorldPosition
-    )
+        var position: WorldPosition,
+        val actionHandler: ItemActionHandler = object : ItemActionHandler {}
+    ) {
+        fun collidesWith(checkedPosition: WorldPosition): Boolean {
+            val ac = Math.abs(position.x - checkedPosition.x)
+            val cb = Math.abs(position.y - checkedPosition.y)
+
+            val distance = Math.hypot(ac.toDouble(), cb.toDouble())
+
+            return distance < itemDef.collisionRadius.value.toDouble()
+        }
+    }
 
     data class GridPosition(
         val x: Coordinate,

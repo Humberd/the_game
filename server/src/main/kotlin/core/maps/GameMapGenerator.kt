@@ -1,6 +1,7 @@
 package core.maps
 
 import core.types.*
+import gameland.items.TeleportActionHandler
 import org.mini2Dx.gdx.math.Vector2
 
 private const val GRAVEL_SPRITE: UShort = 0u
@@ -52,7 +53,8 @@ object GameMapGenerator {
                 GameMap.Item(
                     instanceId = InstanceId(6u),
                     itemDef = ItemDefinitionStore.get(ItemId(4u)),
-                    position = WorldPosition(500f, 580f)
+                    position = WorldPosition(500f, 580f),
+                    actionHandler = TeleportActionHandler
                 )
             )
         )
