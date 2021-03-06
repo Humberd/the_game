@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+using Client.scripts.global.udp.ingress;
+using Godot;
 
 namespace Client.scripts.global
 {
@@ -6,7 +8,8 @@ namespace Client.scripts.global
     {
         public static UserService Instance;
 
-        public uint PlayerId;
+        private uint _pid;
+        private uint _cid;
 
         public override void _Ready()
         {
@@ -16,6 +19,22 @@ namespace Client.scripts.global
         public override void _ExitTree()
         {
             Instance = null;
+        }
+
+        public void HandleDetails(IngressDataPacket.PlayerDetails action)
+        {
+            _pid = action.Pid;
+            _cid = action.Cid;
+        }
+
+        public uint GetCid()
+        {
+            if (_cid == 0)
+            {
+                throw new Exception("Not yet logged in");
+            }
+
+            return _cid;
         }
     }
 }

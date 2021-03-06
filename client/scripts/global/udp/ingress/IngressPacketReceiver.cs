@@ -24,7 +24,7 @@ namespace Client.scripts.global.udp.ingress
 
             switch (packetType)
             {
-                case IngressPacketType.PLAYER_UPDATE:
+                case IngressPacketType.CREATURE_UPDATE:
                 {
                     _ingressPacketHandler.Handle(IngressDataPacket.PlayerUpdate.From(buffer));
                     break;
@@ -46,7 +46,9 @@ namespace Client.scripts.global.udp.ingress
                 }
                 case IngressPacketType.TERRAIN_ITEMS_UPDATE:
                     _ingressPacketHandler.Handle(IngressDataPacket.TerrainItemsUpdate.From(buffer));
-
+                    break;
+                case IngressPacketType.PLAYER_DETAILS:
+                    _ingressPacketHandler.Handle(IngressDataPacket.PlayerDetails.From(buffer));
                     break;
                 default:
                 {

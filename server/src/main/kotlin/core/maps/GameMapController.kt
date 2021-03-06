@@ -29,20 +29,17 @@ class GameMapController(
         players[player.pid] = player
         creatures[player.cid] = player
 
+        notifier.notifyPlayerDetails(player.pid, player)
+
         map.getTileAt(GameMap.GridPosition(Coordinate(0), Coordinate(0))).putCreature(player)
         movePlayerTo(player, Vector2(400f, 400f))
 
         // When first connecting get me a full list of other players
         getVisiblePlayersOf(player) { otherPlayer ->
-            notifier.notifyPlayerUpdate(player.pid, otherPlayer)
+            notifier.notifyCreatureUpdate(player.pid, otherPlayer)
         }
         // Notify me about me
-        notifier.notifyPlayerUpdate(player.pid, player)
-
-//        getPlayersOtherThan(player.pid).forEach { otherPlayer ->
-//            notifier.notifyPlayerUpdate(player.pid, otherPlayer)
-//        }
-//        notifyEveryone { otherPID -> notifier.notifyPlayerUpdate(otherPID, player) }
+        notifier.notifyCreatureUpdate(player.pid, player)
     }
 
     fun removePlayer(pid: PID) {
@@ -54,7 +51,12 @@ class GameMapController(
         val tile = map.getTileFor(player)
         tile.removeCreature(player.cid)
 
-        notifyEveryone { notifier.notifyCreatureDisappear(it, player) }
+        // Notify others about my disappearance
+        player.getVisiblePlayers().forEach { otherPlayer ->
+           notifier.notifyCreatureDisappear(otherPlayer.pid, player)
+        }
+        // Notify me about me
+        notifier.notifyCreatureDisappear(player.pid, player)
     }
 
     fun movePlayerBy(pid: PID, vector: Vector2) {
@@ -104,8 +106,8 @@ class GameMapController(
 
             // Creature Update
             (newVisiblePlayers subtract oldVisiblePlayers).also { println("CreatureUpdate ${it}") }.forEach { otherPlayer ->
-                notifier.notifyPlayerUpdate(otherPlayer.pid, player)
-                notifier.notifyPlayerUpdate(player.pid, otherPlayer)
+                notifier.notifyCreatureUpdate(otherPlayer.pid, player)
+                notifier.notifyCreatureUpdate(player.pid, otherPlayer)
             }
 
             // Notify me about terrain change
@@ -160,10 +162,6 @@ class GameMapController(
 
     private fun getVisiblePlayersOf(player: Player, callback: (otherPlayer: Player) -> Unit) {
         player.getVisiblePlayers().forEach { callback.invoke(it) }
-    }
-
-    private fun getPlayersOtherThan(pid: PID): List<Player> {
-        return players.values.filter { it.pid != pid }
     }
 
     private fun notifyEveryone(callback: (pid: PID) -> Unit) {

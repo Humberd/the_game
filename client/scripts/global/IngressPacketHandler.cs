@@ -28,5 +28,10 @@ namespace Client.scripts.global
         {
             GamePlaneController.Instance.DrawItems(action);
         }
+
+        public void Handle(IngressDataPacket.PlayerDetails action)
+        {
+            UserService.Instance.HandleDetails(action);
+        }
     }
 }

@@ -9,27 +9,26 @@ namespace Client.scripts.global.udp.ingress
 {
     public enum IngressPacketType
     {
-        PLAYER_UPDATE = 0x20,
+        CREATURE_UPDATE = 0x20,
         CREATURE_DISAPPEAR = 0x21,
         CREATURE_POSITION_UPDATE = 0x22,
         TERRAIN_UPDATE = 0x23,
-        TERRAIN_ITEMS_UPDATE = 0x24
+        TERRAIN_ITEMS_UPDATE = 0x24,
+        PLAYER_DETAILS = 0x25
     }
 
     public class IngressDataPacket
     {
         public class PlayerUpdate : IngressDataPacket
         {
-            public readonly PID Pid;
             public readonly CID Cid;
             public readonly string Name;
             public readonly uint Health;
             public readonly Vector2 Position;
             public readonly SpriteId SpriteId;
 
-            public PlayerUpdate(uint pid, uint cid, string name, uint health, Vector2 position, ushort spriteId)
+            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId)
             {
-                Pid = pid;
                 Cid = cid;
                 Name = name;
                 Health = health;
@@ -40,7 +39,6 @@ namespace Client.scripts.global.udp.ingress
             public static PlayerUpdate From(BinaryReader buffer)
             {
                 return new PlayerUpdate(
-                    pid: buffer.ReadUInt32(),
                     cid: buffer.ReadUInt32(),
                     name: buffer.ReadServerString(),
                     health: buffer.ReadUInt32(),
@@ -148,6 +146,26 @@ namespace Client.scripts.global.udp.ingress
                         type: buffer.ReadUInt32(),
                         position: buffer.ReadVector2()
                     ))
+                );
+            }
+        }
+
+        public class PlayerDetails : IngressDataPacket
+        {
+            public readonly PID Pid;
+            public readonly CID Cid;
+
+            private PlayerDetails(uint pid, uint cid)
+            {
+                Pid = pid;
+                Cid = cid;
+            }
+
+            public static PlayerDetails From(BinaryReader buffer)
+            {
+                return new PlayerDetails(
+                    pid: buffer.ReadUInt32(),
+                    cid: buffer.ReadUInt32()
                 );
             }
         }

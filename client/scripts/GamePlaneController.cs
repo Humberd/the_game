@@ -48,7 +48,7 @@ namespace Client.scripts
                 return;
             }
 
-            var isMe = UserService.Instance.PlayerId == action.Pid;
+            var isMe = UserService.Instance.GetCid() == action.Cid;
             CreatureController newCreature;
             if (isMe)
             {

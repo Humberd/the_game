@@ -9,16 +9,15 @@ import infrastructure.udp.egress.UdpEgressPacketHandler
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler
 ) {
-    fun notifyPlayerUpdate(to: PID, player: Player) {
+    fun notifyCreatureUpdate(to: PID, creature: Creature) {
         egressPacketHandler.notify(
             to,
-            EgressDataPacket.PlayerUpdate(
-                pid = player.pid,
-                cid = player.cid,
-                name = player.name,
-                health = player.health,
-                position = player.position,
-                spriteId = player.spriteId
+            EgressDataPacket.CreatureUpdate(
+                cid = creature.cid,
+                name = creature.name,
+                health = creature.health,
+                position = creature.position,
+                spriteId = creature.spriteId
             )
         )
     }
@@ -36,6 +35,16 @@ class StateChangeNotifier(
             EgressDataPacket.CreaturePositionUpdate(
                 creature.cid,
                 position = creature.position
+            )
+        )
+    }
+
+    fun notifyPlayerDetails(to: PID, player: Player) {
+        egressPacketHandler.notify(
+            to,
+            EgressDataPacket.PlayerDetails(
+                pid = player.pid,
+                cid = player.cid
             )
         )
     }

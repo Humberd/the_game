@@ -11,7 +11,6 @@ namespace Client.scripts.login_screen
 
         public override void _Pressed()
         {
-            UserService.Instance.PlayerId = _pid;
             ActionSenderMono.Instance.Send(new EgressDataPacket.AuthLogin(_pid));
             GetParent().QueueFree();
         }
