@@ -36,7 +36,6 @@ namespace Client.scripts.components.terrain
                 {
                     if (mouseEvent.Pressed && _sprite.IsPixelOpaque(GetLocalMousePosition()))
                     {
-                        Console.WriteLine("start dragging");
                         _isDragging = true;
                         GetTree().SetInputAsHandled();
                     }
@@ -46,7 +45,7 @@ namespace Client.scripts.components.terrain
                         _isDragging = false;
                         ActionSenderMono.Instance.Send(new EgressDataPacket.TerrainItemDrag(
                             itemInstanceId: _instanceId,
-                            targetPosition: Position += GetLocalMousePosition()
+                            targetPosition: Position + GetLocalMousePosition()
                         ));
                         GetTree().SetInputAsHandled();
                     }

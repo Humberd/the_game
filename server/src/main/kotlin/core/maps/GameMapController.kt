@@ -7,6 +7,10 @@ import core.types.PID
 import core.types.WorldPosition
 import org.mini2Dx.gdx.math.Vector2
 
+
+import mu.KotlinLogging
+private val logger = KotlinLogging.logger {}
+
 class GameMapController(
     private val notifier: StateChangeNotifier,
     private val map: GameMap
@@ -58,8 +62,13 @@ class GameMapController(
         notifyEveryone { otherPID -> notifier.notifyPlayerPositionUpdate(otherPID, player) }
     }
 
-    fun dragItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
+    fun moveItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
         val item = getItem(itemInstanceId)
+        if (!item.itemDef.isMovable) {
+            logger.debug { "Cannot move immovable object" }
+            return
+        }
+
         val currentItemCoords = GameMap.toGridPosition(item.position)
         val currentItemTile = map.getTileAt(currentItemCoords)
 

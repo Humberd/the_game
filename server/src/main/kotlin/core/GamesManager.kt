@@ -39,7 +39,7 @@ class GamesManager(
 
     fun dragItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
         val ctrl = getMapController(pid)
-        ctrl.dragItemOnTerrain(pid, itemInstanceId, targetPosition)
+        ctrl.moveItemOnTerrain(pid, itemInstanceId, targetPosition)
     }
 
     private fun getMapController(pid: PID): GameMapController {

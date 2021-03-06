@@ -8,33 +8,36 @@ import errors.UnknownItemId
 data class ItemDef(
     val id: ItemId,
     val name: String,
-    val spriteId: SpriteId
+    val spriteId: SpriteId,
+    val isMovable: Boolean
 )
 
 private data class JsonItemDef(
     val id: Int,
     val name: String,
     val spriteId: Int,
+    val isMovable: Boolean
 )
 
 object ItemDefinitionStore {
     private val map = HashMap<ItemId, ItemDef>()
 
     fun readItemsFromJson() {
-        val json = this.javaClass.getResource("/resources/items/items.json").readText()
+        val json = javaClass.getResource("/resources/items/items.json").readText()
         Klaxon().parseArray<JsonItemDef>(json)?.forEach {
             val id = ItemId(it.id.toUShort())
 
             map[id] = ItemDef(
                 id = id,
                 name = it.name,
-                spriteId = SpriteId(it.spriteId.toUShort())
+                spriteId = SpriteId(it.spriteId.toUShort()),
+                isMovable = it.isMovable
             )
         }
     }
 
     fun get(itemId: ItemId): ItemDef {
-        return map[itemId] ?: throw UnknownItemId(itemId)
+        return map[itemId]?.copy() ?: throw UnknownItemId(itemId)
     }
 
 }

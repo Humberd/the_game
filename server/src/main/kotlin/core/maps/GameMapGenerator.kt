@@ -49,6 +49,11 @@ object GameMapGenerator {
                     itemDef = ItemDefinitionStore.get(ItemId(3u)),
                     position = WorldPosition(400f, 290f)
                 ),
+                GameMap.Item(
+                    instanceId = InstanceId(6u),
+                    itemDef = ItemDefinitionStore.get(ItemId(4u)),
+                    position = WorldPosition(500f, 580f)
+                )
             )
         )
     }
