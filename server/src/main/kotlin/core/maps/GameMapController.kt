@@ -30,6 +30,8 @@ class GameMapController(
         creatures[player.cid] = player
 
         notifier.notifyPlayerDetails(player.pid, player)
+        // Notify me about me
+        notifier.notifyCreatureUpdate(player.pid, player)
 
         map.getTileAt(GameMap.GridPosition(Coordinate(0), Coordinate(0))).putCreature(player)
         movePlayerTo(player, Vector2(400f, 400f))
@@ -38,8 +40,6 @@ class GameMapController(
         getVisiblePlayersOf(player) { otherPlayer ->
             notifier.notifyCreatureUpdate(player.pid, otherPlayer)
         }
-        // Notify me about me
-        notifier.notifyCreatureUpdate(player.pid, player)
     }
 
     fun removePlayer(pid: PID) {
@@ -116,6 +116,7 @@ class GameMapController(
         } else {
             // Notify others about me
             getVisiblePlayersOf(player) { otherPlayer ->
+                println(otherPlayer)
                 notifier.notifyCreaturePositionUpdate(otherPlayer.pid, player)
             }
         }
