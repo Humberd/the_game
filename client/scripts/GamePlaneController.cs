@@ -5,15 +5,15 @@ using Client.scripts.components.terrain;
 using Client.scripts.global.udp.ingress;
 using Client.scripts.global;
 using Godot;
+using CID = System.UInt32;
 
 namespace Client.scripts
 {
     public class GamePlaneController : Node
     {
-        public TerrainController TerrainController;
-        public ItemsPlaneController ItemsPlaneController;
-        public PlayerController MainPlayer;
-        public Dictionary<uint, CreatureController> OtherPlayers = new Dictionary<uint, CreatureController>();
+        private TerrainController _terrainController;
+        private ItemsPlaneController _itemsPlaneController;
+        private readonly Dictionary<CID, CreatureController> _allCreatures = new Dictionary<CID, CreatureController>();
 
         public static GamePlaneController Instance;
 
@@ -29,75 +29,74 @@ namespace Client.scripts
         {
             Instance = null;
         }
+
         private void CreateTerrain()
         {
-            TerrainController = new TerrainController();
-            AddChild(TerrainController);
-            ItemsPlaneController = new ItemsPlaneController();
-            AddChild(ItemsPlaneController);
+            _terrainController = new TerrainController();
+            AddChild(_terrainController);
+            _itemsPlaneController = new ItemsPlaneController();
+            AddChild(_itemsPlaneController);
         }
 
-        public void SpawnPlayer(IngressDataPacket.PlayerUpdate action)
+        public void PlayerUpdate(IngressDataPacket.PlayerUpdate action)
         {
-            if (action.Pid == UserService.Instance.PlayerId)
+            if (_allCreatures.ContainsKey(action.Cid))
             {
-                MainPlayer = new PlayerController();
-                OtherPlayers[action.Pid] = MainPlayer;
-
-                MainPlayer.Load(action.Name, action.Position);
-
-                AddChild(MainPlayer);
+                Console.WriteLine($"Creature exists for {action.Cid}");
+                var creature = _allCreatures[action.Cid];
+                creature.UpdateData(action);
                 return;
             }
 
-            var player = new CreatureController();
-            OtherPlayers[action.Pid] = player;
-
-            player.Load(action.Name, action.Position);
-
-            AddChild(player);
-        }
-
-        public void DestroyPlayer(uint pid)
-        {
-            if (OtherPlayers.ContainsKey(pid))
+            var isMe = UserService.Instance.PlayerId == action.Pid;
+            CreatureController newCreature;
+            if (isMe)
             {
-                var player = OtherPlayers[pid];
-                if (MainPlayer == player)
-                {
-                    MainPlayer = null;
-                }
-
-                OtherPlayers.Remove(pid);
-                player.QueueFree();
+                newCreature = new PlayerController();
             }
             else
             {
-                Console.WriteLine($"Player ${pid} not found");
+                newCreature = new CreatureController();
             }
+
+            newCreature.UpdateData(action);
+            _allCreatures[action.Cid] = newCreature;
+            AddChild(newCreature);
         }
 
-        public void UpdatePlayerPosition(uint pid, Vector2 position)
+        public void CreatureDisappear(CID cid)
         {
-            if (OtherPlayers.ContainsKey(pid))
+            if (!_allCreatures.ContainsKey(cid))
             {
-                var player = OtherPlayers[pid];
-                player.UpdatePosition(position);
+                Console.WriteLine($"Creature ${cid} not found");
+                return;
             }
-            else
+
+            var creature = _allCreatures[cid];
+            _allCreatures.Remove(cid);
+            creature.QueueFree();
+        }
+
+        public void UpdateCreaturePosition(IngressDataPacket.CreaturePositionUpdate action)
+        {
+            if (!_allCreatures.ContainsKey(action.Cid))
             {
-                Console.WriteLine($"Player ${pid} not found");
+                Console.WriteLine($"Creature ${action.Cid} not found");
+                return;
             }
+
+            var creature = _allCreatures[action.Cid];
+            creature.UpdatePosition(action.Position);
         }
 
         public void DrawTerrain(IngressDataPacket.TerrainUpdate action)
         {
-            TerrainController.DrawTerrain(action);
+            _terrainController.DrawTerrain(action);
         }
 
         public void DrawItems(IngressDataPacket.TerrainItemsUpdate action)
         {
-            ItemsPlaneController.DrawItems(action);
+            _itemsPlaneController.DrawItems(action);
         }
     }
 }

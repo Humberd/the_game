@@ -1,7 +1,7 @@
 package infrastructure.udp.ingress
 
 import core.types.DirectionByte
-import core.types.InstanceId
+import core.types.IID
 import core.types.PID
 import core.types.WorldPosition
 import utils.uByte
@@ -49,7 +49,7 @@ sealed class IngressPacket {
 
     data class TerrainItemDrag(
         val pid: PID,
-        val itemInstanceId: InstanceId,
+        val iid: IID,
         val targetPosition: WorldPosition
     ) :
         IngressPacket() {
@@ -57,7 +57,7 @@ sealed class IngressPacket {
             fun from(buffer: ByteBuffer, pid: PID): TerrainItemDrag {
                 return TerrainItemDrag(
                     pid = pid,
-                    itemInstanceId = InstanceId(buffer.uInt()),
+                    iid = IID(buffer.uInt()),
                     targetPosition = WorldPosition(buffer.float, buffer.float)
                 )
             }

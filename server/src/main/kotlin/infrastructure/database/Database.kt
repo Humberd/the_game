@@ -1,7 +1,8 @@
 package infrastructure.database
 
+import core.types.CreatureName
 import core.types.PID
-import core.types.PlayerName
+import core.types.SpriteId
 import infrastructure.database.types.PlayerCharacterDAO
 
 class Database {
@@ -11,13 +12,15 @@ class Database {
          chars = hashMapOf(
              PID(1u) to PlayerCharacterDAO(
                  id = PID(1u),
-                 name = PlayerName("Alice"),
-                 health = 100u
+                 name = CreatureName("Alice"),
+                 health = 100u,
+                 spriteId = SpriteId(5u)
              ),
              PID(2u) to PlayerCharacterDAO(
                  id = PID(2u),
-                 name = PlayerName("Bob1"),
-                 health = 80u
+                 name = CreatureName("Bob1"),
+                 health = 80u,
+                 spriteId = SpriteId(5u)
              )
          )
     }

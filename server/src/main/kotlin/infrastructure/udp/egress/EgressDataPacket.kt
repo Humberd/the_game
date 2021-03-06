@@ -1,5 +1,6 @@
 package infrastructure.udp.egress
 
+import core.maps.ItemType
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
 import utils.*
@@ -7,8 +8,8 @@ import java.nio.ByteBuffer
 
 enum class EgressPacketType(val value: Int) {
     PLAYER_UPDATE(0x20),
-    PLAYER_DISCONNECT(0x21),
-    PLAYER_POSITION_UPDATE(0x22),
+    CREATURE_DISAPPEAR(0x21),
+    CREATURE_POSITION_UPDATE(0x22),
     TERRAIN_UPDATE(0x23),
     TERRAIN_ITEMS_UPDATE(0x24)
 }
@@ -30,35 +31,37 @@ sealed class EgressDataPacket(
 
     data class PlayerUpdate(
         val pid: PID,
-        val position: WorldPosition,
+        val cid: CID,
+        val name: CreatureName,
         val health: UInt,
-        val name: PlayerName,
+        val position: WorldPosition,
+        val spriteId: SpriteId
     ) : EgressDataPacket(PLAYER_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(pid.value)
-            buffer.putFloat(position.x)
-            buffer.putFloat(position.y)
-            buffer.putUInt(health)
+            buffer.putUInt(cid.value)
             buffer.putString(name.value)
+            buffer.putUInt(health)
+            buffer.putVector(position)
+            buffer.putUShort(spriteId.value)
         }
     }
 
-    data class PlayerDisconnect(
-        val pid: PID
-    ) : EgressDataPacket(PLAYER_DISCONNECT) {
+    data class CreatureDisappear(
+        val cid: CID
+    ) : EgressDataPacket(CREATURE_DISAPPEAR) {
         override fun packData(buffer: ByteBuffer) {
-            buffer.putUInt(pid.value)
+            buffer.putUInt(cid.value)
         }
     }
 
-    data class PlayerPositionUpdate(
-        val pid: PID,
+    data class CreaturePositionUpdate(
+        val cid: CID,
         val position: WorldPosition
-    ) : EgressDataPacket(PLAYER_POSITION_UPDATE) {
+    ) : EgressDataPacket(CREATURE_POSITION_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
-            buffer.putUInt(pid.value)
-            buffer.putFloat(position.x)
-            buffer.putFloat(position.y)
+            buffer.putUInt(cid.value)
+            buffer.putVector(position)
         }
     }
 
@@ -84,15 +87,15 @@ sealed class EgressDataPacket(
         val items: List<ItemData>
     ) : EgressDataPacket(TERRAIN_ITEMS_UPDATE) {
         data class ItemData(
-            val instanceId: InstanceId,
-            val itemId: ItemId,
+            val iid: IID,
+            val type: ItemType,
             val position: WorldPosition
         )
 
         override fun packData(buffer: ByteBuffer) {
             buffer.putList(items) {
-                buffer.putUInt(it.instanceId.value)
-                buffer.putUShort(it.itemId.value)
+                buffer.putUInt(it.iid.value)
+                buffer.putUInt(it.type.id.toUInt())
                 buffer.putFloat(it.position.x)
                 buffer.putFloat(it.position.y)
             }

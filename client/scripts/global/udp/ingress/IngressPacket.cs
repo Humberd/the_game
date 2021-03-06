@@ -2,14 +2,16 @@
 using Client.scripts.extensions;
 using Godot;
 using PID = System.UInt32;
+using CID = System.UInt32;
+using SpriteId = System.UInt16;
 
 namespace Client.scripts.global.udp.ingress
 {
     public enum IngressPacketType
     {
         PLAYER_UPDATE = 0x20,
-        PLAYER_DISCONNECT = 0x21,
-        PLAYER_POSITION_UPDATE = 0x22,
+        CREATURE_DISAPPEAR = 0x21,
+        CREATURE_POSITION_UPDATE = 0x22,
         TERRAIN_UPDATE = 0x23,
         TERRAIN_ITEMS_UPDATE = 0x24
     }
@@ -19,62 +21,68 @@ namespace Client.scripts.global.udp.ingress
         public class PlayerUpdate : IngressDataPacket
         {
             public readonly PID Pid;
-            public readonly Vector2 Position;
-            public readonly uint Health;
+            public readonly CID Cid;
             public readonly string Name;
+            public readonly uint Health;
+            public readonly Vector2 Position;
+            public readonly SpriteId SpriteId;
 
-            private PlayerUpdate(uint pid, Vector2 position, uint health, string name)
+            public PlayerUpdate(uint pid, uint cid, string name, uint health, Vector2 position, ushort spriteId)
             {
                 Pid = pid;
-                Position = position;
-                Health = health;
+                Cid = cid;
                 Name = name;
+                Health = health;
+                Position = position;
+                SpriteId = spriteId;
             }
 
             public static PlayerUpdate From(BinaryReader buffer)
             {
                 return new PlayerUpdate(
                     pid: buffer.ReadUInt32(),
-                    position: new Vector2(buffer.ReadSingle(), buffer.ReadSingle()),
+                    cid: buffer.ReadUInt32(),
+                    name: buffer.ReadServerString(),
                     health: buffer.ReadUInt32(),
-                    name: buffer.ReadServerString()
+                    position: buffer.ReadVector2(),
+                    spriteId: buffer.ReadUInt16()
                 );
             }
         }
 
-        public class PlayerDisconnect : IngressDataPacket
+        public class CreatureDisappear : IngressDataPacket
         {
             public readonly PID Pid;
 
-            private PlayerDisconnect(uint pid)
+            private CreatureDisappear(uint pid)
             {
                 Pid = pid;
             }
 
-            public static PlayerDisconnect From(BinaryReader buffer)
+            public static CreatureDisappear From(BinaryReader buffer)
             {
-                return new PlayerDisconnect(
+                return new CreatureDisappear(
                     pid: buffer.ReadUInt32()
                 );
             }
         }
 
-        public class PlayerPositionUpdate : IngressDataPacket
+        public class CreaturePositionUpdate : IngressDataPacket
         {
-            public readonly PID Pid;
+            public readonly CID Cid;
             public readonly Vector2 Position;
 
-            private PlayerPositionUpdate(uint pid, Vector2 position)
+            private CreaturePositionUpdate(uint cid, Vector2 position)
             {
-                Pid = pid;
+                Cid = cid;
                 Position = position;
             }
 
-            public static PlayerPositionUpdate From(BinaryReader buffer)
+            public static CreaturePositionUpdate From(BinaryReader buffer)
             {
-                return new PlayerPositionUpdate(
-                    pid: buffer.ReadUInt32(),
-                    position: new Vector2(buffer.ReadSingle(), buffer.ReadSingle())
+                return new CreaturePositionUpdate(
+                    cid: buffer.ReadUInt32(),
+                    position: buffer.ReadVector2()
                 );
             }
         }
@@ -104,7 +112,7 @@ namespace Client.scripts.global.udp.ingress
                     windowHeight: buffer.ReadByte(),
                     windowGridStartPositionX: buffer.ReadUInt16(),
                     windowGridStartPositionY: buffer.ReadUInt16(),
-                    spriteIds: buffer.ReadServerArray(() => buffer.ReadUInt16())
+                    spriteIds: buffer.ReadServerArray(buffer.ReadUInt16)
                 );
             }
         }
@@ -115,14 +123,14 @@ namespace Client.scripts.global.udp.ingress
 
             public class ItemData
             {
-                public readonly uint InstanceId;
-                public readonly ushort ItemId;
+                public readonly uint Iid;
+                public readonly uint Type;
                 public readonly Vector2 Position;
 
-                public ItemData(uint instanceId, ushort itemId, Vector2 position)
+                public ItemData(uint iid, uint type, Vector2 position)
                 {
-                    InstanceId = instanceId;
-                    ItemId = itemId;
+                    Iid = iid;
+                    Type = type;
                     Position = position;
                 }
             }
@@ -136,9 +144,9 @@ namespace Client.scripts.global.udp.ingress
             {
                 return new TerrainItemsUpdate(
                     items: buffer.ReadServerArray(() => new ItemData(
-                        instanceId: buffer.ReadUInt32(),
-                        itemId: buffer.ReadUInt16(),
-                        position: new Vector2(buffer.ReadSingle(), buffer.ReadSingle())
+                        iid: buffer.ReadUInt32(),
+                        type: buffer.ReadUInt32(),
+                        position: buffer.ReadVector2()
                     ))
                 );
             }

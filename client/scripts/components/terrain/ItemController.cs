@@ -1,21 +1,19 @@
-﻿using System;
-using Client.scripts.global.udp.egress;
+﻿using Client.scripts.global.udp.egress;
 using Client.scripts.global.udp.ingress;
 using Godot;
-using Object = Godot.Object;
 
 namespace Client.scripts.components.terrain
 {
     public class ItemController : KinematicBody2D
     {
-        private uint _instanceId;
-        private ushort _itemId;
-
         private readonly Sprite _sprite;
+
+        private uint _iid;
+        private uint _type;
 
         private bool _isDragging;
 
-        public ItemController(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)
+        public ItemController()
         {
             _sprite = new Sprite
             {
@@ -25,7 +23,6 @@ namespace Client.scripts.components.terrain
 
             InputPickable = true;
             CollisionLayer = 1;
-            Update(itemData);
         }
 
         public override void _Input(InputEvent @event)
@@ -44,8 +41,8 @@ namespace Client.scripts.components.terrain
                     {
                         _isDragging = false;
                         ActionSenderMono.Instance.Send(new EgressDataPacket.TerrainItemDrag(
-                            itemInstanceId: _instanceId,
-                            targetPosition: Position + GetLocalMousePosition()
+                            iid: _iid,
+                            position: Position + GetLocalMousePosition()
                         ));
                         GetTree().SetInputAsHandled();
                     }
@@ -53,13 +50,13 @@ namespace Client.scripts.components.terrain
             }
         }
 
-        public void Update(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)
+        public void UpdateData(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)
         {
-            _instanceId = itemData.InstanceId;
-            _itemId = itemData.ItemId;
+            _iid = itemData.Iid;
+            _type = itemData.Type;
             Position = itemData.Position;
-            // fixme: itemId is not a spriteId.
-            _sprite.Texture = (Texture) ResourceLoader.Load($"res://assets/resources/items/sprites/{_itemId}.png");
+            // fixme: Should be retrieved from json store
+            _sprite.Texture = (Texture) ResourceLoader.Load($"res://assets/resources/sprites/{_type}.png");
         }
     }
 }

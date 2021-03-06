@@ -1,6 +1,7 @@
 package core
 
-import core.maps.GameMap
+import core.maps.entities.Creature
+import core.maps.entities.Player
 import core.types.PID
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
@@ -8,40 +9,42 @@ import infrastructure.udp.egress.UdpEgressPacketHandler
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler
 ) {
-    fun notifyPlayerUpdate(to: PID, playerCharacter: PlayerCharacter) {
+    fun notifyPlayerUpdate(to: PID, player: Player) {
         egressPacketHandler.notify(
             to,
             EgressDataPacket.PlayerUpdate(
-                pid = playerCharacter.id,
-                position = playerCharacter.position,
-                health = playerCharacter.health,
-                name = playerCharacter.name
+                pid = player.pid,
+                cid = player.cid,
+                name = player.name,
+                health = player.health,
+                position = player.position,
+                spriteId = player.spriteId
             )
         )
     }
 
-    fun notifyPlayerDisconnect(to: PID, pid: PID) {
+    fun notifyCreatureDisappear(to: PID, creature: Creature) {
         egressPacketHandler.notify(
             to,
-            EgressDataPacket.PlayerDisconnect(pid)
+            EgressDataPacket.CreatureDisappear(creature.cid)
         )
     }
 
-    fun notifyPlayerPositionUpdate(to: PID, playerCharacter: PlayerCharacter) {
+    fun notifyCreaturePositionUpdate(to: PID, creature: Creature) {
         egressPacketHandler.notify(
             to,
-            EgressDataPacket.PlayerPositionUpdate(
-                playerCharacter.id,
-                position = playerCharacter.position
+            EgressDataPacket.CreaturePositionUpdate(
+                creature.cid,
+                position = creature.position
             )
         )
     }
 
-    fun notifyTerrainUpdate(player: PlayerCharacter) {
+    fun notifyTerrainUpdate(player: Player) {
         val tiles = player.lastUpdate.tileSlice
 
         egressPacketHandler.notify(
-            player.id,
+            player.pid,
             EgressDataPacket.TerrainUpdate(
                 windowWidth = tiles.size.toUByte(),
                 windowHeight = if (tiles.size > 0) tiles[0].size.toUByte() else 0u,
@@ -68,14 +71,14 @@ class StateChangeNotifier(
         )
     }
 
-    fun notifyTerrainItemsUpdate(player: PlayerCharacter) {
+    fun notifyTerrainItemsUpdate(player: Player) {
         egressPacketHandler.notify(
-            player.id,
+            player.pid,
             EgressDataPacket.TerrainItemsUpdate(
                 items = player.getVisibleItems().map {
                     EgressDataPacket.TerrainItemsUpdate.ItemData(
-                        instanceId = it.instanceId,
-                        itemId = it.itemDef.id,
+                        iid = it.iid,
+                        type = it.itemDef.type,
                         position = it.position
                     )
                 }

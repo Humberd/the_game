@@ -1,10 +1,12 @@
 package infrastructure.database.types
 
+import core.types.CreatureName
 import core.types.PID
-import core.types.PlayerName
+import core.types.SpriteId
 
 data class PlayerCharacterDAO(
     val id: PID,
-    val name: PlayerName,
-    val health: UInt
+    val name: CreatureName,
+    val health: UInt,
+    val spriteId: SpriteId
 )

@@ -1,5 +1,7 @@
 package core
 
+import core.maps.entities.Player
+import core.types.CID
 import core.types.GameMapId
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
@@ -21,10 +23,12 @@ class GameActionHandler(
 
     fun handle(action: IngressPacket.AuthLogin) {
         val dbPlayer = database.getPlayer(action.pid)
-        val playerCharacter = PlayerCharacter(
-            id = dbPlayer.id,
+        val playerCharacter = Player(
+            pid = dbPlayer.id,
+            cid = CID.unique(),
             name = dbPlayer.name,
             health = dbPlayer.health,
+            spriteId = dbPlayer.spriteId
         )
 
         gamesManager.addPlayer(playerCharacter, GameMapId(1u))
@@ -36,6 +40,6 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.TerrainItemDrag) {
-        gamesManager.dragItemOnTerrain(action.pid, action.itemInstanceId, action.targetPosition)
+        gamesManager.dragItemOnTerrain(action.pid, action.iid, action.targetPosition)
     }
 }

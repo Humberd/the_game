@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Godot;
 
 namespace Client.scripts.extensions
 {
@@ -32,6 +33,17 @@ namespace Client.scripts.extensions
             }
 
             return result;
+        }
+
+        public static Vector2 ReadVector2(this BinaryReader buffer)
+        {
+            return new Vector2(buffer.ReadSingle(), buffer.ReadSingle());
+        }
+
+        public static void PutVector2(this StreamPeerBuffer buffer, Vector2 value)
+        {
+            buffer.PutFloat(value.x);
+            buffer.PutFloat(value.y);
         }
 
     }

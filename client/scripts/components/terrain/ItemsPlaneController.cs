@@ -11,7 +11,7 @@ namespace Client.scripts.components.terrain
 
         public void DrawItems(IngressDataPacket.TerrainItemsUpdate action)
         {
-            var idsToRemove = _items.Keys.Except(action.Items.Select(item => item.InstanceId));
+            var idsToRemove = _items.Keys.Except(action.Items.Select(item => item.Iid));
             foreach (var idToRemove in idsToRemove.ToList())
             {
                 var itemControllerToRemove = _items[idToRemove];
@@ -22,7 +22,7 @@ namespace Client.scripts.components.terrain
 
             foreach (var actionItem in action.Items)
             {
-                if (_items.ContainsKey(actionItem.InstanceId))
+                if (_items.ContainsKey(actionItem.Iid))
                 {
                     ModifyItem(actionItem);
                 }
@@ -35,15 +35,16 @@ namespace Client.scripts.components.terrain
 
         private void DrawItem(IngressDataPacket.TerrainItemsUpdate.ItemData item)
         {
-            var itemController = new ItemController(item);
-            _items[item.InstanceId] = itemController;
+            var itemController = new ItemController();
+            _items[item.Iid] = itemController;
+            itemController.UpdateData(item);
             AddChild(itemController);
         }
 
         private void ModifyItem(IngressDataPacket.TerrainItemsUpdate.ItemData item)
         {
-            var itemController = _items[item.InstanceId];
-            itemController.Update(item);
+            var itemController = _items[item.Iid];
+            itemController.UpdateData(item);
         }
     }
 }

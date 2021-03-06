@@ -1,5 +1,6 @@
 package utils
 
+import org.mini2Dx.gdx.math.Vector2
 import java.nio.ByteBuffer
 
 fun ByteBuffer.uByte(): UByte {
@@ -50,3 +51,7 @@ fun <T> ByteBuffer.putList(value: Collection<T>, itemPut: (T) -> Unit) {
     value.forEach { itemPut.invoke(it) }
 }
 
+fun ByteBuffer.putVector(value: Vector2) {
+    putFloat(value.x)
+    putFloat(value.y)
+}

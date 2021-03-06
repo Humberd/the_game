@@ -6,17 +6,17 @@ namespace Client.scripts.global
     {
         public void Handle(IngressDataPacket.PlayerUpdate action)
         {
-            GamePlaneController.Instance.SpawnPlayer(action);
+            GamePlaneController.Instance.PlayerUpdate(action);
         }
 
-        public void Handle(IngressDataPacket.PlayerDisconnect action)
+        public void Handle(IngressDataPacket.CreatureDisappear action)
         {
-            GamePlaneController.Instance.DestroyPlayer(action.Pid);
+            GamePlaneController.Instance.CreatureDisappear(action.Pid);
         }
 
-        public void Handle(IngressDataPacket.PlayerPositionUpdate action)
+        public void Handle(IngressDataPacket.CreaturePositionUpdate action)
         {
-            GamePlaneController.Instance.UpdatePlayerPosition(action.Pid, action.Position);
+            GamePlaneController.Instance.UpdateCreaturePosition(action);
         }
 
         public void Handle(IngressDataPacket.TerrainUpdate action)

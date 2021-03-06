@@ -1,14 +1,14 @@
 package core.maps
 
-import core.PlayerCharacter
+
 import core.StateChangeNotifier
-import core.types.InstanceId
-import core.types.PID
-import core.types.WorldPosition
-import org.mini2Dx.gdx.math.Vector2
-
-
+import core.maps.entities.Creature
+import core.maps.entities.GameMap
+import core.maps.entities.Item
+import core.maps.entities.Player
+import core.types.*
 import mu.KotlinLogging
+import org.mini2Dx.gdx.math.Vector2
 
 private val logger = KotlinLogging.logger {}
 
@@ -16,28 +16,45 @@ class GameMapController(
     private val notifier: StateChangeNotifier,
     private val map: GameMap
 ) {
-    private val players = HashMap<PID, PlayerCharacter>()
-    private val items = HashMap<InstanceId, GameMap.Item>()
+    private val players = HashMap<PID, Player>()
+    private val items = HashMap<IID, Item>()
+    private val creatures = HashMap<CID, Creature>()
 
     init {
-        map.items.forEach { items[it.instanceId] = it }
+        map.items.forEach { items[it.iid] = it }
+        map.creatures.forEach { creatures[it.cid] = it }
     }
 
-    fun addPlayer(player: PlayerCharacter) {
-        players[player.id] = player
+    fun addPlayer(player: Player) {
+        players[player.pid] = player
+        creatures[player.cid] = player
 
-        getPlayersOtherThan(player.id).forEach { otherPlayer ->
-            notifier.notifyPlayerUpdate(player.id, otherPlayer)
-        }
-        notifyEveryone { otherPID -> notifier.notifyPlayerUpdate(otherPID, player) }
-
+        map.getTileAt(GameMap.GridPosition(Coordinate(0), Coordinate(0))).putCreature(player)
         movePlayerTo(player, Vector2(400f, 400f))
+
+        // When first connecting get me a full list of other players
+        getVisiblePlayersOf(player) { otherPlayer ->
+            notifier.notifyPlayerUpdate(player.pid, otherPlayer)
+        }
+        // Notify me about me
+        notifier.notifyPlayerUpdate(player.pid, player)
+
+//        getPlayersOtherThan(player.pid).forEach { otherPlayer ->
+//            notifier.notifyPlayerUpdate(player.pid, otherPlayer)
+//        }
+//        notifyEveryone { otherPID -> notifier.notifyPlayerUpdate(otherPID, player) }
     }
 
     fun removePlayer(pid: PID) {
-        players.remove(pid)
+        val player = getPlayer(pid)
 
-        notifyEveryone { notifier.notifyPlayerDisconnect(it, pid) }
+        players.remove(pid)
+        creatures.remove(player.cid)
+
+        val tile = map.getTileFor(player)
+        tile.removeCreature(player.cid)
+
+        notifyEveryone { notifier.notifyCreatureDisappear(it, player) }
     }
 
     fun movePlayerBy(pid: PID, vector: Vector2) {
@@ -47,33 +64,74 @@ class GameMapController(
         movePlayerTo(player, newPosition)
     }
 
-    fun movePlayerTo(player: PlayerCharacter, vector: WorldPosition) {
-        val lastGridPosition = player.lastUpdate.gridPosition
+    fun movePlayerTo(player: Player, position: WorldPosition) {
+        val newPosition = position
+        val newGridCoords = GameMap.toGridPosition(position)
 
-        player.position.set(vector)
-        player.lastUpdate.gridPosition = GameMap.toGridPosition(player.position)
-        val currentGridPosition = player.lastUpdate.gridPosition
+        val oldPosition = player.position
+        val olcGridCoords = GameMap.toGridPosition(oldPosition)
 
-        if (lastGridPosition != currentGridPosition) {
-            player.lastUpdate.tileSlice = map.getTilesAround(currentGridPosition, player.viewRadius.toInt())
+        player.position = newPosition
+
+        val tileChanged = olcGridCoords != newGridCoords
+        /*
+        [1,2,3,4] -> [3,4,5,6]
+
+        [1, 2] -> Disappear
+        [3, 4] -> Creature Position Update
+        [5, 6] -> Creature Update
+         */
+        if (tileChanged) {
+            val oldVisiblePlayers = player.getVisiblePlayers()
+            player.lastUpdate.gridPosition = newGridCoords
+            player.lastUpdate.tileSlice = map.getTilesAround(newGridCoords, player.viewRadius.toInt())
+            val newVisiblePlayers = player.getVisiblePlayers()
+
+            val oldTile = map.getTileAt(olcGridCoords)
+            val newTile = map.getTileAt(newGridCoords)
+            oldTile.moveCreatureToTile(player, newTile)
+
+            // Disappear
+            (oldVisiblePlayers subtract newVisiblePlayers).also { println("Disappear ${it}") }.forEach { otherPlayer ->
+                notifier.notifyCreatureDisappear(otherPlayer.pid, player)
+                notifier.notifyCreatureDisappear(player.pid, otherPlayer)
+            }
+
+            // Creature Position Update
+            (oldVisiblePlayers intersect newVisiblePlayers).also { println("PositionUpdate ${it}") }.forEach { otherPlayer ->
+                notifier.notifyCreaturePositionUpdate(otherPlayer.pid, player)
+            }
+
+            // Creature Update
+            (newVisiblePlayers subtract oldVisiblePlayers).also { println("CreatureUpdate ${it}") }.forEach { otherPlayer ->
+                notifier.notifyPlayerUpdate(otherPlayer.pid, player)
+                notifier.notifyPlayerUpdate(player.pid, otherPlayer)
+            }
+
+            // Notify me about terrain change
             notifier.notifyTerrainUpdate(player)
             notifier.notifyTerrainItemsUpdate(player)
+        } else {
+            // Notify others about me
+            getVisiblePlayersOf(player) { otherPlayer ->
+                notifier.notifyCreaturePositionUpdate(otherPlayer.pid, player)
+            }
         }
 
-        notifyEveryone { otherPID -> notifier.notifyPlayerPositionUpdate(otherPID, player) }
+        // Notify me about me
+        notifier.notifyCreaturePositionUpdate(player.pid, player)
 
         checkItemsCollisions(player)
     }
 
-    fun moveItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
-        val item = getItem(itemInstanceId)
+    fun moveItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
+        val item = getItem(iid)
         if (!item.itemDef.isMovable) {
             logger.debug { "Cannot move immovable object" }
             return
         }
 
-        val currentItemCoords = GameMap.toGridPosition(item.position)
-        val currentItemTile = map.getTileAt(currentItemCoords)
+        val currentItemTile = map.getTileFor(item)
 
         val targetItemCoords = GameMap.toGridPosition(targetPosition)
         val targetItemTile = map.getTileAt(targetItemCoords)
@@ -84,7 +142,7 @@ class GameMapController(
         notifyEveryone { otherPID -> notifier.notifyTerrainItemsUpdate(getPlayer(otherPID)) }
     }
 
-    private fun checkItemsCollisions(player: PlayerCharacter) {
+    private fun checkItemsCollisions(player: Player) {
         player.getVisibleItems().forEach { item ->
             if (item.collidesWith(player.position)) {
                 item.actionHandler.onItemWalkedOn(this, player, item)
@@ -92,16 +150,20 @@ class GameMapController(
         }
     }
 
-    private fun getPlayer(pid: PID): PlayerCharacter {
+    private fun getPlayer(pid: PID): Player {
         return players[pid] ?: throw Error("PlayerController not found for ${pid}")
     }
 
-    private fun getItem(instanceId: InstanceId): GameMap.Item {
-        return items[instanceId] ?: throw Error("GameMap.Item not found for ${instanceId}")
+    private fun getItem(iid: IID): Item {
+        return items[iid] ?: throw Error("GameMap.Item not found for ${iid}")
     }
 
-    private fun getPlayersOtherThan(pid: PID): List<PlayerCharacter> {
-        return players.values.filter { it.id != pid }
+    private fun getVisiblePlayersOf(player: Player, callback: (otherPlayer: Player) -> Unit) {
+        player.getVisiblePlayers().forEach { callback.invoke(it) }
+    }
+
+    private fun getPlayersOtherThan(pid: PID): List<Player> {
+        return players.values.filter { it.pid != pid }
     }
 
     private fun notifyEveryone(callback: (pid: PID) -> Unit) {

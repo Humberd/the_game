@@ -2,8 +2,9 @@ package core
 
 import core.maps.GameMapController
 import core.maps.GameMapGenerator
+import core.maps.entities.Player
 import core.types.GameMapId
-import core.types.InstanceId
+import core.types.IID
 import core.types.PID
 import core.types.WorldPosition
 import org.mini2Dx.gdx.math.Vector2
@@ -20,10 +21,10 @@ class GamesManager(
         }
     }
 
-    fun addPlayer(playerCharacter: PlayerCharacter, gameMapId: GameMapId) {
+    fun addPlayer(player: Player, gameMapId: GameMapId) {
         val ctrl = getMapController(gameMapId)
-        playerLUT[playerCharacter.id] = gameMapId
-        ctrl.addPlayer(playerCharacter)
+        playerLUT[player.pid] = gameMapId
+        ctrl.addPlayer(player)
     }
 
     fun removePlayer(pid: PID) {
@@ -37,9 +38,9 @@ class GamesManager(
         ctrl.movePlayerBy(pid, vector)
     }
 
-    fun dragItemOnTerrain(pid: PID, itemInstanceId: InstanceId, targetPosition: WorldPosition) {
+    fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
         val ctrl = getMapController(pid)
-        ctrl.moveItemOnTerrain(pid, itemInstanceId, targetPosition)
+        ctrl.moveItemOnTerrain(pid, iid, targetPosition)
     }
 
     private fun getMapController(pid: PID): GameMapController {

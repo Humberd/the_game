@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using Client.scripts.extensions;
+using Godot;
 
 namespace Client.scripts.global.udp.egress
 {
@@ -90,19 +91,18 @@ namespace Client.scripts.global.udp.egress
 
         public class TerrainItemDrag : EgressDataPacket
         {
-            private readonly uint _itemInstanceId;
-            private readonly Vector2 _targetPosition;
-            public TerrainItemDrag(uint itemInstanceId, Vector2 targetPosition) : base(EgressPacketType.TERRAIN_ITEM_DRAG)
+            private readonly uint _iid;
+            private readonly Vector2 _position;
+            public TerrainItemDrag(uint iid, Vector2 position) : base(EgressPacketType.TERRAIN_ITEM_DRAG)
             {
-                _itemInstanceId = itemInstanceId;
-                _targetPosition = targetPosition;
+                _iid = iid;
+                _position = position;
             }
 
             protected override void PackData(StreamPeerBuffer buffer)
             {
-                buffer.PutU32(_itemInstanceId);
-                buffer.PutFloat(_targetPosition.x);
-                buffer.PutFloat(_targetPosition.y);
+                buffer.PutU32(_iid);
+                buffer.PutVector2(_position);
             }
         }
     }

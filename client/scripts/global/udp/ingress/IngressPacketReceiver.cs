@@ -29,14 +29,14 @@ namespace Client.scripts.global.udp.ingress
                     _ingressPacketHandler.Handle(IngressDataPacket.PlayerUpdate.From(buffer));
                     break;
                 }
-                case IngressPacketType.PLAYER_DISCONNECT:
+                case IngressPacketType.CREATURE_DISAPPEAR:
                 {
-                    _ingressPacketHandler.Handle(IngressDataPacket.PlayerDisconnect.From(buffer));
+                    _ingressPacketHandler.Handle(IngressDataPacket.CreatureDisappear.From(buffer));
                     break;
                 }
-                case IngressPacketType.PLAYER_POSITION_UPDATE:
+                case IngressPacketType.CREATURE_POSITION_UPDATE:
                 {
-                    _ingressPacketHandler.Handle(IngressDataPacket.PlayerPositionUpdate.From(buffer));
+                    _ingressPacketHandler.Handle(IngressDataPacket.CreaturePositionUpdate.From(buffer));
                     break;
                 }
                 case IngressPacketType.TERRAIN_UPDATE:
