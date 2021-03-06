@@ -36,8 +36,8 @@ class GameMapController(
         map.getTileAt(GameMap.GridPosition(Coordinate(0), Coordinate(0))).putCreature(player)
         movePlayerTo(player, Vector2(400f, 400f))
 
-        // When first connecting get me a full list of other players
-        getVisiblePlayersOf(player) { otherPlayer ->
+        // When first connecting get me a full list of other creatures
+        getVisibleCreaturesOf(player) { otherPlayer ->
             notifier.notifyCreatureUpdate(player.pid, otherPlayer)
         }
     }
@@ -53,7 +53,7 @@ class GameMapController(
 
         // Notify others about my disappearance
         player.getVisiblePlayers().forEach { otherPlayer ->
-           notifier.notifyCreatureDisappear(otherPlayer.pid, player)
+            notifier.notifyCreatureDisappear(otherPlayer.pid, player)
         }
         // Notify me about me
         notifier.notifyCreatureDisappear(player.pid, player)
@@ -84,30 +84,36 @@ class GameMapController(
         [5, 6] -> Creature Update
          */
         if (tileChanged) {
-            val oldVisiblePlayers = player.getVisiblePlayers()
+            val oldVisibleCreatures = player.getVisibleCreatures()
             player.lastUpdate.gridPosition = newGridCoords
             player.lastUpdate.tileSlice = map.getTilesAround(newGridCoords, player.viewRadius.toInt())
-            val newVisiblePlayers = player.getVisiblePlayers()
+            val newVisibleCreatures = player.getVisibleCreatures()
 
             val oldTile = map.getTileAt(olcGridCoords)
             val newTile = map.getTileAt(newGridCoords)
             oldTile.moveCreatureToTile(player, newTile)
 
             // Disappear
-            (oldVisiblePlayers subtract newVisiblePlayers).also { println("Disappear ${it}") }.forEach { otherPlayer ->
-                notifier.notifyCreatureDisappear(otherPlayer.pid, player)
-                notifier.notifyCreatureDisappear(player.pid, otherPlayer)
+            (oldVisibleCreatures subtract newVisibleCreatures).forEach { otherCreature ->
+                if (otherCreature is Player) {
+                    notifier.notifyCreatureDisappear(otherCreature.pid, player)
+                }
+                notifier.notifyCreatureDisappear(player.pid, otherCreature)
             }
 
             // Creature Position Update
-            (oldVisiblePlayers intersect newVisiblePlayers).also { println("PositionUpdate ${it}") }.forEach { otherPlayer ->
-                notifier.notifyCreaturePositionUpdate(otherPlayer.pid, player)
+            (oldVisibleCreatures intersect newVisibleCreatures).forEach { otherCreature ->
+                if (otherCreature is Player) {
+                    notifier.notifyCreaturePositionUpdate(otherCreature.pid, player)
+                }
             }
 
             // Creature Update
-            (newVisiblePlayers subtract oldVisiblePlayers).also { println("CreatureUpdate ${it}") }.forEach { otherPlayer ->
-                notifier.notifyCreatureUpdate(otherPlayer.pid, player)
-                notifier.notifyCreatureUpdate(player.pid, otherPlayer)
+            (newVisibleCreatures subtract oldVisibleCreatures).forEach { otherCreature ->
+                if (otherCreature is Player) {
+                    notifier.notifyCreatureUpdate(otherCreature.pid, player)
+                }
+                notifier.notifyCreatureUpdate(player.pid, otherCreature)
             }
 
             // Notify me about terrain change
@@ -162,7 +168,11 @@ class GameMapController(
     }
 
     private fun getVisiblePlayersOf(player: Player, callback: (otherPlayer: Player) -> Unit) {
-        player.getVisiblePlayers().forEach { callback.invoke(it) }
+        player.getVisiblePlayers().forEach(callback)
+    }
+
+    private fun getVisibleCreaturesOf(player: Player, callback: (otherPlayer: Creature) -> Unit) {
+        player.getVisibleCreatures().forEach(callback)
     }
 
     private fun notifyEveryone(callback: (pid: PID) -> Unit) {

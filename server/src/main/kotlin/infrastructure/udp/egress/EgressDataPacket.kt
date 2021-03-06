@@ -107,7 +107,7 @@ sealed class EgressDataPacket(
     ): EgressDataPacket(PLAYER_DETAILS) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(pid.value)
-            buffer.putUInt(pid.value)
+            buffer.putUInt(cid.value)
         }
     }
 }
