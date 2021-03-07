@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using global::Client.scripts.global;
+using Godot;
 using Font = Godot.Font;
 
 namespace Client.scripts.components.terrain
@@ -16,6 +17,7 @@ namespace Client.scripts.components.terrain
             _gridCoordinates = gridCoordinates;
             _vecSize = new Vector2(_size, _size);
 
+            ZIndex = (int) RenderLayer.BackgroundTerrain;
             Position = gridCoordinates * size;
             _font = new Label().GetFont("");
             Centered = false;
@@ -28,7 +30,7 @@ namespace Client.scripts.components.terrain
 
         public override void _Draw()
         {
-            DrawRect(new Rect2(Vector2.Zero, _vecSize), Colors.RebeccaPurple, false);
+            DrawRect(new Rect2(Vector2.Zero, _vecSize), Colors.Black, false);
             DrawString(_font, new Vector2(0, _size / 2), $"{_gridCoordinates.x}, {_gridCoordinates.y}");
         }
 

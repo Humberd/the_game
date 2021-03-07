@@ -1,5 +1,6 @@
 ﻿using Client.scripts.global.udp.egress;
 using Client.scripts.global.udp.ingress;
+using global::Client.scripts.global;
 using Godot;
 
 namespace Client.scripts.components.terrain
@@ -15,6 +16,7 @@ namespace Client.scripts.components.terrain
 
         public ItemController()
         {
+            ZIndex = (int) RenderLayer.Items;
             _sprite = new Sprite
             {
                 Centered = true
@@ -48,6 +50,11 @@ namespace Client.scripts.components.terrain
                     }
                 }
             }
+        }
+
+        public override void _Draw()
+        {
+            DrawRect(new Rect2(new Vector2(-32, -32), new Vector2(64, 64)), Colors.RebeccaPurple, false);
         }
 
         public void UpdateData(IngressDataPacket.TerrainItemsUpdate.ItemData itemData)

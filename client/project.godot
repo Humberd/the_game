@@ -25,6 +25,10 @@ UserService="*res://scripts/global/UserService.cs"
 UdpClientMono="*res://scripts/global/udp/UdpClientMono.cs"
 ActionSenderMono="*res://scripts/global/udp/egress/ActionSenderMono.cs"
 
+[display]
+
+window/size/always_on_top=true
+
 [input]
 
 up={
@@ -55,8 +59,16 @@ left_click={
 
 [layer_names]
 
-2d_physics/layer_1="Items"
+2d_render/layer_1="default"
+2d_render/layer_2="background-terrain"
+2d_render/layer_3="items"
+2d_render/layer_4="creatures"
+2d_render/layer_5="stats"
 
 [rendering]
 
 environment/default_environment="res://default_env.tres"
+
+[world]
+
+2d/cell_size=64
