@@ -1,5 +1,6 @@
 package core.maps.entities
 
+import core.maps.GameMapController
 import core.types.CID
 import core.types.CreatureName
 import core.types.SpriteId
@@ -16,6 +17,8 @@ abstract class Creature(
     val viewRadius: UByte = 3u
 
     val lastUpdate: LastUpdate
+
+    lateinit var gameMapController: GameMapController
 
     init {
         lastUpdate = LastUpdate(

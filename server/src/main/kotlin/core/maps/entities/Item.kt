@@ -10,7 +10,7 @@ data class Item(
     val iid: IID,
     val itemDef: ItemDef,
     var position: WorldPosition,
-    val actionHandler: ItemActionHandler = object : ItemActionHandler {}
+    val actionHandler: ItemActionHandler = ItemActionHandler.defaultImpl
 ) {
     val collisionRadius = CollisionRadius(64u)
 

@@ -35,7 +35,7 @@ class GamesManager(
 
     fun movePlayerBy(pid: PID, vector: Vector2) {
         val ctrl = getMapController(pid)
-        ctrl.movePlayerBy(pid, vector)
+        ctrl.moveBy(pid, vector)
     }
 
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {

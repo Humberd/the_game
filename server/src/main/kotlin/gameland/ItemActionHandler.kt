@@ -1,10 +1,16 @@
 package gameland
 
 import core.maps.GameMapController
+import core.maps.entities.Creature
 import core.maps.entities.Item
-import core.maps.entities.Player
+
+private class DefaultItemActionHandlerImpl : ItemActionHandler
 
 interface ItemActionHandler {
-    fun onItemWalkedOn(context: GameMapController, player: Player, item: Item) {}
-    fun onItem__(){}
+    companion object {
+        val defaultImpl: ItemActionHandler = DefaultItemActionHandlerImpl()
+    }
+
+    fun onItemWalkedOn(context: GameMapController, creature: Creature, item: Item) {}
+    fun onItem__(value: Int) = value
 }

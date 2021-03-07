@@ -1,22 +1,43 @@
 package core
 
 import infrastructure.udp.ingress.IngressPacket
+import mu.KotlinLogging
+import utils.Milliseconds
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import mu.KotlinLogging
-
 private val logger = KotlinLogging.logger {}
+
+data class AsyncGameTask(
+    val intervalTick: Milliseconds, // 2ms
+    val totalDuration: Milliseconds, // 50ms
+    val onFinish: () -> Unit,
+    val callback: () -> Unit
+) {
+    var lastTick: Long = 0
+    var firstTick: Long = 0
+    var scheduledForDeletion = false
+}
+
 
 class GameLoop(
     private val gameActionHandler: GameActionHandler
 ) : Thread("GameLoop") {
     private val queue = ConcurrentLinkedQueue<IngressPacket>()
+    private val asyncGameTasks = ConcurrentLinkedQueue<AsyncGameTask>()
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        lateinit var instance: GameLoop
+    }
 
     override fun run() {
         logger.info { "Starting Game Loop" }
 
         while (true) {
-            if (!queue.isEmpty()) {
+            while (!queue.isEmpty()) {
                 val packet = queue.poll()
                 logger.debug { packet }
 
@@ -29,11 +50,38 @@ class GameLoop(
                     is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(packet)
                 }
             }
+            asyncGameTasks.forEach { task ->
+                val currentTime = System.currentTimeMillis()
+//                logger.debug { "Loop" }
+                val isNew = task.firstTick == 0L
+                if (isNew) {
+                    task.lastTick = currentTime
+                    task.firstTick = currentTime
+                    task.callback.invoke()
+                    return@forEach
+                }
+                val shouldInvoke = task.lastTick + task.intervalTick.value.toLong() <= currentTime
+                if (shouldInvoke) {
+                    task.lastTick = currentTime
+                    task.callback.invoke()
+                }
+
+                val isOverTotalDuration = task.lastTick - task.firstTick >= task.totalDuration.value.toLong()
+                if (isOverTotalDuration) {
+                    task.scheduledForDeletion = true
+                    task.onFinish.invoke()
+                }
+            }
+            asyncGameTasks.removeAll { it.scheduledForDeletion }
             sleep(10)
         }
     }
 
     fun requestAction(action: IngressPacket) {
         queue.add(action)
+    }
+
+    fun requestAsyncTask(task: AsyncGameTask) {
+        asyncGameTasks.add(task)
     }
 }
