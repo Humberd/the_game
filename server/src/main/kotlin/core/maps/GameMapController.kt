@@ -21,14 +21,14 @@ class GameMapController(
         map.items.forEach { items[it.iid] = it }
         map.creatures.forEach {
             creatures[it.cid] = it
-            it.gameMapController = this
+            it.connectWithMap(gameMapController = this)
         }
     }
 
     fun addPlayer(player: Player) {
         players[player.pid] = player
         creatures[player.cid] = player
-        player.gameMapController = this
+        player.connectWithMap(gameMapController = this)
 
         notifier.notifyPlayerDetails(player.pid, player)
         // Notify me about me
@@ -61,8 +61,11 @@ class GameMapController(
     }
 
     fun moveBy(pid: PID, vector: Vector2) {
-        val player = getPlayer(pid)
-        moveBy(player, vector)
+        moveBy(getPlayer(pid), vector)
+    }
+
+    fun moveBy(cid: CID, vector: Vector2) {
+        moveBy(getCreature(cid), vector)
     }
 
     fun moveBy(creature: Creature, vector: Vector2) {
@@ -170,7 +173,7 @@ class GameMapController(
         creature.getVisibleItems().forEach { item ->
             if (item.collidesWith(creature.position)) {
                 item.actionHandler.onItem__(12)
-                item.actionHandler.onItemWalkedOn(this, creature, item)
+                item.actionHandler.onItemWalkedOn(creature.scriptable, item)
             }
         }
     }

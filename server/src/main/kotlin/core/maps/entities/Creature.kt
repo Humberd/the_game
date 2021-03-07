@@ -5,6 +5,7 @@ import core.types.CID
 import core.types.CreatureName
 import core.types.SpriteId
 import core.types.WorldPosition
+import org.mini2Dx.gdx.math.Vector2
 
 abstract class Creature(
     val cid: CID,
@@ -18,7 +19,7 @@ abstract class Creature(
 
     val lastUpdate: LastUpdate
 
-    lateinit var gameMapController: GameMapController
+    open lateinit var scriptable: ScriptableCreature
 
     init {
         lastUpdate = LastUpdate(
@@ -31,6 +32,26 @@ abstract class Creature(
         var gridPosition: GameMap.GridPosition,
         var tileSlice: Array<Array<Tile>>
     )
+
+    fun connectWithMap(gameMapController: GameMapController) {
+        if (this::scriptable.isInitialized) {
+            throw Error("Scriptable object is already connected with a map")
+        }
+
+        scriptable = ScriptableCreature(gameMapController)
+    }
+
+    inner class ScriptableCreature(
+        private val gameMapController: GameMapController
+    ) {
+        fun moveBy(vector: Vector2) {
+            gameMapController.moveBy(cid, vector)
+        }
+
+        fun moveTo(targetPosition: WorldPosition) {
+            gameMapController.moveTo(this@Creature, targetPosition)
+        }
+    }
 
     fun getVisibleItems(): List<Item> {
         val buffer = arrayListOf<Item>()

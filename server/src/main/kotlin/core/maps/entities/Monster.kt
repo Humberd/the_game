@@ -7,14 +7,9 @@ import core.types.CreatureName
 import core.types.SpriteId
 import core.types.WorldPosition
 import errors.NOT_REACHED
-import mu.KotlinLogging
 import org.mini2Dx.gdx.math.Vector2
 import utils.ms
 import utils.sec
-
-private val logger = KotlinLogging.logger {}
-
-private val MAX_DIST_BEFORE_DIRECTION_CHANGE = 64u
 
 class Monster(
     cid: CID,
@@ -55,7 +50,7 @@ class Monster(
                 NOT_REACHED()
             }
         }) {
-            gameMapController.moveBy(this, direction)
+            scriptable.moveBy(direction)
         }
     }
 

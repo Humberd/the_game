@@ -15,3 +15,28 @@ class Player(
         return pid.toString()
     }
 }
+
+
+//abstract class Base(
+//    private val baseName: String
+//) {
+//    open val child = Child()
+//
+//    open inner class Child {
+//        fun compute() = baseName
+//    }
+//}
+//
+//class Car(
+//    private val name: String
+//) : Base("Hello") {
+//    override val child = Mercedes()
+//
+//    inner class Mercedes : Base.Child() {
+//        fun getName() = name
+//    }
+//}
+//
+//val car = Car("BMW")
+//val compute = println(car.child.compute())
+//val name = println(car.child.getName())

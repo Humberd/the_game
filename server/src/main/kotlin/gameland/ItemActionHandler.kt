@@ -1,6 +1,5 @@
 package gameland
 
-import core.maps.GameMapController
 import core.maps.entities.Creature
 import core.maps.entities.Item
 
@@ -11,6 +10,6 @@ interface ItemActionHandler {
         val defaultImpl: ItemActionHandler = DefaultItemActionHandlerImpl()
     }
 
-    fun onItemWalkedOn(context: GameMapController, creature: Creature, item: Item) {}
+    fun onItemWalkedOn(creature: Creature.ScriptableCreature, item: Item) {}
     fun onItem__(value: Int) = value
 }
