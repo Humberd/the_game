@@ -53,6 +53,9 @@ namespace Client.scripts.global.udp.ingress
                 case IngressPacketType.EQUIPPED_SPELLS_UPDATE:
                     _ingressPacketHandler.Handle(IngressDataPacket.EquippedSpellsUpdate.From(buffer));
                     break;
+                case IngressPacketType.SPELL_USE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.SpellUse.From(buffer));
+                    break;
                 default:
                 {
                     Console.WriteLine($"Packet type not supported 0x{packetType:X}");

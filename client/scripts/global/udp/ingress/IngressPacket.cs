@@ -15,7 +15,8 @@ namespace Client.scripts.global.udp.ingress
         TERRAIN_UPDATE = 0x23,
         TERRAIN_ITEMS_UPDATE = 0x24,
         PLAYER_DETAILS = 0x25,
-        EQUIPPED_SPELLS_UPDATE = 0x26
+        EQUIPPED_SPELLS_UPDATE = 0x26,
+        SPELL_USE = 0x27
     }
 
     public class IngressDataPacket
@@ -191,7 +192,7 @@ namespace Client.scripts.global.udp.ingress
                 }
             }
 
-            public EquippedSpellsUpdate(SpellUpdate[] spells)
+            private EquippedSpellsUpdate(SpellUpdate[] spells)
             {
                 Spells = spells;
             }
@@ -214,6 +215,41 @@ namespace Client.scripts.global.udp.ingress
                             cooldown: buffer.ReadUInt32()
                         );
                     })
+                );
+            }
+        }
+
+        public class SpellUse : IngressDataPacket
+        {
+            public readonly Vector2 SourcePosition;
+            public readonly SpellEffect[] Effects;
+
+            public class SpellEffect
+            {
+                public readonly SpriteId SpriteId;
+                public readonly uint Duration;
+
+                public SpellEffect(ushort spriteId, uint duration)
+                {
+                    SpriteId = spriteId;
+                    Duration = duration;
+                }
+            }
+
+            private SpellUse(Vector2 sourcePosition, SpellEffect[] effects)
+            {
+                SourcePosition = sourcePosition;
+                Effects = effects;
+            }
+
+            public static SpellUse From(BinaryReader buffer)
+            {
+                return new SpellUse(
+                    sourcePosition: buffer.ReadVector2(),
+                    effects: buffer.ReadServerArray(() => new SpellEffect(
+                        spriteId: buffer.ReadUInt16(),
+                        duration: buffer.ReadUInt32()
+                    ))
                 );
             }
         }

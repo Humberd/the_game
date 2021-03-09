@@ -38,5 +38,10 @@ namespace Client.scripts.global
         {
             GameMapUiController.Instance.UpdateSpells(action);
         }
+
+        public void Handle(IngressDataPacket.SpellUse action)
+        {
+            GamePlaneController.Instance.DisplaySpell(action);
+        }
     }
 }

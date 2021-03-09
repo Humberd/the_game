@@ -1,9 +1,6 @@
 package infrastructure.udp.ingress
 
-import core.types.DirectionByte
-import core.types.IID
-import core.types.PID
-import core.types.WorldPosition
+import core.types.*
 import utils.uByte
 import utils.uInt
 import java.nio.ByteBuffer
@@ -14,7 +11,8 @@ enum class IngressPacketType(val value: Int) {
     PING_REQUEST(0x02),
     AUTH_LOGIN(0x05),
     POSITION_CHANGE(0x10),
-    TERRAIN_ITEM_DRAG(0x11);
+    TERRAIN_ITEM_DRAG(0x11),
+    SPELL_USAGE(0x12);
 
     companion object {
         private val map = HashMap<Int, IngressPacketType>()
@@ -51,14 +49,27 @@ sealed class IngressPacket {
         val pid: PID,
         val iid: IID,
         val targetPosition: WorldPosition
-    ) :
-        IngressPacket() {
+    ) : IngressPacket() {
         companion object {
             fun from(buffer: ByteBuffer, pid: PID): TerrainItemDrag {
                 return TerrainItemDrag(
                     pid = pid,
                     iid = IID(buffer.uInt()),
                     targetPosition = WorldPosition(buffer.float, buffer.float)
+                )
+            }
+        }
+    }
+
+    data class SpellUsage(
+        val pid: PID,
+        val sid: SID
+    ) : IngressPacket() {
+        companion object {
+            fun from(buffer: ByteBuffer, pid: PID): SpellUsage {
+                return SpellUsage(
+                    pid = pid,
+                    sid = SID(buffer.uInt())
                 )
             }
         }

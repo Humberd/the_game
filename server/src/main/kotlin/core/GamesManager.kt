@@ -3,10 +3,7 @@ package core
 import core.maps.GameMapController
 import core.maps.GameMapGenerator
 import core.maps.entities.Player
-import core.types.GameMapId
-import core.types.IID
-import core.types.PID
-import core.types.WorldPosition
+import core.types.*
 import org.mini2Dx.gdx.math.Vector2
 
 class GamesManager(
@@ -41,6 +38,11 @@ class GamesManager(
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
         val ctrl = getMapController(pid)
         ctrl.moveItemOnTerrain(pid, iid, targetPosition)
+    }
+
+    fun useSpell(pid: PID, sid: SID) {
+        val ctrl = getMapController(pid)
+        ctrl.useSpell(pid, sid)
     }
 
     private fun getMapController(pid: PID): GameMapController {

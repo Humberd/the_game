@@ -41,14 +41,7 @@ class GameLoop(
                 val packet = queue.poll()
                 logger.debug { packet }
 
-                @Suppress("UNUSED_VARIABLE")
-                val foo: Unit = when (packet) {
-                    is IngressPacket.ConnectionHello -> Unit
-                    is IngressPacket.Disconnect -> gameActionHandler.handle(packet)
-                    is IngressPacket.AuthLogin -> gameActionHandler.handle(packet)
-                    is IngressPacket.PositionChange -> gameActionHandler.handle(packet)
-                    is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(packet)
-                }
+                handleAction(packet)
             }
             asyncGameTasks.forEach { task ->
                 val currentTime = System.currentTimeMillis()
@@ -79,6 +72,17 @@ class GameLoop(
 
     fun requestAction(action: IngressPacket) {
         queue.add(action)
+    }
+
+    private fun handleAction(action: IngressPacket) {
+        return when (action) {
+            is IngressPacket.ConnectionHello -> Unit
+            is IngressPacket.Disconnect -> gameActionHandler.handle(action)
+            is IngressPacket.AuthLogin -> gameActionHandler.handle(action)
+            is IngressPacket.PositionChange -> gameActionHandler.handle(action)
+            is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(action)
+            is IngressPacket.SpellUsage -> gameActionHandler.handle(action)
+        }
     }
 
     fun requestAsyncTask(task: AsyncGameTask) {

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Client.scripts.global.udp.egress;
 using Client.scripts.global.udp.ingress;
-using Client.scripts.global;
+using global::Client.scripts.global;
 using Godot;
 
 namespace Client.scripts
@@ -8,6 +8,7 @@ namespace Client.scripts
     public class SpellButton : TextureButton
     {
         private string _name;
+        private uint _sid;
         private readonly Label _cooldownLabel;
 
         public SpellButton()
@@ -29,7 +30,13 @@ namespace Client.scripts
 
         public override void _Pressed()
         {
-            Console.WriteLine("Pressed");
+            if (_sid == 0)
+            {
+                return;
+            }
+            ActionSenderMono.Instance.Send(new EgressDataPacket.SpellUsage(
+                sid: _sid
+            ));
         }
 
         public void UpdateName(string name)
@@ -54,11 +61,14 @@ namespace Client.scripts
             {
                 LoadDefaultSprite();
                 _cooldownLabel.Text = "";
+                _sid = 0;
                 return;
             }
+
             UpdateName(actionSpell.Name);
             UpdateSprite(actionSpell.SpriteId);
             UpdateCooldown(actionSpell.Cooldown);
+            _sid = actionSpell.Sid;
         }
     }
 }

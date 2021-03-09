@@ -3,6 +3,7 @@ package infrastructure.udp.egress
 import core.maps.ItemType
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
+import org.mini2Dx.gdx.math.Vector2
 import utils.*
 import java.nio.ByteBuffer
 
@@ -13,7 +14,8 @@ enum class EgressPacketType(val value: Int) {
     TERRAIN_UPDATE(0x23),
     TERRAIN_ITEMS_UPDATE(0x24),
     PLAYER_DETAILS(0x25),
-    EQUIPPED_SPELLS_UPDATE(0x26)
+    EQUIPPED_SPELLS_UPDATE(0x26),
+    SPELL_USE(0x27)
 }
 
 sealed class EgressDataPacket(
@@ -132,6 +134,24 @@ sealed class EgressDataPacket(
                 buffer.putString(it.name)
                 buffer.putUShort(it.spriteId.value)
                 buffer.putUInt(it.cooldown.value)
+            }
+        }
+    }
+
+    data class SpellUse(
+        val sourcePosition: WorldPosition,
+        val effects: Array<SpellEffect>
+    ) : EgressDataPacket(SPELL_USE) {
+
+        data class SpellEffect(
+            val spriteId: SpriteId,
+            val duration: Milliseconds
+        )
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putVector(sourcePosition)
+            buffer.putArray(effects) {
+                buffer.putUShort(it.spriteId.value)
+                buffer.putUInt(it.duration.value)
             }
         }
     }

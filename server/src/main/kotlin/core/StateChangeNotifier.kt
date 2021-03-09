@@ -119,4 +119,11 @@ class StateChangeNotifier(
             )
         )
     }
+
+    fun notifySpellUse(to: PID, spellUse: EgressDataPacket.SpellUse) {
+        egressPacketHandler.notify(
+            to,
+            spellUse
+        )
+    }
 }

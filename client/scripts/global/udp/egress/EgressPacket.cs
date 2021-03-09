@@ -9,7 +9,8 @@ namespace Client.scripts.global.udp.egress
         DISCONNECT = 0x01,
         AUTH_LOGIN = 0x05,
         POSITION_CHANGE = 0x10,
-        TERRAIN_ITEM_DRAG = 0x11
+        TERRAIN_ITEM_DRAG = 0x11,
+        SPELL_USAGE = 0x12
     }
 
     public abstract class EgressDataPacket
@@ -103,6 +104,21 @@ namespace Client.scripts.global.udp.egress
             {
                 buffer.PutU32(_iid);
                 buffer.PutVector2(_position);
+            }
+        }
+
+        public class SpellUsage : EgressDataPacket
+        {
+            private readonly uint _sid;
+
+            public SpellUsage(uint sid) : base(EgressPacketType.SPELL_USAGE)
+            {
+                _sid = sid;
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                buffer.PutU32(_sid);
             }
         }
     }

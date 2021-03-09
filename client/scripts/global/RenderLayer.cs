@@ -6,6 +6,7 @@
         BackgroundTerrain = 2,
         Items = 4,
         Creatures = 8,
-        Stats = 16,
+        Effects = 16,
+        Stats = 32,
     }
 }

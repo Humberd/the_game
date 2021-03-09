@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Client.scripts.components.creature;
+using Client.scripts.components.spell;
 using Client.scripts.components.terrain;
 using Client.scripts.global.udp.ingress;
 using Client.scripts.global;
@@ -13,6 +14,7 @@ namespace Client.scripts
     {
         private TerrainController _terrainController;
         private ItemsPlaneController _itemsPlaneController;
+        private SpellDisplayingManager _spellDisplayingManager;
         private readonly Dictionary<CID, CreatureController> _allCreatures = new Dictionary<CID, CreatureController>();
 
         public static GamePlaneController Instance;
@@ -36,6 +38,8 @@ namespace Client.scripts
             AddChild(_terrainController);
             _itemsPlaneController = new ItemsPlaneController();
             AddChild(_itemsPlaneController);
+            _spellDisplayingManager = new SpellDisplayingManager();
+            AddChild(_spellDisplayingManager);
         }
 
         public void PlayerUpdate(IngressDataPacket.PlayerUpdate action)
@@ -97,6 +101,11 @@ namespace Client.scripts
         public void DrawItems(IngressDataPacket.TerrainItemsUpdate action)
         {
             _itemsPlaneController.DrawItems(action);
+        }
+
+        public void DisplaySpell(IngressDataPacket.SpellUse action)
+        {
+            _spellDisplayingManager.DisplaySpell(action);
         }
     }
 }

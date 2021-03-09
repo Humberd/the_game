@@ -62,4 +62,8 @@ class GameActionHandler(
     fun handle(action: IngressPacket.TerrainItemDrag) {
         gamesManager.dragItemOnTerrain(action.pid, action.iid, action.targetPosition)
     }
+
+    fun handle(action: IngressPacket.SpellUsage) {
+        gamesManager.useSpell(action.pid,action.sid)
+    }
 }

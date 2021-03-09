@@ -4,8 +4,10 @@ package core.maps
 import core.StateChangeNotifier
 import core.maps.entities.*
 import core.types.*
+import infrastructure.udp.egress.EgressDataPacket
 import mu.KotlinLogging
 import org.mini2Dx.gdx.math.Vector2
+import utils.ms
 
 private val logger = KotlinLogging.logger {}
 
@@ -168,6 +170,25 @@ class GameMapController(
         item.position = targetPosition
 
         notifyEveryone { otherPID -> notifier.notifyTerrainItemsUpdate(getPlayer(otherPID)) }
+    }
+
+    fun useSpell(pid: PID, sid: SID) {
+        val player = getPlayer(pid)
+        val spell = player.spellsContainer.getSpell(sid)
+        executeSpell(player, spell)
+    }
+
+    private fun executeSpell(player: Player, spell: Spell) {
+        val spellUse = EgressDataPacket.SpellUse(
+            sourcePosition = player.position,
+            effects = arrayOf(
+                EgressDataPacket.SpellUse.SpellEffect(SpriteId(7u), 500.ms),
+                EgressDataPacket.SpellUse.SpellEffect(SpriteId(7u), 500.ms),
+                EgressDataPacket.SpellUse.SpellEffect(SpriteId(7u), 500.ms),
+                EgressDataPacket.SpellUse.SpellEffect(SpriteId(7u), 500.ms)
+            )
+        )
+        notifier.notifySpellUse(player.pid, spellUse)
     }
 
     private fun checkItemsCollisions(creature: Creature) {
