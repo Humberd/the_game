@@ -36,7 +36,7 @@ namespace Client.scripts.components.terrain
 
         public void SetTile(ushort spriteId)
         {
-            Texture = (Texture) ResourceLoader.Load($"res://assets/tiles/{spriteId}.png");
+            Texture = GameResourceLoader.GetTile(spriteId);
         }
 
         public void UnsetTile()

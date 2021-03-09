@@ -14,7 +14,8 @@ namespace Client.scripts.global.udp.ingress
         CREATURE_POSITION_UPDATE = 0x22,
         TERRAIN_UPDATE = 0x23,
         TERRAIN_ITEMS_UPDATE = 0x24,
-        PLAYER_DETAILS = 0x25
+        PLAYER_DETAILS = 0x25,
+        EQUIPPED_SPELLS_UPDATE = 0x26
     }
 
     public class IngressDataPacket
@@ -166,6 +167,53 @@ namespace Client.scripts.global.udp.ingress
                 return new PlayerDetails(
                     pid: buffer.ReadUInt32(),
                     cid: buffer.ReadUInt32()
+                );
+            }
+        }
+
+        public class EquippedSpellsUpdate : IngressDataPacket
+        {
+            public readonly SpellUpdate[] Spells;
+
+            public class SpellUpdate
+            {
+                public readonly uint Sid;
+                public readonly string Name;
+                public readonly ushort SpriteId;
+                public readonly uint Cooldown;
+
+                public SpellUpdate(uint sid, string name, ushort spriteId, uint cooldown)
+                {
+                    Sid = sid;
+                    Name = name;
+                    SpriteId = spriteId;
+                    Cooldown = cooldown;
+                }
+            }
+
+            public EquippedSpellsUpdate(SpellUpdate[] spells)
+            {
+                Spells = spells;
+            }
+
+            public static EquippedSpellsUpdate From(BinaryReader buffer)
+            {
+                return new EquippedSpellsUpdate(
+                    spells: buffer.ReadServerArray(() =>
+                    {
+                        var sid = buffer.ReadUInt32();
+                        if (sid == 0)
+                        {
+                            return null;
+                        }
+
+                        return new SpellUpdate(
+                            sid: sid,
+                            name: buffer.ReadServerString(),
+                            spriteId: buffer.ReadUInt16(),
+                            cooldown: buffer.ReadUInt32()
+                        );
+                    })
                 );
             }
         }

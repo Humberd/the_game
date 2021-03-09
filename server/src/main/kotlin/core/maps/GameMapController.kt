@@ -30,6 +30,7 @@ class GameMapController(
         creatures[player.cid] = player
         player.connectWithMap(gameMapController = this)
 
+        notifier.notifyEquippedSpellsChange(player)
         notifier.notifyPlayerDetails(player.pid, player)
         // Notify me about me
         notifier.notifyCreatureUpdate(player.pid, player)
@@ -123,7 +124,7 @@ class GameMapController(
                     notifier.notifyCreatureUpdate(otherCreature.pid, creature)
                 }
                 if (otherCreature is Monster) {
-                    otherCreature.startWalking()
+//                    otherCreature.startWalking()
                 }
                 if (creature is Player) {
                     notifier.notifyCreatureUpdate(creature.pid, otherCreature)

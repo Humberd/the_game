@@ -71,7 +71,7 @@ namespace Client.scripts.components.creature
             if (_spriteId != spriteId)
             {
                 _spriteId = spriteId;
-                _sprite.Texture = (Texture) ResourceLoader.Load($"res://assets/resources/sprites/{spriteId}.png");
+                _sprite.Texture = GameResourceLoader.GetSprite(spriteId);
             }
         }
 

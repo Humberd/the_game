@@ -33,5 +33,10 @@ namespace Client.scripts.global
         {
             UserService.Instance.HandleDetails(action);
         }
+
+        public void Handle(IngressDataPacket.EquippedSpellsUpdate action)
+        {
+            GameMapUiController.Instance.UpdateSpells(action);
+        }
     }
 }

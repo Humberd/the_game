@@ -94,4 +94,29 @@ class StateChangeNotifier(
             )
         )
     }
+
+    fun notifyEquippedSpellsChange(player: Player) {
+        egressPacketHandler.notify(
+            player.pid,
+            EgressDataPacket.EquippedSpellsUpdate(
+                spells = listOf(
+                    player.spellsContainer.spell1,
+                    player.spellsContainer.spell2,
+                    player.spellsContainer.spell3,
+                    player.spellsContainer.spell4
+                ).map {
+                    return@map if (it == null) {
+                        null
+                    } else {
+                        EgressDataPacket.EquippedSpellsUpdate.SpellUpdate(
+                            sid = it.sid,
+                            name = it.name,
+                            spriteId = it.spriteId,
+                            cooldown = it.cooldown
+                        )
+                    }
+                }.toTypedArray()
+            )
+        )
+    }
 }
