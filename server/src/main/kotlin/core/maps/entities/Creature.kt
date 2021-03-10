@@ -3,12 +3,13 @@ package core.maps.entities
 import core.StateChangeNotifier
 import core.maps.GameMapController
 import core.types.*
+import infrastructure.udp.egress.EgressDataPacket
 import org.mini2Dx.gdx.math.Vector2
 
 abstract class Creature(
     val cid: CID,
     val name: CreatureName,
-    val health: UInt,
+    var health: UInt,
     val spriteId: SpriteId,
     var position: WorldPosition
 ) {
@@ -85,5 +86,29 @@ abstract class Creature(
 
     fun getVisiblePlayers(): List<Player> {
         return getVisibleCreatures().filter { it is Player } as List<Player>
+    }
+
+    fun takeDamage(damage: UInt) {
+        val newHealth = health.toInt() - damage.toInt()
+
+        if (newHealth <= 0) {
+            health = 0u
+            // call dead hook
+        } else {
+            health = newHealth.toUInt()
+        }
+
+        if (this is Player) {
+            notifier.notifyDamageTaken(
+                pid,
+                arrayOf(
+                    EgressDataPacket.DamageTaken.Damage(position, damage)
+                )
+            )
+        }
+    }
+
+    fun isDead(): Boolean {
+        return health == 0u
     }
 }

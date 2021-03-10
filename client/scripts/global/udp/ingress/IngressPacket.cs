@@ -16,7 +16,8 @@ namespace Client.scripts.global.udp.ingress
         TERRAIN_ITEMS_UPDATE = 0x24,
         PLAYER_DETAILS = 0x25,
         EQUIPPED_SPELLS_UPDATE = 0x26,
-        SPELL_USE = 0x27
+        SPELL_USE = 0x27,
+        DAMAGE_TAKEN = 0x28
     }
 
     public class IngressDataPacket
@@ -31,7 +32,8 @@ namespace Client.scripts.global.udp.ingress
             public readonly ushort BodyRadius;
             public readonly ushort AttackTriggerRadius;
 
-            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId, ushort bodyRadius, ushort attackTriggerRadius)
+            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId,
+                ushort bodyRadius, ushort attackTriggerRadius)
             {
                 Cid = cid;
                 Name = name;
@@ -255,6 +257,38 @@ namespace Client.scripts.global.udp.ingress
                     effects: buffer.ReadServerArray(() => new SpellEffect(
                         spriteId: buffer.ReadUInt16(),
                         duration: buffer.ReadUInt32()
+                    ))
+                );
+            }
+        }
+
+        public class DamageTaken
+        {
+            public readonly Damage[] Damages;
+
+            public class Damage
+            {
+                public readonly Vector2 Position;
+                public readonly uint Amount;
+
+                public Damage(Vector2 position, uint amount)
+                {
+                    Position = position;
+                    Amount = amount;
+                }
+            }
+
+            private DamageTaken(Damage[] damages)
+            {
+                Damages = damages;
+            }
+
+            public static DamageTaken From(BinaryReader buffer)
+            {
+                return new DamageTaken(
+                    damages: buffer.ReadServerArray(() => new Damage(
+                        position: buffer.ReadVector2(),
+                        amount: buffer.ReadUInt32()
                     ))
                 );
             }

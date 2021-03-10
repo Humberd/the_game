@@ -5,6 +5,7 @@ import core.types.IID
 import core.types.WorldPosition
 import core.types.WorldRadius
 import gameland.ItemActionHandler
+import utils.getDistance
 
 data class Item(
     val iid: IID,
@@ -15,11 +16,6 @@ data class Item(
     val collisionRadius = WorldRadius(64)
 
     fun collidesWith(checkedPosition: WorldPosition): Boolean {
-        val ac = Math.abs(position.x - checkedPosition.x)
-        val cb = Math.abs(position.y - checkedPosition.y)
-
-        val distance = Math.hypot(ac.toDouble(), cb.toDouble())
-
-        return distance < collisionRadius.value
+        return getDistance(position, checkedPosition) < collisionRadius.value
     }
 }

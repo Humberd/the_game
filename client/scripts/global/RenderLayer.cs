@@ -7,6 +7,7 @@
         Items = 4,
         Creatures = 8,
         Effects = 16,
+        Damage = 17,
         Stats = 32,
     }
 }

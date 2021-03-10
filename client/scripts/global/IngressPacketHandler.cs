@@ -43,5 +43,10 @@ namespace Client.scripts.global
         {
             GamePlaneController.Instance.DisplaySpell(action);
         }
+
+        public void Handle(IngressDataPacket.DamageTaken action)
+        {
+            GamePlaneController.Instance.DisplayDamageTaken(action);
+        }
     }
 }

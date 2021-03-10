@@ -1,4 +1,5 @@
-﻿using Client.scripts.global.udp.ingress;
+﻿using System;
+using Client.scripts.global.udp.ingress;
 using Godot;
 
 namespace Client.scripts.components.spell
@@ -15,6 +16,16 @@ namespace Client.scripts.components.spell
                 var effectNode = new Effect();
                 AddChild(effectNode);
                 effectNode.Init(newPosition, effectAction.SpriteId, effectAction.Duration);
+            }
+        }
+
+        public void DisplayDamageTaken(IngressDataPacket.DamageTaken action)
+        {
+            foreach (var damage in action.Damages)
+            {
+                var damageNode = new DamageNode();
+                AddChild(damageNode);
+                damageNode.Init(damage.Position, damage.Amount);
             }
         }
     }

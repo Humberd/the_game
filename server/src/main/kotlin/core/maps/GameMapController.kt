@@ -103,7 +103,7 @@ class GameMapController(
             val newTile = map.getTileAt(newGridCoords)
             oldTile.moveCreatureToTile(creature, newTile)
 
-            // Disappear
+            // Creature Disappear
             (oldVisibleCreatures subtract newVisibleCreatures).forEach { otherCreature ->
                 // fixme: we are assuming they have the same view range
                 otherCreature.onOtherCreatureDisappearFromViewRange(creature)
@@ -116,7 +116,7 @@ class GameMapController(
                 otherCreature.onOtherCreaturePositionChange(creature)
             }
 
-            // Creature Update
+            // Creature Appear
             (newVisibleCreatures subtract oldVisibleCreatures).forEach { otherCreature ->
                 // fixme: we are assuming they have the same view range
                 otherCreature.onOtherCreatureAppearInViewRange(creature)

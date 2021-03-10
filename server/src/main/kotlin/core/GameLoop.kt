@@ -16,6 +16,10 @@ data class AsyncGameTask(
     var lastTick: Long = 0
     var firstTick: Long = 0
     var scheduledForDeletion = false
+
+    fun cancel() {
+        scheduledForDeletion = true
+    }
 }
 
 
@@ -44,6 +48,10 @@ class GameLoop(
                 handleAction(packet)
             }
             asyncGameTasks.forEach { task ->
+                if (task.scheduledForDeletion) {
+                    return@forEach
+                }
+
                 val currentTime = System.currentTimeMillis()
 //                logger.debug { "Loop" }
                 val isNew = task.firstTick == 0L
@@ -85,7 +93,8 @@ class GameLoop(
         }
     }
 
-    fun requestAsyncTask(task: AsyncGameTask) {
+    fun requestAsyncTask(task: AsyncGameTask): AsyncGameTask {
         asyncGameTasks.add(task)
+        return task
     }
 }

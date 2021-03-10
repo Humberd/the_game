@@ -107,5 +107,10 @@ namespace Client.scripts
         {
             _spellDisplayingManager.DisplaySpell(action);
         }
+
+        public void DisplayDamageTaken(IngressDataPacket.DamageTaken action)
+        {
+            _spellDisplayingManager.DisplayDamageTaken(action);
+        }
     }
 }
