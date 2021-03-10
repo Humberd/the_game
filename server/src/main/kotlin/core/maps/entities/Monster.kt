@@ -2,10 +2,7 @@ package core.maps.entities
 
 import core.AsyncGameTask
 import core.GameLoop
-import core.types.CID
-import core.types.CreatureName
-import core.types.SpriteId
-import core.types.WorldPosition
+import core.types.*
 import errors.NOT_REACHED
 import org.mini2Dx.gdx.math.Vector2
 import utils.ms
@@ -19,7 +16,9 @@ class Monster(
     position: WorldPosition = Vector2(0f, 0f)
 ) : Creature(cid, name, health, spriteId, position) {
 
+    val attackTriggerRadius = WorldRadius(85)
     private var isWalking = false
+
 
     fun startWalking() {
         if (isWalking) {

@@ -1,9 +1,9 @@
 package core.maps.entities
 
 import core.maps.ItemDef
-import core.types.CollisionRadius
 import core.types.IID
 import core.types.WorldPosition
+import core.types.WorldRadius
 import gameland.ItemActionHandler
 
 data class Item(
@@ -12,7 +12,7 @@ data class Item(
     var position: WorldPosition,
     val actionHandler: ItemActionHandler = ItemActionHandler.defaultImpl
 ) {
-    val collisionRadius = CollisionRadius(64u)
+    val collisionRadius = WorldRadius(64)
 
     fun collidesWith(checkedPosition: WorldPosition): Boolean {
         val ac = Math.abs(position.x - checkedPosition.x)
@@ -20,6 +20,6 @@ data class Item(
 
         val distance = Math.hypot(ac.toDouble(), cb.toDouble())
 
-        return distance < collisionRadius.value.toDouble()
+        return distance < collisionRadius.value
     }
 }

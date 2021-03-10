@@ -15,7 +15,8 @@ enum class EgressPacketType(val value: Int) {
     TERRAIN_ITEMS_UPDATE(0x24),
     PLAYER_DETAILS(0x25),
     EQUIPPED_SPELLS_UPDATE(0x26),
-    SPELL_USE(0x27)
+    SPELL_USE(0x27),
+    DAMAGE_TAKEN(0x28)
 }
 
 sealed class EgressDataPacket(
@@ -38,7 +39,9 @@ sealed class EgressDataPacket(
         val name: CreatureName,
         val health: UInt,
         val position: WorldPosition,
-        val spriteId: SpriteId
+        val spriteId: SpriteId,
+        val bodyRadius: WorldRadius,
+        val attackTriggerRadius: WorldRadius,
     ) : EgressDataPacket(CREATURE_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(cid.value)
@@ -46,6 +49,8 @@ sealed class EgressDataPacket(
             buffer.putUInt(health)
             buffer.putVector(position)
             buffer.putUShort(spriteId.value)
+            buffer.putUShort(bodyRadius.value.toUShort())
+            buffer.putUShort(attackTriggerRadius.value.toUShort())
         }
     }
 

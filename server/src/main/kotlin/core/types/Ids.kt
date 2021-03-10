@@ -39,6 +39,19 @@ inline class CreatureName(val value: String) {
         require(value.length <= 30)
     }
 }
-inline class CollisionRadius(val value: UShort)
+
+// Used very often as an Int, but in realty should be Ubyte
+inline class TileRadius(val value: Int) {
+    init {
+        require(value >= 0)
+    }
+}
+
+// Used very often as an Int, but in realty should be UShort
+inline class WorldRadius(val value: Int) {
+    init {
+        require(value >= 0)
+    }
+}
 
 typealias WorldPosition = Vector2

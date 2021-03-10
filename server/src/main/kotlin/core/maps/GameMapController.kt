@@ -96,7 +96,7 @@ class GameMapController(
         if (tileChanged) {
             val oldVisibleCreatures = creature.getVisibleCreatures()
             creature.lastUpdate.gridPosition = newGridCoords
-            creature.lastUpdate.tileSlice = map.getTilesAround(newGridCoords, creature.viewRadius.toInt())
+            creature.lastUpdate.tileSlice = map.getTilesAround(newGridCoords, creature.tilesViewRadius.value)
             val newVisibleCreatures = creature.getVisibleCreatures()
 
             val oldTile = map.getTileAt(olcGridCoords)

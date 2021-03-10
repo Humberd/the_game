@@ -15,6 +15,8 @@ namespace Client.scripts.components.creature
         private CID _cid;
         private uint _health;
         private string _name;
+        private ushort _bodyRadius;
+        private ushort _attackTriggerRadius;
 
         private SpriteId _spriteId;
 
@@ -34,7 +36,16 @@ namespace Client.scripts.components.creature
 
         public override void _Draw()
         {
-            DrawRect(new Rect2(new Vector2(-32, -32), new Vector2(64, 64)), Colors.Chartreuse, false);
+            // DrawRect(new Rect2(new Vector2(-32, -32), new Vector2(64, 64)), Colors.Chartreuse, false);
+            if (_bodyRadius > 0)
+            {
+                DrawArc(Vector2.Zero, _bodyRadius, 0, 360, 60, new Color("#272822"));
+            }
+
+            if (_attackTriggerRadius > 0)
+            {
+                DrawArc(Vector2.Zero, _attackTriggerRadius, 0, 360, 60, new Color("#A7271F"));
+            }
         }
 
         public void UpdateCid(CID cid)
@@ -82,6 +93,8 @@ namespace Client.scripts.components.creature
             UpdateName(playerUpdate.Name);
             UpdateHealth(playerUpdate.Health);
             UpdateOutfit(playerUpdate.SpriteId);
+            _bodyRadius = playerUpdate.BodyRadius;
+            _attackTriggerRadius = playerUpdate.AttackTriggerRadius;
         }
     }
 }

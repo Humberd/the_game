@@ -28,14 +28,18 @@ namespace Client.scripts.global.udp.ingress
             public readonly uint Health;
             public readonly Vector2 Position;
             public readonly SpriteId SpriteId;
+            public readonly ushort BodyRadius;
+            public readonly ushort AttackTriggerRadius;
 
-            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId)
+            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId, ushort bodyRadius, ushort attackTriggerRadius)
             {
                 Cid = cid;
                 Name = name;
                 Health = health;
                 Position = position;
                 SpriteId = spriteId;
+                BodyRadius = bodyRadius;
+                AttackTriggerRadius = attackTriggerRadius;
             }
 
             public static PlayerUpdate From(BinaryReader buffer)
@@ -45,7 +49,9 @@ namespace Client.scripts.global.udp.ingress
                     name: buffer.ReadServerString(),
                     health: buffer.ReadUInt32(),
                     position: buffer.ReadVector2(),
-                    spriteId: buffer.ReadUInt16()
+                    spriteId: buffer.ReadUInt16(),
+                    bodyRadius: buffer.ReadUInt16(),
+                    attackTriggerRadius: buffer.ReadUInt16()
                 );
             }
         }

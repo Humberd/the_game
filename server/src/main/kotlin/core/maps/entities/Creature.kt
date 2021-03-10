@@ -1,10 +1,7 @@
 package core.maps.entities
 
 import core.maps.GameMapController
-import core.types.CID
-import core.types.CreatureName
-import core.types.SpriteId
-import core.types.WorldPosition
+import core.types.*
 import org.mini2Dx.gdx.math.Vector2
 
 abstract class Creature(
@@ -15,7 +12,8 @@ abstract class Creature(
     var position: WorldPosition
 ) {
     var movementSpeed = 3f
-    val viewRadius: UByte = 3u
+    val tilesViewRadius = TileRadius(3)
+    val bodyRadius = WorldRadius(32)
 
     val lastUpdate: LastUpdate
 

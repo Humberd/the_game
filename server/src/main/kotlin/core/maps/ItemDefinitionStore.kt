@@ -1,7 +1,7 @@
 package core.maps
 
 import com.beust.klaxon.Klaxon
-import core.types.CollisionRadius
+import core.types.WorldRadius
 import errors.UnknownItemId
 
 enum class ItemType(val id: Int) {
@@ -20,7 +20,7 @@ enum class ItemType(val id: Int) {
 data class ItemDef(
     val type: ItemType,
     val isMovable: Boolean,
-    val collisionRadius: CollisionRadius = CollisionRadius(64u)
+    val collisionRadius: WorldRadius = WorldRadius(64)
 )
 
 private data class JsonItemDef(
