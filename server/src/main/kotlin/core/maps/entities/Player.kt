@@ -42,8 +42,24 @@ class Player(
     val spellsContainer: SpellsContainer
 ) : Creature(cid, name, health, spriteId, position) {
 
+    override val scriptable = ScriptablePlayer()
+
+    inner class ScriptablePlayer : ScriptableCreature()
+
     override fun toString(): String {
         return pid.toString()
+    }
+
+    override fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {
+        notifier.notifyCreatureDisappear(pid, otherCreature)
+    }
+
+    override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {
+        notifier.notifyCreatureUpdate(pid, otherCreature)
+    }
+
+    override fun onOtherCreaturePositionChange(otherCreature: Creature) {
+        notifier.notifyCreaturePositionUpdate(pid, otherCreature)
     }
 }
 

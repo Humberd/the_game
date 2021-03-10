@@ -1,5 +1,6 @@
 package core.maps.entities
 
+import core.StateChangeNotifier
 import core.maps.GameMapController
 import core.types.*
 import org.mini2Dx.gdx.math.Vector2
@@ -17,7 +18,11 @@ abstract class Creature(
 
     val lastUpdate: LastUpdate
 
-    open lateinit var scriptable: ScriptableCreature
+    open val scriptable = ScriptableCreature()
+
+    protected lateinit var gameMapController: GameMapController
+    protected lateinit var notifier: StateChangeNotifier
+
 
     init {
         lastUpdate = LastUpdate(
@@ -31,17 +36,16 @@ abstract class Creature(
         var tileSlice: Array<Array<Tile>>
     )
 
-    fun connectWithMap(gameMapController: GameMapController) {
-        if (this::scriptable.isInitialized) {
+    fun connectWithMap(gameMapController: GameMapController, notifier: StateChangeNotifier) {
+        if (this::gameMapController.isInitialized) {
             throw Error("Scriptable object is already connected with a map")
         }
+        this.gameMapController = gameMapController
+        this.notifier = notifier
 
-        scriptable = ScriptableCreature(gameMapController)
     }
 
-    inner class ScriptableCreature(
-        private val gameMapController: GameMapController
-    ) {
+    inner open class ScriptableCreature {
         fun moveBy(vector: Vector2) {
             gameMapController.moveBy(cid, vector)
         }
@@ -50,6 +54,10 @@ abstract class Creature(
             gameMapController.moveTo(this@Creature, targetPosition)
         }
     }
+
+    abstract fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature)
+    abstract fun onOtherCreatureAppearInViewRange(otherCreature: Creature)
+    abstract fun onOtherCreaturePositionChange(otherCreature: Creature)
 
     fun getVisibleItems(): List<Item> {
         val buffer = arrayListOf<Item>()

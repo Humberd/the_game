@@ -3,7 +3,6 @@ package infrastructure.udp.egress
 import core.maps.ItemType
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
-import org.mini2Dx.gdx.math.Vector2
 import utils.*
 import java.nio.ByteBuffer
 
@@ -157,6 +156,22 @@ sealed class EgressDataPacket(
             buffer.putArray(effects) {
                 buffer.putUShort(it.spriteId.value)
                 buffer.putUInt(it.duration.value)
+            }
+        }
+    }
+
+    data class DamageTaken(
+        val damages: Array<Damage>
+    ) : EgressDataPacket(DAMAGE_TAKEN) {
+        data class Damage(
+            val position: WorldPosition,
+            val amount: UInt
+        )
+
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putArray(damages) {
+                buffer.putVector(it.position)
+                buffer.putUInt(it.amount)
             }
         }
     }

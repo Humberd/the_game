@@ -130,4 +130,11 @@ class StateChangeNotifier(
             spellUse
         )
     }
+
+    fun notifyDamageTaken(to: PID, damages: Array<EgressDataPacket.DamageTaken.Damage>) {
+        egressPacketHandler.notify(
+            to,
+            EgressDataPacket.DamageTaken(damages)
+        )
+    }
 }

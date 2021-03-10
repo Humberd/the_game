@@ -23,14 +23,14 @@ class GameMapController(
         map.items.forEach { items[it.iid] = it }
         map.creatures.forEach {
             creatures[it.cid] = it
-            it.connectWithMap(gameMapController = this)
+            it.connectWithMap(this, notifier)
         }
     }
 
     fun addPlayer(player: Player) {
         players[player.pid] = player
         creatures[player.cid] = player
-        player.connectWithMap(gameMapController = this)
+        player.connectWithMap(this, notifier)
 
         notifier.notifyEquippedSpellsChange(player)
         notifier.notifyPlayerDetails(player.pid, player)
@@ -81,11 +81,11 @@ class GameMapController(
         val newGridCoords = GameMap.toGridPosition(position)
 
         val oldPosition = creature.position
-        val olcGridCoords = GameMap.toGridPosition(oldPosition)
+        val oldGridCoords = GameMap.toGridPosition(oldPosition)
 
         creature.position = newPosition
 
-        val tileChanged = olcGridCoords != newGridCoords
+        val tileChanged = oldGridCoords != newGridCoords
         /*
         [1,2,3,4] -> [3,4,5,6]
 
@@ -99,38 +99,28 @@ class GameMapController(
             creature.lastUpdate.tileSlice = map.getTilesAround(newGridCoords, creature.tilesViewRadius.value)
             val newVisibleCreatures = creature.getVisibleCreatures()
 
-            val oldTile = map.getTileAt(olcGridCoords)
+            val oldTile = map.getTileAt(oldGridCoords)
             val newTile = map.getTileAt(newGridCoords)
             oldTile.moveCreatureToTile(creature, newTile)
 
             // Disappear
             (oldVisibleCreatures subtract newVisibleCreatures).forEach { otherCreature ->
-                if (otherCreature is Player) {
-                    notifier.notifyCreatureDisappear(otherCreature.pid, creature)
-                }
-                if (creature is Player) {
-                    notifier.notifyCreatureDisappear(creature.pid, otherCreature)
-                }
+                // fixme: we are assuming they have the same view range
+                otherCreature.onOtherCreatureDisappearFromViewRange(creature)
+                creature.onOtherCreatureDisappearFromViewRange(otherCreature)
             }
 
             // Creature Position Update
             (oldVisibleCreatures intersect newVisibleCreatures).forEach { otherCreature ->
-                if (otherCreature is Player) {
-                    notifier.notifyCreaturePositionUpdate(otherCreature.pid, creature)
-                }
+                // fixme: we are assuming they have the same view range
+                otherCreature.onOtherCreaturePositionChange(creature)
             }
 
             // Creature Update
             (newVisibleCreatures subtract oldVisibleCreatures).forEach { otherCreature ->
-                if (otherCreature is Player) {
-                    notifier.notifyCreatureUpdate(otherCreature.pid, creature)
-                }
-                if (otherCreature is Monster) {
-//                    otherCreature.startWalking()
-                }
-                if (creature is Player) {
-                    notifier.notifyCreatureUpdate(creature.pid, otherCreature)
-                }
+                // fixme: we are assuming they have the same view range
+                otherCreature.onOtherCreatureAppearInViewRange(creature)
+                creature.onOtherCreatureAppearInViewRange(otherCreature)
             }
 
             if (creature is Player) {
@@ -142,7 +132,7 @@ class GameMapController(
         } else {
             // Notify others about me
             getVisiblePlayersOf(creature) { otherPlayer ->
-                notifier.notifyCreaturePositionUpdate(otherPlayer.pid, creature)
+                otherPlayer.onOtherCreaturePositionChange(creature)
             }
         }
 

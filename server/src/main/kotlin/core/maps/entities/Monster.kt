@@ -19,6 +19,17 @@ class Monster(
     val attackTriggerRadius = WorldRadius(85)
     private var isWalking = false
 
+    override fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {
+
+    }
+
+    override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {
+
+    }
+
+    override fun onOtherCreaturePositionChange(otherCreature: Creature) {
+
+    }
 
     fun startWalking() {
         if (isWalking) {
