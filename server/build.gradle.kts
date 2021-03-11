@@ -23,6 +23,10 @@ dependencies {
 
     // Json
     implementation("com.beust:klaxon:5.5")
+
+    // physics
+    implementation("com.badlogicgames.gdx:gdx-box2d:1.9.14")
+    implementation("com.badlogicgames.gdx:gdx-box2d-platform:1.9.14:natives-desktop")
 }
 
 kotlin {

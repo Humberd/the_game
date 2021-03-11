@@ -1,10 +1,12 @@
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import core.GameActionHandler
 import core.GameLoop
 import core.GamesManager
 import core.StateChangeNotifier
 import core.maps.ItemDefinitionStore
-import infrastructure.udp.UdpClientStore
 import infrastructure.database.Database
+import infrastructure.udp.UdpClientStore
 import infrastructure.udp.UdpConnectionPersistor
 import infrastructure.udp.egress.UdpEgressPacketHandler
 import infrastructure.udp.egress.UpdEgressServer
@@ -40,4 +42,6 @@ fun main() {
     udpConnectionPersistor.start()
     udpEgressServer.start()
     udpIngressServer.start()
+
+    val world = World(Vector2(0f, 10f), true)
 }
