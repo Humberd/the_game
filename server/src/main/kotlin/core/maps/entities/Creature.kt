@@ -174,11 +174,36 @@ abstract class Creature(
             /*
             [1,2,3,4] -> [3,4,5,6]
 
-            [1, 2] -> Disappear
+            [1, 2] -> Creature Disappear
             [3, 4] -> Creature Position Update
-            [5, 6] -> Creature Update
+            [5, 6] -> Creature Appear
              */
 
+            // Creature Disappear
+            ArrayList(creaturesThatSeeMe).forEach {
+                if (!it.canSee(this)) {
+                    it.creaturesISee.unregister(this)
+                }
+            }
+            creaturesISee.getAll().forEach {
+                if (!canSee(it)) {
+                    creaturesISee.unregister(it)
+                }
+            }
+
+            // Creature Appear
+            gameMap.players.getAll()
+                .filter { it.cid != cid }
+                .filter { it.canSee(this) }
+                .subtract(creaturesThatSeeMe)
+                .forEach {
+                    it.creaturesISee.register(this)
+                }
+            getGreedyVisibleCreatures()
+                .subtract(creaturesISee.getAll())
+                .forEach {
+                    creaturesISee.register(it)
+                }
 
         }
 
