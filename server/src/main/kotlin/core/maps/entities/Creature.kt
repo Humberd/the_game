@@ -112,12 +112,21 @@ abstract class Creature(
             return
         }
 
-        val distanceToStopMoving = deltaTime * velocity
-        val currentDistance = getDistance(position, targetPosition!!)
-        if (distanceToStopMoving > currentDistance) {
+        val testXOutsideMap = position.x.coerceIn(0f, gameMap.gridWidth.toFloat())
+        val testYOutsideMap = position.y.coerceIn(0f, gameMap.gridHeight.toFloat())
+        val test = WorldPosition(testXOutsideMap, testYOutsideMap)
+        if (position != test) {
+            fixture.body.setTransform(test, 0f)
             stopMoving()
+        } else {
+            val distanceToStopMoving = deltaTime * velocity
+            val currentDistance = getDistance(position, targetPosition!!)
+            if (distanceToStopMoving > currentDistance) {
+                stopMoving()
+            }
         }
 
+        // update tiles in grid
         val oldGridCoords = lastUpdate.gridPosition
         val newGridCoords = toGridPosition(position)
         val tileChanged = oldGridCoords != newGridCoords
