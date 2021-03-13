@@ -40,7 +40,7 @@ sealed class EgressDataPacket(
         val currentHealth: UInt,
         val position: WorldPosition,
         val spriteId: SpriteId,
-        val bodyRadius: WorldRadius,
+        val bodyRadius: Float,
         val attackTriggerRadius: Float,
     ) : EgressDataPacket(CREATURE_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
@@ -50,7 +50,7 @@ sealed class EgressDataPacket(
             buffer.putUInt(currentHealth)
             buffer.putVector(position)
             buffer.putUShort(spriteId.value)
-            buffer.putUShort(bodyRadius.value.toUShort())
+            buffer.putFloat(bodyRadius)
             buffer.putFloat(attackTriggerRadius)
         }
     }

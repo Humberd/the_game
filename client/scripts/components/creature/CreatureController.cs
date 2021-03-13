@@ -16,7 +16,7 @@ namespace Client.scripts.components.creature
         private CID _cid;
         private uint _health;
         private string _name;
-        private ushort _bodyRadius;
+        private float _bodyRadius;
         private ushort _attackTriggerRadius;
 
         private SpriteId _spriteId;
@@ -94,7 +94,7 @@ namespace Client.scripts.components.creature
             UpdateName(playerUpdate.Name);
             UpdateHealth(playerUpdate.BaseHealth, playerUpdate.CurrentHealth);
             UpdateOutfit(playerUpdate.SpriteId);
-            _bodyRadius = playerUpdate.BodyRadius;
+            _bodyRadius = playerUpdate.BodyRadius * 64;
             _attackTriggerRadius = playerUpdate.AttackTriggerRadius;
         }
     }
