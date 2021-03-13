@@ -40,8 +40,11 @@ namespace Client.scripts.components.creature
                     }
                 }
             }
+        }
 
-            if (@event is InputEventMouseMotion eventMouseMotion && _isRequestingPositionChange)
+        public override void _Process(float delta)
+        {
+            if (_isRequestingPositionChange)
             {
                 SendPositionChange();
             }
