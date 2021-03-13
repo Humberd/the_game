@@ -109,8 +109,14 @@ class GameMap(
             if (it >= gridHeight) gridHeight - 1 else it
         }
 
-        val result = Array<Array<Tile?>>(endX - startX + 1) {
-            Array(endY - startY + 1) {
+        val arrWidth = (endX - startX + 1).also {
+            if (it <= 0) return emptyArray()
+        }
+        val arrHeight = (endY - startY + 1).also {
+            if (it <= 0) return emptyArray()
+        }
+        val result = Array<Array<Tile?>>(arrWidth) {
+            Array(arrHeight) {
                 null
             }
         }

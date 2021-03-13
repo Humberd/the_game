@@ -118,6 +118,14 @@ abstract class Creature(
             stopMoving()
         }
 
+        val oldGridCoords = lastUpdate.gridPosition
+        val newGridCoords = toGridPosition(position)
+        val tileChanged = oldGridCoords != newGridCoords
+        if (tileChanged) {
+            lastUpdate.gridPosition = newGridCoords
+            lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
+        }
+
         if (this is Player) {
             hooks.onMoved()
         }

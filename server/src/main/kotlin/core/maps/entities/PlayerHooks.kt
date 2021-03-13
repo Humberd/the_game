@@ -9,6 +9,7 @@ class PlayerHooks(
     fun onAddedToMap(gameMap: GameMap) {
         notifier.notifyPlayerDetails(player.pid, player)
         notifier.notifyCreatureUpdate(player.pid, player)
+        notifier.notifyTerrainUpdate(player)
     }
 
     fun onRemovedFromMap(gameMap: GameMap) {
@@ -17,5 +18,6 @@ class PlayerHooks(
 
     fun onMoved() {
         notifier.notifyCreatureUpdate(player.pid, player)
+        notifier.notifyTerrainUpdate(player)
     }
 }
