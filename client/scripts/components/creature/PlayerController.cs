@@ -7,6 +7,7 @@ namespace Client.scripts.components.creature
     public class PlayerController : CreatureController
     {
         private Camera2D _camera2D;
+        private bool _isRequestingPositionChange;
 
         public override void _Ready()
         {
@@ -26,11 +27,29 @@ namespace Client.scripts.components.creature
         {
             if (@event is InputEventMouseButton eventMouseButton)
             {
-                if (eventMouseButton.Pressed && eventMouseButton.ButtonIndex == (int) ButtonList.Right)
+                if (eventMouseButton.ButtonIndex == (int) ButtonList.Right)
                 {
-                    ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(GetGlobalMousePosition() / 64f));
+                    if (eventMouseButton.Pressed)
+                    {
+                        _isRequestingPositionChange = true;
+                        SendPositionChange();
+                    }
+                    else
+                    {
+                        _isRequestingPositionChange = false;
+                    }
                 }
             }
+
+            if (@event is InputEventMouseMotion eventMouseMotion && _isRequestingPositionChange)
+            {
+                SendPositionChange();
+            }
+        }
+
+        private void SendPositionChange()
+        {
+            ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(GetGlobalMousePosition() / 64f));
         }
     }
 }
