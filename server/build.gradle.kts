@@ -13,7 +13,6 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.mini2Dx:gdx-math:1.9.13")
 
     // Logging
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.2")

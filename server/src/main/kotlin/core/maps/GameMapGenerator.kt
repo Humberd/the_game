@@ -2,7 +2,6 @@ package core.maps
 
 import core.maps.entities.GameMap
 import core.maps.entities.Item
-import core.maps.entities.Monster
 import core.maps.entities.Tile
 import core.types.*
 import gameland.items.TeleportActionHandler
@@ -60,13 +59,12 @@ object GameMapGenerator {
                 )
             ),
             creatures = listOf(
-                Monster(
-                    cid = CID.unique(),
-                    name = CreatureName("Ghost"),
-                    health = 100u,
-                    spriteId = SpriteId(6u),
-                    position = WorldPosition(300f, 300f)
-                )
+//                Monster(
+//                    cid = CID.unique(),
+//                    name = CreatureName("Ghost"),
+//                    health = 100u,
+//                    spriteId = SpriteId(6u),
+//                )
             )
         )
     }

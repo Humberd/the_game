@@ -1,11 +1,13 @@
 package core.maps.entities
 
+import com.badlogic.gdx.math.Vector2
 import core.AsyncGameTask
 import core.GameLoop
-import core.types.*
+import core.types.CID
+import core.types.CreatureName
+import core.types.SpriteId
+import core.types.WorldRadius
 import errors.NOT_REACHED
-import org.mini2Dx.gdx.math.Vector2
-import utils.getDistance
 import utils.ms
 import utils.sec
 
@@ -14,8 +16,7 @@ class Monster(
     name: CreatureName,
     health: UInt,
     spriteId: SpriteId,
-    position: WorldPosition = Vector2(0f, 0f)
-) : Creature(cid, name, health, spriteId, position) {
+) : Creature(cid, name, health, spriteId) {
 
     val attackTriggerRadius = WorldRadius(85)
     private var isWalking = false
@@ -32,23 +33,23 @@ class Monster(
     }
 
     override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {
-        if (otherCreature is Player) {
-            if (!isAttacking) {
-                tryStartToAttack(otherCreature)
-            } else {
-                tryStopToAttack(otherCreature)
-            }
-        }
+//        if (otherCreature is Player) {
+//            if (!isAttacking) {
+//                tryStartToAttack(otherCreature)
+//            } else {
+//                tryStopToAttack(otherCreature)
+//            }
+//        }
     }
 
     override fun onOtherCreaturePositionChange(otherCreature: Creature) {
-        if (otherCreature is Player) {
-            if (!isAttacking) {
-                tryStartToAttack(otherCreature)
-            } else {
-                tryStopToAttack(otherCreature)
-            }
-        }
+//        if (otherCreature is Player) {
+//            if (!isAttacking) {
+//                tryStartToAttack(otherCreature)
+//            } else {
+//                tryStopToAttack(otherCreature)
+//            }
+//        }
     }
 
     private fun stopAttacking() {
@@ -68,20 +69,20 @@ class Monster(
     }
 
     private fun tryStartToAttack(otherCreature: Player) {
-        val totalDistance = getDistance(this.position, otherCreature.position)
-        val maxDistToAttack = attackTriggerRadius.value + otherCreature.bodyRadius.value
-        if (totalDistance < maxDistToAttack) {
-            startAttacking(otherCreature)
-        }
+//        val totalDistance = getDistance(this.position, otherCreature.position)
+//        val maxDistToAttack = attackTriggerRadius.value + otherCreature.bodyRadius.value
+//        if (totalDistance < maxDistToAttack) {
+//            startAttacking(otherCreature)
+//        }
     }
 
 
     private fun tryStopToAttack(otherCreature: Player) {
-        val totalDistance = getDistance(this.position, otherCreature.position)
-        val maxDistToAttack = attackTriggerRadius.value + otherCreature.bodyRadius.value
-        if (totalDistance >= maxDistToAttack) {
-            stopAttacking()
-        }
+//        val totalDistance = getDistance(this.position, otherCreature.position)
+//        val maxDistToAttack = attackTriggerRadius.value + otherCreature.bodyRadius.value
+//        if (totalDistance >= maxDistToAttack) {
+//            stopAttacking()
+//        }
     }
 
 

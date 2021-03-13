@@ -1,8 +1,11 @@
 package infrastructure.udp.ingress
 
-import core.types.*
-import utils.uByte
+import core.types.IID
+import core.types.PID
+import core.types.SID
+import core.types.WorldPosition
 import utils.uInt
+import utils.vector
 import java.nio.ByteBuffer
 
 enum class IngressPacketType(val value: Int) {
@@ -33,13 +36,13 @@ sealed class IngressPacket {
     data class AuthLogin(val pid: PID) : IngressPacket()
     data class PositionChange(
         val pid: PID,
-        val direction: DirectionByte
+        val targetPosition: WorldPosition
     ) : IngressPacket() {
         companion object {
             fun from(buffer: ByteBuffer, pid: PID): PositionChange {
                 return PositionChange(
                     pid = pid,
-                    direction = DirectionByte(buffer.uByte())
+                    targetPosition = buffer.vector()
                 )
             }
         }

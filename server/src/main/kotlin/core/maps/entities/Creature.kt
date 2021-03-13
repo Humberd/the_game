@@ -1,35 +1,98 @@
 package core.maps.entities
 
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.*
 import core.StateChangeNotifier
 import core.maps.GameMapController
 import core.types.*
 import infrastructure.udp.egress.EgressDataPacket
-import org.mini2Dx.gdx.math.Vector2
+import utils.getDistance
 
 abstract class Creature(
     val cid: CID,
     val name: CreatureName,
     var health: UInt,
     val spriteId: SpriteId,
-    var position: WorldPosition
 ) {
-    var movementSpeed = 3f
+    val velocity = 3f
     val tilesViewRadius = TileRadius(3)
-    val bodyRadius = WorldRadius(32)
 
     val lastUpdate: LastUpdate
+
+    lateinit var fixture: Fixture
 
     open val scriptable = ScriptableCreature()
 
     protected lateinit var gameMapController: GameMapController
     protected lateinit var notifier: StateChangeNotifier
 
+    val position: WorldPosition
+        get() = fixture.body.position
+    var targetPosition: WorldPosition? = null
+
+    fun isMoving(): Boolean {
+        return targetPosition != null
+    }
+
+    fun stopMoving() {
+        targetPosition = null
+        fixture.body.setLinearVelocity(0f, 0f)
+    }
+
+    fun startMovingTo(targetPosition: WorldPosition) {
+        val velocity = targetPosition.cpy().sub(position).nor()
+        velocity.x *= this.velocity
+        velocity.y *= this.velocity
+        this.targetPosition = targetPosition
+        fixture.body.setLinearVelocity(velocity)
+    }
+
+    fun afterPhysicsUpdate(deltaTime: Float) {
+        if (!isMoving()) {
+            return
+        }
+
+        val distanceToStopMoving = deltaTime * velocity
+        val currentDistance = getDistance(position, targetPosition!!)
+        if (distanceToStopMoving > currentDistance) {
+            stopMoving()
+        }
+
+        if (this is Player) {
+            notifier.notifyCreatureUpdate(pid, this)
+        }
+    }
+
 
     init {
         lastUpdate = LastUpdate(
-            gridPosition = GameMap.toGridPosition(position),
+            gridPosition = GameMap.toGridPosition(WorldPosition(0f, 0f)),
             tileSlice = emptyArray()
         )
+    }
+
+    fun createPhysicsBody(world: World) {
+        val bodyDef = BodyDef().also {
+            it.type = BodyDef.BodyType.DynamicBody
+            it.position.set(0f, 0f)
+        }
+
+        val body = world.createBody(bodyDef)
+
+        val shape = CircleShape().also {
+            it.radius = 0.5f
+        }
+
+        val fixtureDef = FixtureDef().also {
+            it.shape = shape
+            it.density = 0f
+            it.friction = 0f
+            it.restitution = 0f
+        }
+
+        fixture = body.createFixture(fixtureDef)
+
+        shape.dispose()
     }
 
     data class LastUpdate(
@@ -48,11 +111,11 @@ abstract class Creature(
 
     inner open class ScriptableCreature {
         fun moveBy(vector: Vector2) {
-            gameMapController.moveBy(cid, vector)
+//            gameMapController.moveBy(cid, vector)
         }
 
         fun moveTo(targetPosition: WorldPosition) {
-            gameMapController.moveTo(this@Creature, targetPosition)
+//            gameMapController.moveTo(this@Creature, targetPosition)
         }
     }
 

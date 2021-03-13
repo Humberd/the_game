@@ -55,8 +55,7 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.PositionChange) {
-        val direction = action.direction.toDirection().toVector2()
-        gamesManager.movePlayerBy(action.pid, direction)
+        gamesManager.movePlayerBy(action.pid, action.targetPosition)
     }
 
     fun handle(action: IngressPacket.TerrainItemDrag) {
@@ -65,5 +64,9 @@ class GameActionHandler(
 
     fun handle(action: IngressPacket.SpellUsage) {
         gamesManager.useSpell(action.pid,action.sid)
+    }
+
+    fun onPhysicsStep(deltaTime: Float) {
+        gamesManager.onPhysicsStep(deltaTime)
     }
 }

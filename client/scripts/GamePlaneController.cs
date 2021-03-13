@@ -10,7 +10,7 @@ using CID = System.UInt32;
 
 namespace Client.scripts
 {
-    public class GamePlaneController : Node
+    public class GamePlaneController : Node2D
     {
         private TerrainController _terrainController;
         private ItemsPlaneController _itemsPlaneController;
@@ -46,7 +46,6 @@ namespace Client.scripts
         {
             if (_allCreatures.ContainsKey(action.Cid))
             {
-                Console.WriteLine($"Creature exists for {action.Cid}");
                 var creature = _allCreatures[action.Cid];
                 creature.UpdateData(action);
                 return;

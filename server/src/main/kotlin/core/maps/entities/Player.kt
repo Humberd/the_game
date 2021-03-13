@@ -1,7 +1,6 @@
 package core.maps.entities
 
 import core.types.*
-import org.mini2Dx.gdx.math.Vector2
 import utils.Milliseconds
 
 data class Spell(
@@ -38,9 +37,8 @@ class Player(
     name: CreatureName,
     health: UInt,
     spriteId: SpriteId,
-    position: WorldPosition = Vector2(0f, 0f),
     val spellsContainer: SpellsContainer
-) : Creature(cid, name, health, spriteId, position) {
+) : Creature(cid, name, health, spriteId) {
 
     override val scriptable = ScriptablePlayer()
 

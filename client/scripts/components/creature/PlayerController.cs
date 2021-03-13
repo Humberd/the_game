@@ -6,37 +6,31 @@ namespace Client.scripts.components.creature
 {
     public class PlayerController : CreatureController
     {
+        private Camera2D _camera2D;
+
         public override void _Ready()
         {
             Console.WriteLine("Hello from Main Player Controller C#");
 
-            var camera2D = new Camera2D
+            _camera2D = new Camera2D
             {
-                Current = true
+                Current = true,
+                SmoothingEnabled = true,
             };
 
-            AddChild(camera2D);
+            AddChild(_camera2D);
         }
 
-        public override void _PhysicsProcess(float delta)
+
+        public override void _Input(InputEvent @event)
         {
-            var mask = GetInput();
-            if (mask != 0)
+            if (@event is InputEventMouseButton eventMouseButton)
             {
-                ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(mask));
+                if (eventMouseButton.Pressed && eventMouseButton.ButtonIndex == (int) ButtonList.Right)
+                {
+                    ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(GetGlobalMousePosition() / 64f));
+                }
             }
-        }
-
-        private byte GetInput()
-        {
-            byte mask = 0;
-
-            if (Input.IsActionPressed("up")) mask |= 0x1;
-            if (Input.IsActionPressed("down")) mask |= 0x4;
-            if (Input.IsActionPressed("right")) mask |= 0x2;
-            if (Input.IsActionPressed("left")) mask |= 0x8;
-
-            return mask;
         }
     }
 }

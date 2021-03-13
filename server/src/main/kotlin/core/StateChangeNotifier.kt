@@ -20,7 +20,7 @@ class StateChangeNotifier(
                 health = creature.health,
                 position = creature.position,
                 spriteId = creature.spriteId,
-                bodyRadius = creature.bodyRadius,
+                bodyRadius = WorldRadius(0),
                 attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else WorldRadius(0)
             )
         )

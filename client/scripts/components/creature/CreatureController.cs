@@ -1,4 +1,5 @@
-﻿using Client.scripts.global.udp.ingress;
+﻿using System;
+using Client.scripts.global.udp.ingress;
 using global::Client.scripts.global;
 using Godot;
 using PID = System.UInt32;
@@ -7,7 +8,7 @@ using SpriteId = System.UInt16;
 
 namespace Client.scripts.components.creature
 {
-    public class CreatureController : Node2D
+    public class CreatureController : KinematicBody2D
     {
         private readonly Sprite _sprite;
         private readonly CreatureInfoController _creatureInfoController;
@@ -56,7 +57,7 @@ namespace Client.scripts.components.creature
 
         public void UpdatePosition(Vector2 position)
         {
-            Position = position;
+            Position = position * 64;
         }
 
         public void UpdateName(string name)

@@ -74,8 +74,22 @@ class GameLoop(
                 }
             }
             asyncGameTasks.removeAll { it.scheduledForDeletion }
+
+            simulatePhysics()
             sleep(10)
         }
+    }
+
+    var currentTime = System.currentTimeMillis()
+
+    private fun simulatePhysics() {
+        val newTime = System.currentTimeMillis()
+        val deltaTimeInMs = (newTime - currentTime).toFloat()
+        val deltaTimeInSec = deltaTimeInMs / 1000
+        currentTime = newTime
+
+        // fixme: should use 1/60 deltaTime
+        gameActionHandler.onPhysicsStep(deltaTimeInSec)
     }
 
     fun requestAction(action: IngressPacket) {

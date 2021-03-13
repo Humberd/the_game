@@ -4,7 +4,6 @@ import core.maps.GameMapController
 import core.maps.GameMapGenerator
 import core.maps.entities.Player
 import core.types.*
-import org.mini2Dx.gdx.math.Vector2
 
 class GamesManager(
     private val notifier: StateChangeNotifier,
@@ -30,9 +29,9 @@ class GamesManager(
         ctrl.removePlayer(pid)
     }
 
-    fun movePlayerBy(pid: PID, vector: Vector2) {
+    fun movePlayerBy(pid: PID, targetPosition: WorldPosition) {
         val ctrl = getMapController(pid)
-        ctrl.moveBy(pid, vector)
+        ctrl.moveToV2(pid, targetPosition)
     }
 
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
@@ -43,6 +42,12 @@ class GamesManager(
     fun useSpell(pid: PID, sid: SID) {
         val ctrl = getMapController(pid)
         ctrl.useSpell(pid, sid)
+    }
+
+    fun onPhysicsStep(deltaTime: Float) {
+        controllers.values.forEach {
+            it.onPhysicsStep(deltaTime)
+        }
     }
 
     private fun getMapController(pid: PID): GameMapController {

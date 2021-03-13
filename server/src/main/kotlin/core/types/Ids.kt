@@ -1,6 +1,6 @@
 package core.types
 
-import org.mini2Dx.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector2
 
 // Unique PlayerId
 inline class PID(val value: UInt) {

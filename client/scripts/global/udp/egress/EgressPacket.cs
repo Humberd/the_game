@@ -77,16 +77,16 @@ namespace Client.scripts.global.udp.egress
 
         public class PositionChange: EgressDataPacket
         {
-            private readonly byte _mask;
+            private readonly Vector2 _targetPosition;
 
-            public PositionChange(byte mask) : base(EgressPacketType.POSITION_CHANGE)
+            public PositionChange(Vector2 targetPosition) : base(EgressPacketType.POSITION_CHANGE)
             {
-                _mask = mask;
+                _targetPosition = targetPosition;
             }
 
             protected override void PackData(StreamPeerBuffer buffer)
             {
-                buffer.PutU8(_mask);
+                buffer.PutVector2(_targetPosition);
             }
         }
 

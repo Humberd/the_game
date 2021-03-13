@@ -1,6 +1,6 @@
 package utils
 
-import org.mini2Dx.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector2
 import java.nio.ByteBuffer
 
 fun ByteBuffer.uByte(): UByte {
@@ -17,6 +17,10 @@ fun ByteBuffer.uInt(): UInt {
 
 fun ByteBuffer.uLong(): ULong {
     return this.long.toULong()
+}
+
+fun ByteBuffer.vector(): Vector2 {
+    return Vector2(float, float)
 }
 
 fun ByteBuffer.putUByte(value: UByte) {

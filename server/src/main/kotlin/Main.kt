@@ -1,5 +1,3 @@
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
 import core.GameActionHandler
 import core.GameLoop
 import core.GamesManager
@@ -42,6 +40,4 @@ fun main() {
     udpConnectionPersistor.start()
     udpEgressServer.start()
     udpIngressServer.start()
-
-    val world = World(Vector2(0f, 10f), true)
 }
