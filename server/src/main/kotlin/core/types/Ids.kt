@@ -55,3 +55,8 @@ inline class WorldRadius(val value: Int) {
 }
 
 typealias WorldPosition = Vector2
+
+data class GridPosition(
+    val x: Coordinate,
+    val y: Coordinate
+)

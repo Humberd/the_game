@@ -1,60 +1,66 @@
 package core
 
-import core.maps.GameMapController
 import core.maps.GameMapGenerator
+import core.maps.entities.CreatureSeed
+import core.maps.entities.GameMap
 import core.maps.entities.Player
+import core.maps.entities.PlayerSeed
 import core.types.*
 
 class GamesManager(
     private val notifier: StateChangeNotifier,
 ) {
-    private val controllers = HashMap<GameMapId, GameMapController>()
+    private val maps = HashMap<GameMapId, GameMap>()
     private val playerLUT = HashMap<PID, GameMapId>()
 
     init {
         GameMapGenerator.generateMap1(20, 20).also { map ->
-            controllers[map.id] = GameMapController(notifier, map)
+            maps[map.id] = map
         }
     }
 
-    fun addPlayer(player: Player, gameMapId: GameMapId) {
-        val ctrl = getMapController(gameMapId)
-        playerLUT[player.pid] = gameMapId
-        ctrl.addPlayer(player)
+    fun addPlayer(creatureSeed: CreatureSeed, playerSeed: PlayerSeed) {
+        //fixme: hardcoded gameMapId
+        val gameMapId = GameMapId(1u)
+        val map = getMap(gameMapId)
+        playerLUT[playerSeed.pid] = gameMapId
+
+        val player = Player(creatureSeed, map, notifier, playerSeed)
+        map.players.add(player)
     }
 
     fun removePlayer(pid: PID) {
-        val ctrl = getMapController(pid)
+        val map = getMap(pid)
         playerLUT.remove(pid)
-        ctrl.removePlayer(pid)
+        map.players.remove(pid)
     }
 
-    fun movePlayerBy(pid: PID, targetPosition: WorldPosition) {
-        val ctrl = getMapController(pid)
-        ctrl.moveToV2(pid, targetPosition)
+    fun movePlayerTo(pid: PID, targetPosition: WorldPosition) {
+        val map = getMap(pid)
+        map.players.moveTo(pid, targetPosition)
     }
 
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
-        val ctrl = getMapController(pid)
-        ctrl.moveItemOnTerrain(pid, iid, targetPosition)
+        val map = getMap(pid)
+//        map.moveItemOnTerrain(pid, iid, targetPosition)
     }
 
     fun useSpell(pid: PID, sid: SID) {
-        val ctrl = getMapController(pid)
-        ctrl.useSpell(pid, sid)
+        val map = getMap(pid)
+//        map.useSpell(pid, sid)
     }
 
     fun onPhysicsStep(deltaTime: Float) {
-        controllers.values.forEach {
+        maps.values.forEach {
             it.onPhysicsStep(deltaTime)
         }
     }
 
-    private fun getMapController(pid: PID): GameMapController {
-        return controllers[playerLUT[pid]] ?: throw Error("GameMapController not found for ${pid}")
+    private fun getMap(pid: PID): GameMap {
+        return maps[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
     }
 
-    private fun getMapController(gameMapId: GameMapId): GameMapController {
-        return controllers[gameMapId] ?: throw Error("GameMapController not found for ${gameMapId}")
+    private fun getMap(gameMapId: GameMapId): GameMap {
+        return maps[gameMapId] ?: throw Error("GameMap not found for ${gameMapId}")
     }
 }

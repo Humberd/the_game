@@ -1,17 +1,8 @@
 package core
 
-import core.maps.entities.Player
-import core.maps.entities.Spell
-import core.maps.entities.SpellsContainer
-import core.types.CID
-import core.types.GameMapId
-import core.types.SID
-import core.types.SpriteId
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
 import mu.KotlinLogging
-import utils.ms
-import utils.sec
 
 private val logger = KotlinLogging.logger {}
 
@@ -29,33 +20,15 @@ class GameActionHandler(
 
     fun handle(action: IngressPacket.AuthLogin) {
         val dbPlayer = database.getPlayer(action.pid)
-        val playerCharacter = Player(
-            pid = dbPlayer.id,
-            cid = CID.unique(),
-            name = dbPlayer.name,
-            health = dbPlayer.health,
-            spriteId = dbPlayer.spriteId,
-            spellsContainer = SpellsContainer(
-                spell1 = Spell(
-                    sid = SID.unique(),
-                    name = "Grizzly Beam",
-                    spriteId = SpriteId(11u),
-                    cooldown = 1500.ms
-                ),
-                spell3 = Spell(
-                    sid = SID.unique(),
-                    name = "Mega inferno blast",
-                    spriteId = SpriteId(9u),
-                    cooldown = 12.sec
-                )
-            )
-        )
 
-        gamesManager.addPlayer(playerCharacter, GameMapId(1u))
+        val creatureSeed = dbPlayer.toCreatureSeed()
+        val playerSeed = dbPlayer.toPlayerSeed()
+
+        gamesManager.addPlayer(creatureSeed,playerSeed)
     }
 
     fun handle(action: IngressPacket.PositionChange) {
-        gamesManager.movePlayerBy(action.pid, action.targetPosition)
+        gamesManager.movePlayerTo(action.pid, action.targetPosition)
     }
 
     fun handle(action: IngressPacket.TerrainItemDrag) {

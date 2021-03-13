@@ -10,6 +10,6 @@ interface ItemActionHandler {
         val defaultImpl: ItemActionHandler = DefaultItemActionHandlerImpl()
     }
 
-    fun onItemWalkedOn(creature: Creature.ScriptableCreature, item: Item) {}
+    fun onItemWalkedOn(creature: Creature, item: Item) {}
     fun onItem__(value: Int) = value
 }

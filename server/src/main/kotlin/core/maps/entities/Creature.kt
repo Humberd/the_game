@@ -1,33 +1,93 @@
 package core.maps.entities
 
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.CircleShape
+import com.badlogic.gdx.physics.box2d.Fixture
+import com.badlogic.gdx.physics.box2d.FixtureDef
 import core.StateChangeNotifier
-import core.maps.GameMapController
 import core.types.*
 import infrastructure.udp.egress.EgressDataPacket
 import utils.getDistance
+import utils.toGridPosition
+
+data class CreatureSeed(
+    val name: CreatureName,
+    val baseHealth: UInt,
+    val currentHealth: UInt,
+    val spriteId: SpriteId,
+    val position: WorldPosition,
+    val velocity: Float,
+    val tilesViewRadius: TileRadius,
+    val bodyRadius: Float
+)
 
 abstract class Creature(
-    val cid: CID,
-    val name: CreatureName,
-    var health: UInt,
-    val spriteId: SpriteId,
+    creatureSeed: CreatureSeed,
+    protected val gameMap: GameMap,
+    protected val notifier: StateChangeNotifier
 ) {
-    val velocity = 3f
-    val tilesViewRadius = TileRadius(3)
+    val cid = CID.unique()
 
-    val lastUpdate: LastUpdate
+    var name: CreatureName = creatureSeed.name
+        private set
 
-    lateinit var fixture: Fixture
+    var baseHealth: UInt = creatureSeed.baseHealth
+        private set
 
-    open val scriptable = ScriptableCreature()
+    var currentHealth: UInt = creatureSeed.currentHealth
+        private set
 
-    protected lateinit var gameMapController: GameMapController
-    protected lateinit var notifier: StateChangeNotifier
+    var spriteId: SpriteId = creatureSeed.spriteId
+        private set
 
     val position: WorldPosition
         get() = fixture.body.position
+
+    var velocity: Float = creatureSeed.velocity
+        private set
+
+    var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
+        private set
+
+    val bodyRadius: Float
+        get() = fixture.shape.radius
+
+    val lastUpdate: LastUpdate
+
+    init {
+        val gridPosition = toGridPosition(creatureSeed.position)
+        lastUpdate = LastUpdate(
+            gridPosition = gridPosition,
+            tileSlice = gameMap.getTilesAround(gridPosition, tilesViewRadius.value)
+        )
+    }
+
+    val fixture: Fixture
+
+    init {
+        val bodyDef = BodyDef().also {
+            it.type = BodyDef.BodyType.DynamicBody
+            it.position.set(creatureSeed.position)
+        }
+
+        val body = gameMap.physics.createBody(bodyDef)
+
+        val shape = CircleShape().also {
+            it.radius = creatureSeed.bodyRadius
+        }
+
+        val fixtureDef = FixtureDef().also {
+            it.shape = shape
+            it.density = 0f
+            it.friction = 0f
+            it.restitution = 0f
+        }
+
+        fixture = body.createFixture(fixtureDef)
+
+        shape.dispose()
+    }
+
     var targetPosition: WorldPosition? = null
 
     fun isMoving(): Boolean {
@@ -59,65 +119,14 @@ abstract class Creature(
         }
 
         if (this is Player) {
-            notifier.notifyCreatureUpdate(pid, this)
+            hooks.onMoved()
         }
-    }
-
-
-    init {
-        lastUpdate = LastUpdate(
-            gridPosition = GameMap.toGridPosition(WorldPosition(0f, 0f)),
-            tileSlice = emptyArray()
-        )
-    }
-
-    fun createPhysicsBody(world: World) {
-        val bodyDef = BodyDef().also {
-            it.type = BodyDef.BodyType.DynamicBody
-            it.position.set(0f, 0f)
-        }
-
-        val body = world.createBody(bodyDef)
-
-        val shape = CircleShape().also {
-            it.radius = 0.5f
-        }
-
-        val fixtureDef = FixtureDef().also {
-            it.shape = shape
-            it.density = 0f
-            it.friction = 0f
-            it.restitution = 0f
-        }
-
-        fixture = body.createFixture(fixtureDef)
-
-        shape.dispose()
     }
 
     data class LastUpdate(
-        var gridPosition: GameMap.GridPosition,
+        var gridPosition: GridPosition,
         var tileSlice: Array<Array<Tile>>
     )
-
-    fun connectWithMap(gameMapController: GameMapController, notifier: StateChangeNotifier) {
-        if (this::gameMapController.isInitialized) {
-            throw Error("Scriptable object is already connected with a map")
-        }
-        this.gameMapController = gameMapController
-        this.notifier = notifier
-
-    }
-
-    inner open class ScriptableCreature {
-        fun moveBy(vector: Vector2) {
-//            gameMapController.moveBy(cid, vector)
-        }
-
-        fun moveTo(targetPosition: WorldPosition) {
-//            gameMapController.moveTo(this@Creature, targetPosition)
-        }
-    }
 
     abstract fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature)
     abstract fun onOtherCreatureAppearInViewRange(otherCreature: Creature)
@@ -128,7 +137,7 @@ abstract class Creature(
 
         lastUpdate.tileSlice.forEach {
             it.forEach {
-                it.writeItemsTo(buffer)
+                it.items.writeTo(buffer)
             }
         }
 
@@ -140,7 +149,7 @@ abstract class Creature(
 
         lastUpdate.tileSlice.forEach {
             it.forEach {
-                it.writeCreaturesTo(buffer)
+                it.creatures.writeTo(buffer)
             }
         }
 
@@ -152,13 +161,13 @@ abstract class Creature(
     }
 
     fun takeDamage(damage: UInt) {
-        val newHealth = health.toInt() - damage.toInt()
+        val newHealth = currentHealth.toInt() - damage.toInt()
 
         if (newHealth <= 0) {
-            health = 0u
+            currentHealth = 0u
             // call dead hook
         } else {
-            health = newHealth.toUInt()
+            currentHealth = newHealth.toUInt()
         }
 
         if (this is Player) {
@@ -172,6 +181,6 @@ abstract class Creature(
     }
 
     fun isDead(): Boolean {
-        return health == 0u
+        return currentHealth == 0u
     }
 }

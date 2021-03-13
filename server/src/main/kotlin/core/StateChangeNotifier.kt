@@ -17,11 +17,11 @@ class StateChangeNotifier(
             EgressDataPacket.CreatureUpdate(
                 cid = creature.cid,
                 name = creature.name,
-                health = creature.health,
+                health = creature.currentHealth,
                 position = creature.position,
                 spriteId = creature.spriteId,
                 bodyRadius = WorldRadius(0),
-                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else WorldRadius(0)
+                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f
             )
         )
     }

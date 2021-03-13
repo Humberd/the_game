@@ -1,6 +1,9 @@
 package core.maps.entities
 
-import core.types.*
+import core.StateChangeNotifier
+import core.types.PID
+import core.types.SID
+import core.types.SpriteId
 import utils.Milliseconds
 
 data class Spell(
@@ -31,18 +34,21 @@ class SpellsContainer(
     }
 }
 
-class Player(
+data class PlayerSeed(
     val pid: PID,
-    cid: CID,
-    name: CreatureName,
-    health: UInt,
-    spriteId: SpriteId,
     val spellsContainer: SpellsContainer
-) : Creature(cid, name, health, spriteId) {
+)
 
-    override val scriptable = ScriptablePlayer()
+class Player(
+    creatureSeed: CreatureSeed,
+    gameMap: GameMap,
+    notifier: StateChangeNotifier,
+    playerSeed: PlayerSeed
+) : Creature(creatureSeed, gameMap, notifier) {
+    val pid = playerSeed.pid
+    val spellsContainer = playerSeed.spellsContainer
 
-    inner class ScriptablePlayer : ScriptableCreature()
+    val hooks = PlayerHooks(this, notifier)
 
     override fun toString(): String {
         return pid.toString()
@@ -60,28 +66,3 @@ class Player(
         notifier.notifyCreaturePositionUpdate(pid, otherCreature)
     }
 }
-
-
-//abstract class Base(
-//    private val baseName: String
-//) {
-//    open val child = Child()
-//
-//    open inner class Child {
-//        fun compute() = baseName
-//    }
-//}
-//
-//class Car(
-//    private val name: String
-//) : Base("Hello") {
-//    override val child = Mercedes()
-//
-//    inner class Mercedes : Base.Child() {
-//        fun getName() = name
-//    }
-//}
-//
-//val car = Car("BMW")
-//val compute = println(car.child.compute())
-//val name = println(car.child.getName())
