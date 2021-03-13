@@ -28,6 +28,14 @@ class PlayerHooks(
 
     override fun onRemovedFromMap(gameMap: GameMap) {
         notifier.notifyCreatureDisappear(player.pid, player)
+
+        player.creaturesThatSeeMe.forEach {
+            it.creaturesISee.unregister(player)
+        }
+
+        player.creaturesISee.getAll().forEach {
+            player.creaturesISee.unregister(it)
+        }
     }
 
     override fun onMoved() {

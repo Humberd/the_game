@@ -118,6 +118,10 @@ abstract class Creature(
 
             hooks.onOtherCreatureDisappearFromViewRange(creature)
         }
+
+        fun getAll(): Collection<Creature> {
+            return ArrayList(set)
+        }
     }
 
     var targetPosition: WorldPosition? = null
@@ -174,6 +178,7 @@ abstract class Creature(
             [3, 4] -> Creature Position Update
             [5, 6] -> Creature Update
              */
+
 
         }
 
