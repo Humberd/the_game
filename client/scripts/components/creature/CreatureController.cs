@@ -69,12 +69,12 @@ namespace Client.scripts.components.creature
             }
         }
 
-        public void UpdateHealth(uint health)
+        public void UpdateHealth(uint baseHealth, uint currentHealth)
         {
-            if (_health != health)
+            if (_health != currentHealth)
             {
-                _health = health;
-                _creatureInfoController.UpdateHealth(health, 130);
+                _health = currentHealth;
+                _creatureInfoController.UpdateHealth(currentHealth, baseHealth);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Client.scripts.components.creature
             UpdateCid(playerUpdate.Cid);
             UpdatePosition(playerUpdate.Position);
             UpdateName(playerUpdate.Name);
-            UpdateHealth(playerUpdate.Health);
+            UpdateHealth(playerUpdate.BaseHealth, playerUpdate.CurrentHealth);
             UpdateOutfit(playerUpdate.SpriteId);
             _bodyRadius = playerUpdate.BodyRadius;
             _attackTriggerRadius = playerUpdate.AttackTriggerRadius;

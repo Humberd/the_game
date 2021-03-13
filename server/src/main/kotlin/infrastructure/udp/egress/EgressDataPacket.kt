@@ -36,7 +36,8 @@ sealed class EgressDataPacket(
     data class CreatureUpdate(
         val cid: CID,
         val name: CreatureName,
-        val health: UInt,
+        val baseHealth: UInt,
+        val currentHealth: UInt,
         val position: WorldPosition,
         val spriteId: SpriteId,
         val bodyRadius: WorldRadius,
@@ -45,7 +46,8 @@ sealed class EgressDataPacket(
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(cid.value)
             buffer.putString(name.value)
-            buffer.putUInt(health)
+            buffer.putUInt(baseHealth)
+            buffer.putUInt(currentHealth)
             buffer.putVector(position)
             buffer.putUShort(spriteId.value)
             buffer.putUShort(bodyRadius.value.toUShort())

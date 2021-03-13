@@ -57,7 +57,7 @@ class GameMap(
         }
 
         fun remove(pid: PID) {
-            if (map.containsKey(pid)) {
+            if (!map.containsKey(pid)) {
                 throw Error("Player doesn't exist")
             }
 

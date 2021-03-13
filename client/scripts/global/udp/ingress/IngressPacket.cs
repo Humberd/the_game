@@ -26,18 +26,20 @@ namespace Client.scripts.global.udp.ingress
         {
             public readonly CID Cid;
             public readonly string Name;
-            public readonly uint Health;
+            public readonly uint BaseHealth;
+            public readonly uint CurrentHealth;
             public readonly Vector2 Position;
             public readonly SpriteId SpriteId;
             public readonly ushort BodyRadius;
             public readonly ushort AttackTriggerRadius;
 
-            public PlayerUpdate(uint cid, string name, uint health, Vector2 position, ushort spriteId,
+            public PlayerUpdate(uint cid, string name, uint baseHealth, uint currentHealth, Vector2 position, ushort spriteId,
                 ushort bodyRadius, ushort attackTriggerRadius)
             {
                 Cid = cid;
                 Name = name;
-                Health = health;
+                BaseHealth = baseHealth;
+                CurrentHealth = currentHealth;
                 Position = position;
                 SpriteId = spriteId;
                 BodyRadius = bodyRadius;
@@ -49,7 +51,8 @@ namespace Client.scripts.global.udp.ingress
                 return new PlayerUpdate(
                     cid: buffer.ReadUInt32(),
                     name: buffer.ReadServerString(),
-                    health: buffer.ReadUInt32(),
+                    baseHealth: buffer.ReadUInt32(),
+                    currentHealth: buffer.ReadUInt32(),
                     position: buffer.ReadVector2(),
                     spriteId: buffer.ReadUInt16(),
                     bodyRadius: buffer.ReadUInt16(),

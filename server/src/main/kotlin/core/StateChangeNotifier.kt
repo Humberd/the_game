@@ -17,7 +17,8 @@ class StateChangeNotifier(
             EgressDataPacket.CreatureUpdate(
                 cid = creature.cid,
                 name = creature.name,
-                health = creature.currentHealth,
+                baseHealth = creature.baseHealth,
+                currentHealth = creature.currentHealth,
                 position = creature.position,
                 spriteId = creature.spriteId,
                 bodyRadius = WorldRadius(0),
