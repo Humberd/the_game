@@ -14,6 +14,8 @@ class Monster(
 ) : Creature(creatureSeed, gameMap, notifier) {
     val attackTriggerRadius = monsterSeed.attackTriggerRadius
 
+    override val hooks = MonsterHooks()
+
     override fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {
     }
 

@@ -37,7 +37,7 @@ data class Tile(
             map.values.forEach { buffer.add(it) }
         }
 
-        fun moveTo(id: Id, item: Item, container: TileContainer<Id, Item>) {
+        fun transferTo(id: Id, item: Item, container: TileContainer<Id, Item>) {
             remove(id)
             container.put(id, item)
         }

@@ -48,7 +48,7 @@ class Player(
     val pid = playerSeed.pid
     val spellsContainer = playerSeed.spellsContainer
 
-    val hooks = PlayerHooks(this, notifier)
+    override val hooks = PlayerHooks(this, notifier)
 
     override fun toString(): String {
         return pid.toString()

@@ -21,13 +21,13 @@ class Database {
              ),
              PID(2u) to PlayerCharacterDAO(
                  pid = PID(2u),
-                 name = CreatureName("Alice"),
+                 name = CreatureName("Bob"),
                  baseHealth = 150u,
                  currentHealth = 30u,
                  spriteId = SpriteId(5u),
                  position = WorldPosition(5f, 4.5f),
                  velocity = 2.5f,
-                 tilesViewRadius = TileRadius(3),
+                 tilesViewRadius = TileRadius(1),
                  bodyRadius = 0.75f
              )
          )

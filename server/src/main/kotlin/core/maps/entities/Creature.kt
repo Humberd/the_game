@@ -26,6 +26,8 @@ abstract class Creature(
     protected val gameMap: GameMap,
     protected val notifier: StateChangeNotifier
 ) {
+    abstract val hooks: CreatureHooks
+
     val cid = CID.unique()
 
     var name: CreatureName = creatureSeed.name
@@ -60,6 +62,7 @@ abstract class Creature(
             gridPosition = gridPosition,
             tileSlice = gameMap.getTilesAround(gridPosition, tilesViewRadius.value)
         )
+        gameMap.getTileAt(gridPosition).creatures.put(cid, this)
     }
 
     val fixture: Fixture
@@ -88,6 +91,35 @@ abstract class Creature(
         shape.dispose()
     }
 
+    val creaturesThatSeeMe = HashSet<Creature>()
+    val creaturesISee = VisibleCreatures()
+
+    inner class VisibleCreatures {
+        private val set = HashSet<Creature>()
+
+        fun register(creature: Creature) {
+            if (set.contains(creature)) {
+                throw Error("Creature already exists")
+            }
+
+            set.add(creature)
+            creature.creaturesThatSeeMe.add(this@Creature)
+
+            hooks.onOtherCreatureAppearInViewRange(creature)
+        }
+
+        fun unregister(creature: Creature) {
+            if (!set.contains(creature)) {
+                throw Error("Creature doesn't exist")
+            }
+
+            set.remove(creature)
+            creature.creaturesThatSeeMe.remove(this@Creature)
+
+            hooks.onOtherCreatureDisappearFromViewRange(creature)
+        }
+    }
+
     var targetPosition: WorldPosition? = null
 
     fun isMoving(): Boolean {
@@ -114,9 +146,9 @@ abstract class Creature(
 
         val testXOutsideMap = position.x.coerceIn(0f, gameMap.gridWidth.toFloat())
         val testYOutsideMap = position.y.coerceIn(0f, gameMap.gridHeight.toFloat())
-        val test = WorldPosition(testXOutsideMap, testYOutsideMap)
-        if (position != test) {
-            fixture.body.setTransform(test, 0f)
+        val testOutsideMap = WorldPosition(testXOutsideMap, testYOutsideMap)
+        if (position != testOutsideMap) {
+            fixture.body.setTransform(testOutsideMap, 0f)
             stopMoving()
         } else {
             val distanceToStopMoving = deltaTime * velocity
@@ -133,10 +165,21 @@ abstract class Creature(
         if (tileChanged) {
             lastUpdate.gridPosition = newGridCoords
             lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
+            gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
+
+            /*
+            [1,2,3,4] -> [3,4,5,6]
+
+            [1, 2] -> Disappear
+            [3, 4] -> Creature Position Update
+            [5, 6] -> Creature Update
+             */
+
         }
 
-        if (this is Player) {
-            hooks.onMoved()
+        hooks.onMoved()
+        creaturesThatSeeMe.forEach {
+            it.hooks.onOtherCreaturePositionChange(this)
         }
     }
 
@@ -161,7 +204,7 @@ abstract class Creature(
         return buffer
     }
 
-    fun getVisibleCreatures(): List<Creature> {
+    fun getGreedyVisibleCreatures(): List<Creature> {
         val buffer = arrayListOf<Creature>()
 
         lastUpdate.tileSlice.forEach {
@@ -174,7 +217,11 @@ abstract class Creature(
     }
 
     fun getVisiblePlayers(): List<Player> {
-        return getVisibleCreatures().filter { it is Player } as List<Player>
+        return getGreedyVisibleCreatures().filter { it is Player } as List<Player>
+    }
+
+    fun canSee(otherCreature: Creature): Boolean {
+        return getGreedyVisibleCreatures().contains(otherCreature)
     }
 
     fun takeDamage(damage: UInt) {
