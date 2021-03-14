@@ -26,6 +26,11 @@ dependencies {
     // physics
     implementation("com.badlogicgames.gdx:gdx-box2d:1.9.14")
     implementation("com.badlogicgames.gdx:gdx-box2d-platform:1.9.14:natives-desktop")
+
+    // physics debug
+    implementation("com.badlogicgames.gdx:gdx:1.9.14")
+    implementation("com.badlogicgames.gdx:gdx-platform:1.9.14:natives-desktop")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.14")
 }
 
 kotlin {

@@ -74,20 +74,25 @@ abstract class Creature(
         }
 
         val body = gameMap.physics.createBody(bodyDef)
+        body.fixtureList
 
         val shape = CircleShape().also {
             it.radius = creatureSeed.bodyRadius
         }
+
+        // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
+        val EVERYTHING = -1
 
         val fixtureDef = FixtureDef().also {
             it.shape = shape
             it.density = 0f
             it.friction = 0f
             it.restitution = 0f
+            it.filter.categoryBits = if (this is Player) CollisionCategory.PLAYER.value else CollisionCategory.MONSTER.value
+            it.filter.maskBits = CollisionCategory.PLAYER.value
         }
 
         fixture = body.createFixture(fixtureDef)
-
         shape.dispose()
     }
 

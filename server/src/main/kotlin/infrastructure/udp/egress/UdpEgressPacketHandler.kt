@@ -2,9 +2,8 @@ package infrastructure.udp.egress
 
 import core.types.PID
 import infrastructure.udp.UdpClientStore
-import java.util.concurrent.ConcurrentLinkedQueue
-
 import mu.KotlinLogging
+import java.util.concurrent.ConcurrentLinkedQueue
 
 private val logger = KotlinLogging.logger {}
 
@@ -23,7 +22,7 @@ class UdpEgressPacketHandler(
     }
 
     fun notify(to: PID, dataPacket: EgressDataPacket) {
-        logger.debug { "Requesting data send to ${to} -> ${dataPacket}" }
+//        logger.debug { "Requesting data send to ${to} -> ${dataPacket}" }
         val client = udpClientStore.getClient(to)
         if (client == null) {
             println("Client not found")

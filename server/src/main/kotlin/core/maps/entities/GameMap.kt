@@ -11,6 +11,12 @@ import utils.toGridPosition
 
 private val logger = KotlinLogging.logger {}
 
+enum class CollisionCategory(val value: Short){
+    PLAYER(0x0001),
+    MONSTER(0x0002),
+    SCENERY(0x0004),
+}
+
 class GameMap(
     val id: GameMapId,
     val gridWidth: Int,
@@ -22,12 +28,15 @@ class GameMap(
     val players = PlayersContainer()
 
     val physics: World
+    val physicsDebug: GameMapDebugRenderer
 
     init {
         val gravity = Vector2(0f, 0f)
         physics = World(gravity, true)
+        physicsDebug = GameMapDebugRenderer(this)
         physics.setContactListener(object : ContactListener {
             override fun beginContact(contact: Contact) {
+                logger.debug { contact }
             }
 
             override fun endContact(contact: Contact?) {
