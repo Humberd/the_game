@@ -14,12 +14,13 @@ class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
     lateinit var debugRenderer: Box2DDebugRenderer
 
     init {
-        LwjglApplication(this, LwjglApplicationConfiguration())
-        camera = OrthographicCamera(50f, 25f)
-        println(camera.combined)
-        println("---")
+        LwjglApplication(this, LwjglApplicationConfiguration().also {
+            it.height = 800
+            it.width = 800
+        })
+        camera = OrthographicCamera(25f, 25f)
         camera.projection.mul(Matrix4().scale(1f, -1f, 1f))
-        println(camera.combined)
+        camera.translate(10f, 10f)
     }
 
     override fun create() {
@@ -29,7 +30,7 @@ class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
     override fun render() {
         Gdx.gl.glClearColor(.125f, .125f, .125f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        debugRenderer.render(gameMap.physics, camera.projection)
+        debugRenderer.render(gameMap.physics, camera.combined)
     }
 
     override fun dispose() {

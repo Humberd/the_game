@@ -156,7 +156,8 @@ abstract class Creature(
         val testXOutsideMap = position.x.coerceIn(0f, gameMap.gridWidth.toFloat())
         val testYOutsideMap = position.y.coerceIn(0f, gameMap.gridHeight.toFloat())
         val testOutsideMap = WorldPosition(testXOutsideMap, testYOutsideMap)
-        if (position != testOutsideMap) {
+        val isOutsideMap = position != testOutsideMap
+        if (isOutsideMap) {
             fixture.body.setTransform(testOutsideMap, 0f)
             stopMoving()
         } else {
@@ -165,51 +166,51 @@ abstract class Creature(
             if (distanceToStopMoving > currentDistance) {
                 stopMoving()
             }
-        }
 
-        // update tiles in grid
-        val oldGridCoords = lastUpdate.gridPosition
-        val newGridCoords = toGridPosition(position)
-        val tileChanged = oldGridCoords != newGridCoords
-        if (tileChanged) {
-            lastUpdate.gridPosition = newGridCoords
-            lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
-            gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
+            // update tiles in grid
+            val oldGridCoords = lastUpdate.gridPosition
+            val newGridCoords = toGridPosition(position)
+            val tileChanged = oldGridCoords != newGridCoords
+            if (tileChanged) {
+                lastUpdate.gridPosition = newGridCoords
+                lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
+                gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
 
-            /*
-            [1,2,3,4] -> [3,4,5,6]
+                /*
+                [1,2,3,4] -> [3,4,5,6]
 
-            [1, 2] -> Creature Disappear
-            [3, 4] -> Creature Position Update
-            [5, 6] -> Creature Appear
-             */
+                [1, 2] -> Creature Disappear
+                [3, 4] -> Creature Position Update
+                [5, 6] -> Creature Appear
+                 */
 
-            // Creature Disappear
-            ArrayList(creaturesThatSeeMe).forEach {
-                if (!it.canSee(this)) {
-                    it.creaturesISee.unregister(this)
+                // Creature Disappear
+                ArrayList(creaturesThatSeeMe).forEach {
+                    if (!it.canSee(this)) {
+                        it.creaturesISee.unregister(this)
+                    }
                 }
+                creaturesISee.getAll().forEach {
+                    if (!canSee(it)) {
+                        creaturesISee.unregister(it)
+                    }
+                }
+
+                // Creature Appear
+                gameMap.players.getAll()
+                    .filter { it.cid != cid }
+                    .filter { it.canSee(this) }
+                    .subtract(creaturesThatSeeMe)
+                    .forEach {
+                        it.creaturesISee.register(this)
+                    }
+                getGreedyVisibleCreatures()
+                    .subtract(creaturesISee.getAll())
+                    .forEach {
+                        creaturesISee.register(it)
+                    }
+
             }
-            creaturesISee.getAll().forEach {
-                if (!canSee(it)) {
-                    creaturesISee.unregister(it)
-                }
-            }
-
-            // Creature Appear
-            gameMap.players.getAll()
-                .filter { it.cid != cid }
-                .filter { it.canSee(this) }
-                .subtract(creaturesThatSeeMe)
-                .forEach {
-                    it.creaturesISee.register(this)
-                }
-            getGreedyVisibleCreatures()
-                .subtract(creaturesISee.getAll())
-                .forEach {
-                    creaturesISee.register(it)
-                }
-
         }
 
         hooks.onMoved()
