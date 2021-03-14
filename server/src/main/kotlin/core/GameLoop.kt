@@ -43,7 +43,7 @@ class GameLoop(
         while (true) {
             while (!queue.isEmpty()) {
                 val packet = queue.poll()
-                logger.debug { packet }
+//                logger.debug { packet }
 
                 handleAction(packet)
             }

@@ -18,9 +18,13 @@ class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
             it.height = 800
             it.width = 800
         })
+
         camera = OrthographicCamera(25f, 25f)
-        camera.projection.mul(Matrix4().scale(1f, -1f, 1f))
         camera.translate(10f, 10f)
+        camera.update()
+        camera.projection.mul(Matrix4().scale(1f, -1f, 1f))
+        camera.combined.set(camera.projection)
+        Matrix4.mul(camera.combined.`val`, camera.view.`val`)
     }
 
     override fun create() {

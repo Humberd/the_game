@@ -1,6 +1,11 @@
 package core.maps.entities
 
 import core.StateChangeNotifier
+import core.maps.shapes.Wall
+import mu.KotlinLogging
+
+private val logger = KotlinLogging.logger {}
+
 
 class PlayerHooks(
     private val player: Player,
@@ -41,6 +46,11 @@ class PlayerHooks(
     override fun onMoved() {
         notifier.notifyCreatureUpdate(player.pid, player)
         notifier.notifyTerrainUpdate(player)
+    }
+
+    override fun onCollideWith(wall: Wall) {
+        logger.debug { "Colliding with Wall" }
+        player.stopMoving()
     }
 
     override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {

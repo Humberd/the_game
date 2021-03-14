@@ -1,7 +1,9 @@
 package core.maps.entities
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import core.maps.shapes.Wall
 import core.types.GameMapId
 import core.types.GridPosition
 import core.types.PID
@@ -10,12 +12,6 @@ import mu.KotlinLogging
 import utils.toGridPosition
 
 private val logger = KotlinLogging.logger {}
-
-enum class CollisionCategory(val value: Short){
-    PLAYER(0x0001),
-    MONSTER(0x0002),
-    SCENERY(0x0004),
-}
 
 class GameMap(
     val id: GameMapId,
@@ -33,24 +29,74 @@ class GameMap(
     init {
         val gravity = Vector2(0f, 0f)
         physics = World(gravity, true)
+        initMapBounds()
         physicsDebug = GameMapDebugRenderer(this)
         physics.setContactListener(object : ContactListener {
             override fun beginContact(contact: Contact) {
-                logger.debug { contact }
+                handleContacts(contact.fixtureA.userData, contact.fixtureB.userData)
+                handleContacts(contact.fixtureB.userData, contact.fixtureA.userData)
             }
 
-            override fun endContact(contact: Contact?) {
-//                TODO("Not yet implemented")
+            private fun handleContacts(aaa: Any?, bbb: Any?) {
+                when (aaa) {
+                    is Creature -> when (bbb) {
+                        is Wall -> aaa.hooks.onCollideWith(bbb)
+                    }
+                }
+            }
+
+            override fun endContact(contact: Contact) {
+                logger.debug { "END_CONTACT $contact" }
             }
 
             override fun preSolve(contact: Contact?, oldManifold: Manifold?) {
-//                TODO("Not yet implemented")
+                logger.debug { "PRE_SOLVE $contact $oldManifold" }
             }
 
             override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
-//                TODO("Not yet implemented")
+                logger.debug { "PRE_SOLVE $contact $impulse" }
             }
         })
+    }
+
+    private fun initMapBounds() {
+        val vertices = listOf(
+            Pair(Vector2(0f, 0f), gridWidth),
+            Pair(Vector2(gridWidth.toFloat(), 0f), gridHeight),
+            Pair(Vector2(gridWidth.toFloat(), gridHeight.toFloat()), gridWidth),
+            Pair(Vector2(0f, gridHeight.toFloat()), gridHeight),
+        )
+
+        vertices.forEachIndexed { index, pair ->
+            val width = pair.second
+            val startingPosition = pair.first
+
+            val bodyDef = BodyDef().also {
+                it.type = BodyDef.BodyType.StaticBody
+            }
+
+            val shape = EdgeShape().also {
+                it.set(Vector2(0f, 0f), Vector2(width.toFloat(), 0f))
+            }
+
+            val fixtureDef = FixtureDef().also {
+                it.shape = shape
+                it.density = 0f
+                it.friction = 0f
+                it.restitution = 0f
+                it.filter.categoryBits = CollisionCategory.TERRAIN.value
+                it.filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
+            }
+
+            physics.createBody(bodyDef).also {
+                it.createFixture(fixtureDef).also {
+                    it.userData = Wall()
+                }
+                it.setTransform(startingPosition, 90 * MathUtils.degreesToRadians * index)
+            }
+
+            shape.dispose()
+        }
     }
 
     inner class PlayersContainer {
@@ -103,8 +149,6 @@ class GameMap(
         val locX = position.x.value
         val locY = position.y.value
 
-        println(position)
-
         val startX = (locX - radius).let {
             if (it < 0) 0 else it
         }
@@ -130,7 +174,7 @@ class GameMap(
             }
         }
 
-        println("$startX, $startY -> $endX, $endY")
+//        println("$startX, $startY -> $endX, $endY")
 
         for (x in startX..endX) {
             for (y in startY..endY) {

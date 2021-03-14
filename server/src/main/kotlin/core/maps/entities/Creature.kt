@@ -26,8 +26,6 @@ abstract class Creature(
     protected val gameMap: GameMap,
     protected val notifier: StateChangeNotifier
 ) {
-    abstract val hooks: CreatureHooks
-
     val cid = CID.unique()
 
     var name: CreatureName = creatureSeed.name
@@ -74,27 +72,30 @@ abstract class Creature(
         }
 
         val body = gameMap.physics.createBody(bodyDef)
-        body.fixtureList
 
         val shape = CircleShape().also {
             it.radius = creatureSeed.bodyRadius
         }
 
         // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
-        val EVERYTHING = -1
 
         val fixtureDef = FixtureDef().also {
             it.shape = shape
             it.density = 0f
             it.friction = 0f
             it.restitution = 0f
-            it.filter.categoryBits = if (this is Player) CollisionCategory.PLAYER.value else CollisionCategory.MONSTER.value
-            it.filter.maskBits = CollisionCategory.PLAYER.value
+            it.filter.categoryBits = collisionCategory().value
+            it.filter.maskBits = collisionCategory().collidesWith()
         }
 
-        fixture = body.createFixture(fixtureDef)
+        fixture = body.createFixture(fixtureDef).also {
+            it.userData = this@Creature
+        }
         shape.dispose()
     }
+
+    abstract val hooks: CreatureHooks
+    abstract fun collisionCategory(): CollisionCategory
 
     val creaturesThatSeeMe = HashSet<Creature>()
     val creaturesISee = VisibleCreatures()
@@ -153,64 +154,55 @@ abstract class Creature(
             return
         }
 
-        val testXOutsideMap = position.x.coerceIn(0f, gameMap.gridWidth.toFloat())
-        val testYOutsideMap = position.y.coerceIn(0f, gameMap.gridHeight.toFloat())
-        val testOutsideMap = WorldPosition(testXOutsideMap, testYOutsideMap)
-        val isOutsideMap = position != testOutsideMap
-        if (isOutsideMap) {
-            fixture.body.setTransform(testOutsideMap, 0f)
+        val distanceToStopMoving = deltaTime * velocity
+        val currentDistance = getDistance(position, targetPosition!!)
+        if (distanceToStopMoving > currentDistance) {
             stopMoving()
-        } else {
-            val distanceToStopMoving = deltaTime * velocity
-            val currentDistance = getDistance(position, targetPosition!!)
-            if (distanceToStopMoving > currentDistance) {
-                stopMoving()
+        }
+
+        // update tiles in grid
+        val oldGridCoords = lastUpdate.gridPosition
+        val newGridCoords = toGridPosition(position)
+        val tileChanged = oldGridCoords != newGridCoords
+        if (tileChanged) {
+            lastUpdate.gridPosition = newGridCoords
+            lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
+            gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
+
+            /*
+            [1,2,3,4] -> [3,4,5,6]
+
+            [1, 2] -> Creature Disappear
+            [3, 4] -> Creature Position Update
+            [5, 6] -> Creature Appear
+             */
+
+            // Creature Disappear
+            ArrayList(creaturesThatSeeMe).forEach {
+                if (!it.canSee(this)) {
+                    it.creaturesISee.unregister(this)
+                }
+            }
+            creaturesISee.getAll().forEach {
+                if (!canSee(it)) {
+                    creaturesISee.unregister(it)
+                }
             }
 
-            // update tiles in grid
-            val oldGridCoords = lastUpdate.gridPosition
-            val newGridCoords = toGridPosition(position)
-            val tileChanged = oldGridCoords != newGridCoords
-            if (tileChanged) {
-                lastUpdate.gridPosition = newGridCoords
-                lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
-                gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
-
-                /*
-                [1,2,3,4] -> [3,4,5,6]
-
-                [1, 2] -> Creature Disappear
-                [3, 4] -> Creature Position Update
-                [5, 6] -> Creature Appear
-                 */
-
-                // Creature Disappear
-                ArrayList(creaturesThatSeeMe).forEach {
-                    if (!it.canSee(this)) {
-                        it.creaturesISee.unregister(this)
-                    }
+            // Creature Appear
+            gameMap.players.getAll()
+                .filter { it.cid != cid }
+                .filter { it.canSee(this) }
+                .subtract(creaturesThatSeeMe)
+                .forEach {
+                    it.creaturesISee.register(this)
                 }
-                creaturesISee.getAll().forEach {
-                    if (!canSee(it)) {
-                        creaturesISee.unregister(it)
-                    }
+            getGreedyVisibleCreatures()
+                .subtract(creaturesISee.getAll())
+                .forEach {
+                    creaturesISee.register(it)
                 }
 
-                // Creature Appear
-                gameMap.players.getAll()
-                    .filter { it.cid != cid }
-                    .filter { it.canSee(this) }
-                    .subtract(creaturesThatSeeMe)
-                    .forEach {
-                        it.creaturesISee.register(this)
-                    }
-                getGreedyVisibleCreatures()
-                    .subtract(creaturesISee.getAll())
-                    .forEach {
-                        creaturesISee.register(it)
-                    }
-
-            }
         }
 
         hooks.onMoved()
