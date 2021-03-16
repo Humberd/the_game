@@ -14,7 +14,7 @@ class GamesManager(
     private val playerLUT = HashMap<PID, GameMapId>()
 
     init {
-        GameMapGenerator.generateMap1(20, 20).also { map ->
+        GameMapGenerator.generateMap1(20, 20, notifier).also { map ->
             maps[map.id] = map
         }
     }
@@ -26,18 +26,18 @@ class GamesManager(
         playerLUT[playerSeed.pid] = gameMapId
 
         val player = Player(creatureSeed, map, notifier, playerSeed)
-        map.players.add(player)
+        map.creatures.add(player)
     }
 
     fun removePlayer(pid: PID) {
         val map = getMap(pid)
         playerLUT.remove(pid)
-        map.players.remove(pid)
+        map.creatures.remove(pid)
     }
 
     fun movePlayerTo(pid: PID, targetPosition: WorldPosition) {
         val map = getMap(pid)
-        map.players.moveTo(pid, targetPosition)
+        map.creatures.moveTo(pid, targetPosition)
     }
 
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {

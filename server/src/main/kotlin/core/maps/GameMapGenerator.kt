@@ -1,17 +1,14 @@
 package core.maps
 
-import core.maps.entities.GameMap
-import core.maps.entities.Tile
-import core.types.Coordinate
-import core.types.GameMapId
-import core.types.GridPosition
-import core.types.SpriteId
+import core.StateChangeNotifier
+import core.maps.entities.*
+import core.types.*
 
 private const val GRAVEL_SPRITE: UShort = 0u
 private const val GRASS_SPRITE: UShort = 1u
 
 object GameMapGenerator {
-    fun generateMap1(width: Int, height: Int): GameMap {
+    fun generateMap1(width: Int, height: Int, notifier: StateChangeNotifier): GameMap {
         val grid = Array(width) { x ->
             Array(height) { y ->
                 Tile(
@@ -21,7 +18,7 @@ object GameMapGenerator {
             }
         }
 
-        return GameMap(
+        val gameMap =  GameMap(
             id = GameMapId(1u),
             gridWidth = width,
             gridHeight = height,
@@ -59,14 +56,32 @@ object GameMapGenerator {
 //                    actionHandler = TeleportActionHandler
 //                )
             ),
-            creatures = listOf(
-//                Monster(
-//                    cid = CID.unique(),
-//                    name = CreatureName("Ghost"),
-//                    health = 100u,
-//                    spriteId = SpriteId(6u),
-//                )
+        )
+
+        val monsters = listOf(
+            Monster(
+                creatureSeed = CreatureSeed(
+                    name = CreatureName("Ghost"),
+                    baseHealth = 300u,
+                    currentHealth = 300u,
+                    spriteId = SpriteId(6u),
+                    position = WorldPosition(6f, 2f),
+                    velocity = 1f,
+                    tilesViewRadius = TileRadius(3),
+                    bodyRadius = 0.5f
+                ),
+                gameMap = gameMap,
+                notifier = notifier,
+                monsterSeed = MonsterSeed(
+                    attackTriggerRadius = 0.1f
+                )
             )
         )
+
+        monsters.forEach {
+            gameMap.creatures.add(it)
+        }
+
+        return gameMap
     }
 }

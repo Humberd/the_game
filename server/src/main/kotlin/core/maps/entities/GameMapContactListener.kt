@@ -13,7 +13,7 @@ private val logger = KotlinLogging.logger {}
 
 class GameMapContactListener : ContactListener {
     override fun beginContact(contact: Contact) {
-        contact.tangentSpeed
+//        logger.debug { "Collision" }
         handleContacts(contact.fixtureA.userData, contact.fixtureB.userData)
         handleContacts(contact.fixtureB.userData, contact.fixtureA.userData)
     }
@@ -27,14 +27,14 @@ class GameMapContactListener : ContactListener {
     }
 
     override fun endContact(contact: Contact) {
-        logger.debug { "END_CONTACT $contact" }
+//        logger.debug { "END_CONTACT $contact" }
     }
 
     override fun preSolve(contact: Contact?, oldManifold: Manifold?) {
-        logger.debug { "PRE_SOLVE $contact $oldManifold" }
+//        logger.debug { "PRE_SOLVE $contact $oldManifold" }
     }
 
     override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
-        logger.debug { "POST_SOLVE $contact $impulse" }
+//        logger.debug { "POST_SOLVE $contact $impulse" }
     }
 }

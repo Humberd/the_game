@@ -190,7 +190,7 @@ abstract class Creature(
             }
 
             // Creature Appear
-            gameMap.players.getAll()
+            gameMap.creatures.getAllCreatures()
                 .filter { it.cid != cid }
                 .filter { it.canSee(this) }
                 .subtract(creaturesThatSeeMe)
@@ -215,10 +215,6 @@ abstract class Creature(
         var gridPosition: GridPosition,
         var tileSlice: Array<Array<Tile>>
     )
-
-    abstract fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature)
-    abstract fun onOtherCreatureAppearInViewRange(otherCreature: Creature)
-    abstract fun onOtherCreaturePositionChange(otherCreature: Creature)
 
     fun getVisibleItems(): List<Item> {
         val buffer = arrayListOf<Item>()

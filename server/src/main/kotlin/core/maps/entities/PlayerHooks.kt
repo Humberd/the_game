@@ -17,7 +17,7 @@ class PlayerHooks(
         notifier.notifyTerrainUpdate(player)
 
         // Make aware other creatures that can see me
-        gameMap.players.getAll()
+        gameMap.creatures.getAllCreatures()
             .filter { it.cid != player.cid }
             .filter { it.canSee(player) }
             .forEach {

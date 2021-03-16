@@ -17,14 +17,4 @@ class Monster(
     override val hooks = MonsterHooks()
     override fun collisionCategory() = CollisionCategory.MONSTER
 
-
-    override fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {
-    }
-
-    override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {
-    }
-
-    override fun onOtherCreaturePositionChange(otherCreature: Creature) {
-    }
-
 }

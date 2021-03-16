@@ -4,10 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import core.maps.shapes.Wall
-import core.types.GameMapId
-import core.types.GridPosition
-import core.types.PID
-import core.types.WorldPosition
+import core.types.*
 import mu.KotlinLogging
 import utils.toGridPosition
 
@@ -19,10 +16,76 @@ class GameMap(
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
     items: List<Item>,
-    creatures: List<Creature>
 ) {
-    val players = PlayersContainer()
+    //region Creatures Store
+    val creatures = CreaturesContainer()
 
+    inner class CreaturesContainer {
+        private val players = HashMap<PID, Player>()
+        private val creatures = HashMap<CID, Creature>()
+
+        fun add(creature: Creature) {
+            if (creatures.containsKey(creature.cid)) {
+                throw Error("Creature already exists")
+            }
+
+            if (creature is Player) {
+                if (players.containsKey(creature.pid)) {
+                    throw Error("Player already exists")
+                }
+                players[creature.pid] = creature
+            }
+
+            creatures[creature.cid] = creature
+
+            creature.hooks.onAddedToMap(this@GameMap)
+        }
+
+        fun remove(pid: PID) {
+            if (!players.containsKey(pid)) {
+                throw Error("Player doesn't exist")
+            }
+
+            remove(players[pid]!!.cid)
+            players.remove(pid)
+        }
+
+        fun remove(cid: CID) {
+            if (!creatures.containsKey(cid)) {
+                throw Error("Creature doesn't exist")
+            }
+            val removedCreature = creatures.remove(cid)
+            removedCreature!!.hooks.onRemovedFromMap(this@GameMap)
+        }
+
+        fun get(pid: PID): Player {
+            return players[pid] ?: throw Error("Player not found")
+        }
+
+        fun get(cid: CID): Creature {
+            return creatures[cid] ?: throw Error("Creature not found")
+        }
+
+        fun getAllPlayers(): Collection<Player> {
+            return players.values
+        }
+
+        fun getAllCreatures(): Collection<Creature> {
+            return creatures.values
+        }
+
+        fun moveTo(pid: PID, targetPosition: WorldPosition) {
+            moveTo(get(pid).cid, targetPosition)
+        }
+
+        fun moveTo(cid: CID, targetPosition: WorldPosition) {
+            val creature = get(cid)
+            creature.startMovingTo(targetPosition)
+        }
+    }
+    //endregion
+
+    //region Physics Initialization
     val physics: World
     val physicsDebug: GameMapDebugRenderer
 
@@ -74,51 +137,19 @@ class GameMap(
         }
     }
 
-    inner class PlayersContainer {
-        private val map = HashMap<PID, Player>()
-
-        fun add(player: Player) {
-            if (map.containsKey(player.pid)) {
-                throw Error("Player already exists")
-            }
-
-            map[player.pid] = player
-            player.hooks.onAddedToMap(this@GameMap)
-        }
-
-        fun remove(pid: PID) {
-            if (!map.containsKey(pid)) {
-                throw Error("Player doesn't exist")
-            }
-
-            val removedPlayer = map.remove(pid)
-            removedPlayer!!.hooks.onRemovedFromMap(this@GameMap)
-        }
-
-        fun get(pid: PID): Player {
-            return map[pid] ?: throw Error("Player not found")
-        }
-
-        fun getAll(): Collection<Player> {
-            return map.values
-        }
-
-        fun moveTo(pid: PID, targetPosition: WorldPosition) {
-            val player = get(pid)
-            player.startMovingTo(targetPosition)
-        }
-    }
+    //endregion
 
     fun onPhysicsStep(deltaTime: Float) {
         val velocityIterations = 6
         val positionIterations = 2
         physics.step(deltaTime, velocityIterations, positionIterations)
 
-        players.getAll().forEach {
+        creatures.getAllCreatures().forEach {
             it.afterPhysicsUpdate(deltaTime)
         }
     }
 
+    //region Tile Utils
     fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>> {
         require(radius >= 0)
         val locX = position.x.value
@@ -177,4 +208,5 @@ class GameMap(
     fun getTileFor(item: Item): Tile {
         return getTileAt(toGridPosition(item.position))
     }
+    //endregion
 }
