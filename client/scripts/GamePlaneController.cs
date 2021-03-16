@@ -111,5 +111,10 @@ namespace Client.scripts
         {
             _spellDisplayingManager.DisplayDamageTaken(action);
         }
+
+        public void DisplayProjectile(IngressDataPacket.ProjectileSend action)
+        {
+            _spellDisplayingManager.DisplayProjectile(action);
+        }
     }
 }

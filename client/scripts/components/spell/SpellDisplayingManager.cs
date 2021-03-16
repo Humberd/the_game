@@ -13,7 +13,7 @@ namespace Client.scripts.components.spell
                 var effectAction = action.Effects[i];
                 var newPosition = action.SourcePosition + new Vector2(64 * i, 0);
 
-                var effectNode = new Effect();
+                var effectNode = new EffectNode();
                 AddChild(effectNode);
                 effectNode.Init(newPosition, effectAction.SpriteId, effectAction.Duration);
             }
@@ -25,8 +25,20 @@ namespace Client.scripts.components.spell
             {
                 var damageNode = new DamageNode();
                 AddChild(damageNode);
-                damageNode.Init(damage.Position, damage.Amount);
+                damageNode.Init(damage.Position * 64, damage.Amount);
             }
+        }
+
+        public void DisplayProjectile(IngressDataPacket.ProjectileSend action)
+        {
+            var projectileNode = new ProjectileNode();
+            AddChild(projectileNode);
+            projectileNode.Init(
+                spriteId: action.SpriteId,
+                position: action.SourcePosition * 64,
+                targetPosition: action.TargetPosition * 64,
+                duration: action.Duration
+            );
         }
     }
 }

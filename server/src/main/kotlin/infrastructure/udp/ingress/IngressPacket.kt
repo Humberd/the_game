@@ -1,9 +1,6 @@
 package infrastructure.udp.ingress
 
-import core.types.IID
-import core.types.PID
-import core.types.SID
-import core.types.WorldPosition
+import core.types.*
 import utils.uInt
 import utils.vector
 import java.nio.ByteBuffer
@@ -15,7 +12,9 @@ enum class IngressPacketType(val value: Int) {
     AUTH_LOGIN(0x05),
     POSITION_CHANGE(0x10),
     TERRAIN_ITEM_DRAG(0x11),
-    SPELL_USAGE(0x12);
+    SPELL_USAGE(0x12),
+    BASIC_ATTACK_START(0x13),
+    BASIC_ATTACK_END(0x14);
 
     companion object {
         private val map = HashMap<Int, IngressPacketType>()
@@ -73,6 +72,32 @@ sealed class IngressPacket {
                 return SpellUsage(
                     pid = pid,
                     sid = SID(buffer.uInt())
+                )
+            }
+        }
+    }
+
+    data class BasicAttackStart(
+        val pid: PID,
+        val targetCid: CID
+    ) : IngressPacket() {
+        companion object {
+            fun from(buffer: ByteBuffer, pid: PID): BasicAttackStart {
+                return BasicAttackStart(
+                    pid = pid,
+                    targetCid = CID(buffer.uInt())
+                )
+            }
+        }
+    }
+
+    data class BasicAttackStop(
+        val pid: PID
+    ) : IngressPacket() {
+        companion object {
+            fun from(buffer: ByteBuffer, pid: PID): BasicAttackStop {
+                return BasicAttackStop(
+                    pid = pid
                 )
             }
         }

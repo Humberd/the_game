@@ -149,6 +149,22 @@ class GameMap(
         }
     }
 
+    //region Combat
+    fun startAttacking(pid: PID, targetCID: CID) {
+        val sourceCreature = creatures.get(pid)
+        val targetCreature = creatures.get(targetCID)
+
+        sourceCreature.startAttacking(targetCreature)
+    }
+
+
+    fun stopAttacking(pid: PID) {
+        val sourceCreature = creatures.get(pid)
+
+        sourceCreature.stopAttacking()
+    }
+    //endregion
+
     //region Tile Utils
     fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>> {
         require(radius >= 0)

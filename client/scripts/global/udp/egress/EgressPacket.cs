@@ -10,7 +10,9 @@ namespace Client.scripts.global.udp.egress
         AUTH_LOGIN = 0x05,
         POSITION_CHANGE = 0x10,
         TERRAIN_ITEM_DRAG = 0x11,
-        SPELL_USAGE = 0x12
+        SPELL_USAGE = 0x12,
+        BASIC_ATTACK_START = 0x13,
+        BASIC_ATTACK_END = 0x14
     }
 
     public abstract class EgressDataPacket
@@ -75,7 +77,7 @@ namespace Client.scripts.global.udp.egress
             }
         }
 
-        public class PositionChange: EgressDataPacket
+        public class PositionChange : EgressDataPacket
         {
             private readonly Vector2 _targetPosition;
 
@@ -94,6 +96,7 @@ namespace Client.scripts.global.udp.egress
         {
             private readonly uint _iid;
             private readonly Vector2 _position;
+
             public TerrainItemDrag(uint iid, Vector2 position) : base(EgressPacketType.TERRAIN_ITEM_DRAG)
             {
                 _iid = iid;
@@ -119,6 +122,33 @@ namespace Client.scripts.global.udp.egress
             protected override void PackData(StreamPeerBuffer buffer)
             {
                 buffer.PutU32(_sid);
+            }
+        }
+
+        public class BasicAttackStart : EgressDataPacket
+        {
+            private readonly uint _targetCid;
+
+            public BasicAttackStart(uint targetCid) : base(EgressPacketType.BASIC_ATTACK_START)
+            {
+                _targetCid = targetCid;
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                buffer.PutU32(_targetCid);
+            }
+        }
+
+        public class BasicAttackStop : EgressDataPacket
+        {
+            public BasicAttackStop() : base(EgressPacketType.BASIC_ATTACK_END)
+            {
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                // not sending any data
             }
         }
     }

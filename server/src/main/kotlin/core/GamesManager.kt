@@ -36,8 +36,7 @@ class GamesManager(
     }
 
     fun movePlayerTo(pid: PID, targetPosition: WorldPosition) {
-        val map = getMap(pid)
-        map.creatures.moveTo(pid, targetPosition)
+        getMap(pid).creatures.moveTo(pid, targetPosition)
     }
 
     fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
@@ -56,6 +55,15 @@ class GamesManager(
         }
     }
 
+    fun startBasicAttacking(pid: PID, targetCid: CID) {
+        getMap(pid).startAttacking(pid, targetCid)
+    }
+
+    fun stopBasicAttacking(pid: PID) {
+        getMap(pid).stopAttacking(pid)
+    }
+
+    //region Utilities
     private fun getMap(pid: PID): GameMap {
         return maps[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
     }
@@ -63,4 +71,5 @@ class GamesManager(
     private fun getMap(gameMapId: GameMapId): GameMap {
         return maps[gameMapId] ?: throw Error("GameMap not found for ${gameMapId}")
     }
+    //endregion
 }

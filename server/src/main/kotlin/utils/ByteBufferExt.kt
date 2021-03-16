@@ -59,3 +59,11 @@ fun ByteBuffer.putVector(value: Vector2) {
     putFloat(value.x)
     putFloat(value.y)
 }
+
+// fixme
+fun ByteBuffer.putBooleanMask(vararg values: Boolean) {
+    require(values.size <= 0)
+    values.forEach {
+
+    }
+}

@@ -22,7 +22,9 @@ class UdpEgressPacketHandler(
     }
 
     fun notify(to: PID, dataPacket: EgressDataPacket) {
-//        logger.debug { "Requesting data send to ${to} -> ${dataPacket}" }
+        if (!(dataPacket is EgressDataPacket.CreaturePositionUpdate)) {
+            logger.debug { "${to} -> ${dataPacket}" }
+        }
         val client = udpClientStore.getClient(to)
         if (client == null) {
             println("Client not found")

@@ -17,7 +17,8 @@ namespace Client.scripts.global.udp.ingress
         PLAYER_DETAILS = 0x25,
         EQUIPPED_SPELLS_UPDATE = 0x26,
         SPELL_USE = 0x27,
-        DAMAGE_TAKEN = 0x28
+        DAMAGE_TAKEN = 0x28,
+        PROJECTILE_SEND = 0x29
     }
 
     public class IngressDataPacket
@@ -31,10 +32,12 @@ namespace Client.scripts.global.udp.ingress
             public readonly Vector2 Position;
             public readonly SpriteId SpriteId;
             public readonly float BodyRadius;
-            public readonly ushort AttackTriggerRadius;
+            public readonly float AttackTriggerRadius;
+            public readonly byte IsBeingAttackedByMe;
 
-            public PlayerUpdate(uint cid, string name, uint baseHealth, uint currentHealth, Vector2 position, ushort spriteId,
-                float bodyRadius, ushort attackTriggerRadius)
+            public PlayerUpdate(uint cid, string name, uint baseHealth, uint currentHealth, Vector2 position,
+                ushort spriteId,
+                float bodyRadius, float attackTriggerRadius, byte isBeingAttackedByMe)
             {
                 Cid = cid;
                 Name = name;
@@ -44,6 +47,7 @@ namespace Client.scripts.global.udp.ingress
                 SpriteId = spriteId;
                 BodyRadius = bodyRadius;
                 AttackTriggerRadius = attackTriggerRadius;
+                IsBeingAttackedByMe = isBeingAttackedByMe;
             }
 
             public static PlayerUpdate From(BinaryReader buffer)
@@ -56,7 +60,8 @@ namespace Client.scripts.global.udp.ingress
                     position: buffer.ReadVector2(),
                     spriteId: buffer.ReadUInt16(),
                     bodyRadius: buffer.ReadSingle(),
-                    attackTriggerRadius: buffer.ReadUInt16()
+                    attackTriggerRadius: buffer.ReadSingle(),
+                    isBeingAttackedByMe: buffer.ReadByte()
                 );
             }
         }
@@ -293,6 +298,32 @@ namespace Client.scripts.global.udp.ingress
                         position: buffer.ReadVector2(),
                         amount: buffer.ReadUInt32()
                     ))
+                );
+            }
+        }
+
+        public class ProjectileSend
+        {
+            public readonly SpriteId SpriteId;
+            public readonly Vector2 SourcePosition;
+            public readonly Vector2 TargetPosition;
+            public readonly uint Duration;
+
+            public ProjectileSend(ushort spriteId, Vector2 sourcePosition, Vector2 targetPosition, uint duration)
+            {
+                SpriteId = spriteId;
+                SourcePosition = sourcePosition;
+                TargetPosition = targetPosition;
+                Duration = duration;
+            }
+
+            public static ProjectileSend From(BinaryReader buffer)
+            {
+                return new ProjectileSend(
+                    spriteId: buffer.ReadUInt16(),
+                    sourcePosition: buffer.ReadVector2(),
+                    targetPosition: buffer.ReadVector2(),
+                    duration: buffer.ReadUInt32()
                 );
             }
         }

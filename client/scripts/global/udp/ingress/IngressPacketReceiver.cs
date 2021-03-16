@@ -59,6 +59,9 @@ namespace Client.scripts.global.udp.ingress
                 case IngressPacketType.DAMAGE_TAKEN:
                     _ingressPacketHandler.Handle(IngressDataPacket.DamageTaken.From(buffer));
                     break;
+                case IngressPacketType.PROJECTILE_SEND:
+                    _ingressPacketHandler.Handle(IngressDataPacket.ProjectileSend.From(buffer));
+                    break;
                 default:
                 {
                     Console.WriteLine($"Packet type not supported 0x{packetType:X}");

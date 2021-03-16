@@ -85,6 +85,12 @@ class UdpIngressPacketHandler(
                 IngressPacketType.SPELL_USAGE -> {
                     gameLoop.requestAction(IngressPacket.SpellUsage.from(packet, getPID(client)))
                 }
+                IngressPacketType.BASIC_ATTACK_START -> {
+                    gameLoop.requestAction(IngressPacket.BasicAttackStart.from(packet, getPID(client)))
+                }
+                IngressPacketType.BASIC_ATTACK_END -> {
+                    gameLoop.requestAction(IngressPacket.BasicAttackStop.from(packet, getPID(client)))
+                }
                 null -> {
                     logger.warn { "Unknown packet type ${packetTypeValue}" }
                 }

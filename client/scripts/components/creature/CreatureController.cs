@@ -1,6 +1,7 @@
 ﻿using System;
 using Client.scripts.global.udp.ingress;
-using global::Client.scripts.global;
+using Client.scripts.global;
+using Client.scripts.global.udp.egress;
 using Godot;
 using PID = System.UInt32;
 using CID = System.UInt32;
@@ -17,7 +18,8 @@ namespace Client.scripts.components.creature
         private uint _health;
         private string _name;
         private float _bodyRadius;
-        private ushort _attackTriggerRadius;
+        private float _attackTriggerRadius;
+        private byte _isBeingAttackedByMe;
 
         private SpriteId _spriteId;
 
@@ -46,6 +48,11 @@ namespace Client.scripts.components.creature
             if (_attackTriggerRadius > 0)
             {
                 DrawArc(Vector2.Zero, _attackTriggerRadius, 0, 360, 60, new Color("#A7271F"));
+            }
+
+            if (_isBeingAttackedByMe > 0)
+            {
+                DrawArc(Vector2.Zero, 50, 0, 360, 60, Colors.Red, 3f);
             }
         }
 
@@ -96,6 +103,30 @@ namespace Client.scripts.components.creature
             UpdateOutfit(playerUpdate.SpriteId);
             _bodyRadius = playerUpdate.BodyRadius * 64;
             _attackTriggerRadius = playerUpdate.AttackTriggerRadius;
+            _isBeingAttackedByMe = playerUpdate.IsBeingAttackedByMe;
+            Update();
+        }
+
+        public override void _Input(InputEvent @event)
+        {
+            if (@event is InputEventMouseButton mouseEvent)
+            {
+                if (mouseEvent.ButtonIndex == (int) ButtonList.Left)
+                {
+                    if (mouseEvent.Pressed && _sprite.IsPixelOpaque(GetLocalMousePosition()))
+                    {
+                        if (_isBeingAttackedByMe == 0)
+                        {
+                            ActionSenderMono.Instance.Send(new EgressDataPacket.BasicAttackStart(_cid));
+                        }
+                        else
+                        {
+                            ActionSenderMono.Instance.Send(new EgressDataPacket.BasicAttackStop());
+                        }
+                        GetTree().SetInputAsHandled();
+                    }
+                }
+            }
         }
     }
 }

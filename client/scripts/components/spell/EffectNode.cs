@@ -3,7 +3,7 @@ using Godot;
 
 namespace Client.scripts.components.spell
 {
-    public class Effect : Sprite
+    public class EffectNode : Sprite
     {
         public void Init(Vector2 position, ushort spriteId, uint duration)
         {

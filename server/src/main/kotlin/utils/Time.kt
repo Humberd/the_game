@@ -8,6 +8,9 @@ val Int.ms: Milliseconds
         return Milliseconds(this.toUInt())
     }
 
+val Float.sec: Milliseconds
+    get() = (this * 1000).toInt().ms
+
 val Int.sec: Milliseconds
     get() = (this * 1000).ms
 

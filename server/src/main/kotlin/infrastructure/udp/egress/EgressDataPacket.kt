@@ -15,7 +15,8 @@ enum class EgressPacketType(val value: Int) {
     PLAYER_DETAILS(0x25),
     EQUIPPED_SPELLS_UPDATE(0x26),
     SPELL_USE(0x27),
-    DAMAGE_TAKEN(0x28)
+    DAMAGE_TAKEN(0x28),
+    PROJECTILE_SEND(0x29)
 }
 
 sealed class EgressDataPacket(
@@ -42,6 +43,7 @@ sealed class EgressDataPacket(
         val spriteId: SpriteId,
         val bodyRadius: Float,
         val attackTriggerRadius: Float,
+        val isBeingAttackedByMe: Boolean
     ) : EgressDataPacket(CREATURE_UPDATE) {
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(cid.value)
@@ -52,6 +54,7 @@ sealed class EgressDataPacket(
             buffer.putUShort(spriteId.value)
             buffer.putFloat(bodyRadius)
             buffer.putFloat(attackTriggerRadius)
+            buffer.putUByte(if (isBeingAttackedByMe) 1u else 0u)
         }
     }
 
@@ -153,6 +156,7 @@ sealed class EgressDataPacket(
             val spriteId: SpriteId,
             val duration: Milliseconds
         )
+
         override fun packData(buffer: ByteBuffer) {
             buffer.putVector(sourcePosition)
             buffer.putArray(effects) {
@@ -175,6 +179,20 @@ sealed class EgressDataPacket(
                 buffer.putVector(it.position)
                 buffer.putUInt(it.amount)
             }
+        }
+    }
+
+    data class ProjectileSend(
+        val spriteId: SpriteId,
+        val sourcePosition: WorldPosition,
+        val targetPosition: WorldPosition,
+        val duration: Milliseconds
+    ) : EgressDataPacket(PROJECTILE_SEND) {
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putUShort(spriteId.value)
+            buffer.putVector(sourcePosition)
+            buffer.putVector(targetPosition)
+            buffer.putUInt(duration.value)
         }
     }
 }

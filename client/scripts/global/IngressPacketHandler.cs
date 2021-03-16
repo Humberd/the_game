@@ -48,5 +48,10 @@ namespace Client.scripts.global
         {
             GamePlaneController.Instance.DisplayDamageTaken(action);
         }
+
+        public void Handle(IngressDataPacket.ProjectileSend action)
+        {
+            GamePlaneController.Instance.DisplayProjectile(action);
+        }
     }
 }

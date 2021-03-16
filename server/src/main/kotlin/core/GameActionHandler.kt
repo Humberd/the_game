@@ -24,7 +24,7 @@ class GameActionHandler(
         val creatureSeed = dbPlayer.toCreatureSeed()
         val playerSeed = dbPlayer.toPlayerSeed()
 
-        gamesManager.addPlayer(creatureSeed,playerSeed)
+        gamesManager.addPlayer(creatureSeed, playerSeed)
     }
 
     fun handle(action: IngressPacket.PositionChange) {
@@ -36,10 +36,18 @@ class GameActionHandler(
     }
 
     fun handle(action: IngressPacket.SpellUsage) {
-        gamesManager.useSpell(action.pid,action.sid)
+        gamesManager.useSpell(action.pid, action.sid)
     }
 
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
+    }
+
+    fun handle(action: IngressPacket.BasicAttackStart) {
+        gamesManager.startBasicAttacking(action.pid, action.targetCid)
+    }
+
+    fun handle(action: IngressPacket.BasicAttackStop) {
+        gamesManager.stopBasicAttacking(action.pid)
     }
 }

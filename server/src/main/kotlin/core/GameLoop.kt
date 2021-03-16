@@ -3,6 +3,8 @@ package core
 import infrastructure.udp.ingress.IngressPacket
 import mu.KotlinLogging
 import utils.Milliseconds
+import utils.ms
+import utils.sec
 import java.util.concurrent.ConcurrentLinkedQueue
 
 private val logger = KotlinLogging.logger {}
@@ -104,11 +106,23 @@ class GameLoop(
             is IngressPacket.PositionChange -> gameActionHandler.handle(action)
             is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(action)
             is IngressPacket.SpellUsage -> gameActionHandler.handle(action)
+            is IngressPacket.BasicAttackStart -> gameActionHandler.handle(action)
+            is IngressPacket.BasicAttackStop -> gameActionHandler.handle(action)
         }
     }
 
     fun requestAsyncTask(task: AsyncGameTask): AsyncGameTask {
         asyncGameTasks.add(task)
         return task
+    }
+
+    fun requestAsyncTask(intervalTick: Milliseconds, callback: () -> Unit ): AsyncGameTask {
+        // FIXME: 16.03.2021 Timer without end
+        val indefinitely = 100000.sec
+        return requestAsyncTask(AsyncGameTask(intervalTick, indefinitely, {}, callback))
+    }
+
+    fun requestAsyncTaskOnce(timeout: Milliseconds, callback: () -> Unit): AsyncGameTask {
+        return requestAsyncTask(AsyncGameTask(timeout, 0.ms, {}, callback))
     }
 }

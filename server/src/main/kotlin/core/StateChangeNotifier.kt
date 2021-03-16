@@ -10,9 +10,9 @@ import infrastructure.udp.egress.UdpEgressPacketHandler
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler
 ) {
-    fun notifyCreatureUpdate(to: PID, creature: Creature) {
+    fun notifyCreatureUpdate(to: Player, creature: Creature) {
         egressPacketHandler.notify(
-            to,
+            to.pid,
             EgressDataPacket.CreatureUpdate(
                 cid = creature.cid,
                 name = creature.name,
@@ -21,7 +21,8 @@ class StateChangeNotifier(
                 position = creature.position,
                 spriteId = creature.spriteId,
                 bodyRadius = creature.bodyRadius,
-                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f
+                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
+                isBeingAttackedByMe = to.attackTarget === creature
             )
         )
     }
@@ -136,5 +137,9 @@ class StateChangeNotifier(
             to,
             EgressDataPacket.DamageTaken(damages)
         )
+    }
+
+    fun sendProjectile(to: PID, data: EgressDataPacket.ProjectileSend) {
+        egressPacketHandler.notify(to, data)
     }
 }
