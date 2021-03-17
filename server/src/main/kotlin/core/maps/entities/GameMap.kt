@@ -87,13 +87,12 @@ class GameMap(
 
     //region Physics Initialization
     val physics: World
-    val physicsDebug: GameMapDebugRenderer
 
     init {
         val gravity = Vector2(0f, 0f)
         physics = World(gravity, true)
         initMapBounds()
-        physicsDebug = GameMapDebugRenderer(this)
+//        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
     }
 

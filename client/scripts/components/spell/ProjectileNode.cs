@@ -13,9 +13,8 @@ namespace Client.scripts.components.spell
         {
             Position = position;
             Texture = GameResourceLoader.GetSprite(spriteId);
-            Rotation = position.AngleTo(targetPosition) + Mathf.Deg2Rad(90);
+            Rotation = position.AngleToPoint(targetPosition) - Mathf.Deg2Rad(90);
             _direction = position.DirectionTo(targetPosition);
-            Console.WriteLine($"Position: {position}, TargetPosition: {targetPosition}, Angle: {position.AngleTo(targetPosition)}");
             _unitsPerSecond = position.DistanceTo(targetPosition) / (duration / 1000f);
             SetTime(duration);
             ZIndex = (int) RenderLayer.Effects;
@@ -23,7 +22,7 @@ namespace Client.scripts.components.spell
 
         public override void _Process(float delta)
         {
-            Position += _direction * delta;
+            Position += _direction * delta * _unitsPerSecond;
         }
 
         private async void SetTime(uint duration)
