@@ -33,6 +33,10 @@ class PlayerHooks(
     }
 
     override fun onRemovedFromMap(gameMap: GameMap) {
+        if (player.combat.isCurrentlyAttacking()) {
+            player.combat.stopAttacking()
+        }
+
         notifier.notifyCreatureDisappear(player.pid, player)
 
         player.creaturesThatSeeMe.forEach {
@@ -61,6 +65,9 @@ class PlayerHooks(
     }
 
     override fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {
+        if (player.combat.attackedTarget === otherCreature) {
+            player.combat.stopAttacking()
+        }
         notifier.notifyCreatureDisappear(player.pid, otherCreature)
     }
 
@@ -82,6 +89,7 @@ class PlayerHooks(
                 EgressDataPacket.DamageTaken.Damage(otherCreature.position, damage)
             )
         )
+        notifier.notifyCreatureUpdate(player, otherCreature)
     }
 
     override fun onStartAttackOtherCreature(otherCreature: Creature) {

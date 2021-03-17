@@ -259,87 +259,98 @@ abstract class Creature(
         return getGreedyVisibleCreatures().contains(otherCreature)
     }
 
-
     //region Combat
-    var isAttacking = false
-        private set
-    var attackTarget: Creature? = null
-        private set
-    private var attackTask: AsyncGameTask? = null
+    var combat = Combat()
 
-    fun takeDamage(damage: UInt) {
-        val newHealth = currentHealth.toInt() - damage.toInt()
+    inner class Combat {
+        var attackedTarget: Creature? = null
+            private set
+        val attackedByTargets: MutableSet<Creature> = mutableSetOf()
+        private var attackTask: AsyncGameTask? = null
 
-        if (newHealth <= 0) {
-            currentHealth = 0u
+        fun takeDamage(damage: UInt) {
+            val newHealth = currentHealth.toInt() - damage.toInt()
+
+            if (newHealth <= 0) {
+                currentHealth = 0u
+                die()
+            } else {
+                currentHealth = newHealth.toUInt()
+            }
+
+            hooks.onSelfDamageTaken(damage)
+            creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(this@Creature, damage) }
+        }
+
+        private fun die() {
+            attackedByTargets.forEach { it.combat.stopAttacking() }
             hooks.onDeath()
-        } else {
-            currentHealth = newHealth.toUInt()
         }
 
-        hooks.onSelfDamageTaken(damage)
-        creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(this, damage) }
-    }
+        fun startAttacking(target: Creature) {
+            if (isCurrentlyAttacking()) {
+                if (target === attackedTarget) {
+                    throw IllegalStateException("Cannot attack the same target again")
+                }
 
-    fun startAttacking(target: Creature) {
-        if (isAttacking) {
-            if (target === attackTarget) {
-                throw IllegalStateException("Cannot attack the same target again")
+                stopAttacking()
             }
 
-            stopAttacking()
-        }
+            if (!canSee(target)) {
+                throw Error("Creature can't see the target")
+            }
 
-        if (!canSee(target)) {
-            throw Error("Creature can't see the target")
-        }
+            attackedTarget = target
+            target.combat.attackedByTargets.add(this@Creature)
 
-        isAttacking = true
-        attackTarget = target
+            val attackSpeed = 1000.ms
+            val damage = 10u
 
-        val attackSpeed = 1000.ms
-        val damage = 10u
+            val projectileUnitsPerSecond = 3f
 
-        val projectileUnitsPerSecond = 3f
+            attackTask = GameLoop.instance.requestAsyncTask(attackSpeed) {
+                val distanceToTarget = getDistance(position, target.position)
+                val projectileDelay = (distanceToTarget.toFloat() / projectileUnitsPerSecond).sec
 
-        attackTask = GameLoop.instance.requestAsyncTask(attackSpeed) {
-            val distanceToTarget = getDistance(position, target.position)
-            val projectileDelay = (distanceToTarget.toFloat() / projectileUnitsPerSecond).sec
-
-            // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
-            if (this is Player) {
-                notifier.sendProjectile(
-                    pid, EgressDataPacket.ProjectileSend(
-                        spriteId = SpriteId(13u),
-                        sourcePosition = position,
-                        targetPosition = target.position,
-                        duration = projectileDelay
+                // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
+                if (this@Creature is Player) {
+                    notifier.sendProjectile(
+                        pid, EgressDataPacket.ProjectileSend(
+                            spriteId = SpriteId(13u),
+                            sourcePosition = position,
+                            targetPosition = target.position,
+                            duration = projectileDelay
+                        )
                     )
-                )
+                }
+
+                GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
+                    target.combat.takeDamage(damage)
+                }
             }
 
-            GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
-                target.takeDamage(damage)
-            }
+            hooks.onStartAttackOtherCreature(target)
+            target.hooks.onBeingAttackedBy(this@Creature)
         }
 
-        hooks.onStartAttackOtherCreature(target)
-        target.hooks.onBeingAttackedBy(this)
+        fun stopAttacking() {
+            val task = attackTask
+            check(task != null)
+            val target = attackedTarget
+            check(target != null)
+
+            task.cancel()
+            attackedTarget = null
+            target.combat.attackedByTargets.remove(this@Creature)
+            attackTask = null
+
+            hooks.onStoppedAttackOtherCreature(target)
+        }
+
+        fun isCurrentlyAttacking(): Boolean {
+            return attackedTarget != null;
+        }
     }
 
-    fun stopAttacking() {
-        check(isAttacking) { "To stop attacking one need to attack first" }
-        val task = attackTask
-        check(task != null)
-        val target = attackTarget
-        check(target != null)
-
-        task.cancel()
-        isAttacking = false
-        attackTarget = null
-        attackTask = null
-
-        hooks.onStoppedAttackOtherCreature(target)
-    }
     //endregion
 }

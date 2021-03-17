@@ -153,14 +153,14 @@ class GameMap(
         val sourceCreature = creatures.get(pid)
         val targetCreature = creatures.get(targetCID)
 
-        sourceCreature.startAttacking(targetCreature)
+        sourceCreature.combat.startAttacking(targetCreature)
     }
 
 
     fun stopAttacking(pid: PID) {
         val sourceCreature = creatures.get(pid)
 
-        sourceCreature.stopAttacking()
+        sourceCreature.combat.stopAttacking()
     }
     //endregion
 

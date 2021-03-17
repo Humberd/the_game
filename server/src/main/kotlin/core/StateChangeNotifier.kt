@@ -22,7 +22,7 @@ class StateChangeNotifier(
                 spriteId = creature.spriteId,
                 bodyRadius = creature.bodyRadius,
                 attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
-                isBeingAttackedByMe = to.attackTarget === creature
+                isBeingAttackedByMe = to.combat.attackedTarget === creature
             )
         )
     }
