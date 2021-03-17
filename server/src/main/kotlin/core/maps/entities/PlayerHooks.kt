@@ -81,6 +81,7 @@ class PlayerHooks(
                 EgressDataPacket.DamageTaken.Damage(player.position, damage)
             )
         )
+        notifier.notifyCreatureUpdate(player, player)
     }
 
     override fun onOtherCreatureDamageTaken(otherCreature: Creature, damage: UInt) {
