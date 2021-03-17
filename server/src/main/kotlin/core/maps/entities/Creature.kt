@@ -283,7 +283,7 @@ abstract class Creature(
         }
 
         private fun die() {
-            attackedByTargets.forEach { it.combat.stopAttacking() }
+            attackedByTargets.toTypedArray().forEach { it.combat.stopAttacking() }
             hooks.onDeath()
         }
 
@@ -323,6 +323,19 @@ abstract class Creature(
                         )
                     )
                 }
+                creaturesThatSeeMe
+                    .forEach {
+                        if (it is Player) {
+                            notifier.sendProjectile(
+                                it.pid, EgressDataPacket.ProjectileSend(
+                                    spriteId = SpriteId(13u),
+                                    sourcePosition = position,
+                                    targetPosition = target.position,
+                                    duration = projectileDelay
+                                )
+                            )
+                        }
+                    }
 
                 GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
                     target.combat.takeDamage(damage)
