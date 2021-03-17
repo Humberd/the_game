@@ -225,7 +225,7 @@ abstract class Creature(
 
         }
 
-        hooks.onMoved()
+        hooks.onMoved(tileChanged)
         creaturesThatSeeMe.forEach {
             it.hooks.onOtherCreaturePositionChange(this)
         }
@@ -300,11 +300,11 @@ abstract class Creature(
         val attackSpeed = 1000.ms
         val damage = 10u
 
-        val projectileUnitsPerSecond = 0.5f
+        val projectileUnitsPerSecond = 3f
 
         attackTask = GameLoop.instance.requestAsyncTask(attackSpeed) {
             val distanceToTarget = getDistance(position, target.position)
-            val projectileDelay = (distanceToTarget.toFloat() * projectileUnitsPerSecond).sec
+            val projectileDelay = (distanceToTarget.toFloat() / projectileUnitsPerSecond).sec
 
             // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
             if (this is Player) {
@@ -313,7 +313,7 @@ abstract class Creature(
                         spriteId = SpriteId(13u),
                         sourcePosition = position,
                         targetPosition = target.position,
-                        projectileDelay
+                        duration = projectileDelay
                     )
                 )
             }

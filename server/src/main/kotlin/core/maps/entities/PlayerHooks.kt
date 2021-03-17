@@ -44,9 +44,11 @@ class PlayerHooks(
         }
     }
 
-    override fun onMoved() {
-        notifier.notifyCreatureUpdate(player, player)
-        notifier.notifyTerrainUpdate(player)
+    override fun onMoved(tileChanged: Boolean) {
+        notifier.notifyCreaturePositionUpdate(player.pid, player)
+        if (tileChanged) {
+            notifier.notifyTerrainUpdate(player)
+        }
     }
 
     override fun onCollideWith(wall: Wall) {
