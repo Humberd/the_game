@@ -39,7 +39,7 @@ class PlayerHooks(
 
         notifier.notifyCreatureDisappear(player.pid, player)
 
-        player.creaturesThatSeeMe.forEach {
+        player.creaturesThatSeeMe.toTypedArray().forEach {
             it.creaturesISee.unregister(player)
         }
 
