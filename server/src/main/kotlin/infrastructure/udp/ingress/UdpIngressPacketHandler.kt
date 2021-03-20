@@ -91,6 +91,9 @@ class UdpIngressPacketHandler(
                 IngressPacketType.BASIC_ATTACK_END -> {
                     gameLoop.requestAction(IngressPacket.BasicAttackStop.from(packet, getPID(client)))
                 }
+                IngressPacketType.PLAYER_STATS_UPDATE_REQUEST -> {
+                    gameLoop.requestAction(IngressPacket.PlayerStatsUpdateRequest.from(packet, getPID(client)))
+                }
                 null -> {
                     logger.warn { "Unknown packet type ${packetTypeValue}" }
                 }

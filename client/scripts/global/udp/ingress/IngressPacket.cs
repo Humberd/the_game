@@ -18,7 +18,9 @@ namespace Client.scripts.global.udp.ingress
         EQUIPPED_SPELLS_UPDATE = 0x26,
         SPELL_USE = 0x27,
         DAMAGE_TAKEN = 0x28,
-        PROJECTILE_SEND = 0x29
+        PROJECTILE_SEND = 0x29,
+        EQUIPMENT_UPDATE = 0x2A,
+        CREATURE_STATS_UPDATE = 0x2B
     }
 
     public class IngressDataPacket
@@ -324,6 +326,75 @@ namespace Client.scripts.global.udp.ingress
                     sourcePosition: buffer.ReadVector2(),
                     targetPosition: buffer.ReadVector2(),
                     duration: buffer.ReadUInt32()
+                );
+            }
+        }
+
+        public class CreatureStatsUpdate
+        {
+            public readonly IntCreatureStatPacket Defense;
+            public readonly IntCreatureStatPacket Attack;
+            public readonly FloatCreatureStatPacket AttackSpeed;
+            public readonly FloatCreatureStatPacket MovementSpeed;
+            public readonly IntCreatureStatPacket HealthPool;
+
+            public CreatureStatsUpdate(IntCreatureStatPacket defense, IntCreatureStatPacket attack, FloatCreatureStatPacket attackSpeed, FloatCreatureStatPacket movementSpeed, IntCreatureStatPacket healthPool)
+            {
+                Defense = defense;
+                Attack = attack;
+                AttackSpeed = attackSpeed;
+                MovementSpeed = movementSpeed;
+                HealthPool = healthPool;
+            }
+
+            public readonly struct IntCreatureStatPacket
+            {
+                public readonly int BaseValue;
+                public readonly int CurrentValue;
+
+                public IntCreatureStatPacket(int baseValue, int currentValue)
+                {
+                    BaseValue = baseValue;
+                    CurrentValue = currentValue;
+                }
+            }
+
+            public readonly struct FloatCreatureStatPacket
+            {
+                public readonly float BaseValue;
+                public readonly float CurrentValue;
+
+                public FloatCreatureStatPacket(float baseValue, float currentValue)
+                {
+                    BaseValue = baseValue;
+                    CurrentValue = currentValue;
+                }
+            }
+
+            public static CreatureStatsUpdate From(BinaryReader buffer)
+            {
+                return new CreatureStatsUpdate(
+                    defense: ReadIntStat(buffer),
+                    attack: ReadIntStat(buffer),
+                    attackSpeed: ReadFloatStat(buffer),
+                    movementSpeed: ReadFloatStat(buffer),
+                    healthPool: ReadIntStat(buffer)
+                );
+            }
+
+            private static IntCreatureStatPacket ReadIntStat(BinaryReader buffer)
+            {
+                return new IntCreatureStatPacket(
+                    baseValue: buffer.ReadInt32(),
+                    currentValue: buffer.ReadInt32()
+                );
+            }
+
+            private static FloatCreatureStatPacket ReadFloatStat(BinaryReader buffer)
+            {
+                return new FloatCreatureStatPacket(
+                    baseValue: buffer.ReadSingle(),
+                    currentValue: buffer.ReadSingle()
                 );
             }
         }

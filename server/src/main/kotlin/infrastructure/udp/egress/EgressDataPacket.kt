@@ -1,6 +1,7 @@
 package infrastructure.udp.egress
 
 import core.maps.ItemType
+import core.maps.entities.creatures.StatValue
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
 import utils.*
@@ -17,7 +18,8 @@ enum class EgressPacketType(val value: Int) {
     SPELL_USE(0x27),
     DAMAGE_TAKEN(0x28),
     PROJECTILE_SEND(0x29),
-    EQUIPMENT_UPDATE(0x2A)
+    EQUIPMENT_UPDATE(0x2A),
+    CREATURE_STATS_UPDATE(0x2B)
 }
 
 sealed class EgressDataPacket(
@@ -211,6 +213,49 @@ sealed class EgressDataPacket(
 
         override fun packData(buffer: ByteBuffer) {
 
+        }
+    }
+
+    data class CreatureStatsUpdate(
+        val defense: CreatureStatPacket,
+        val attack: CreatureStatPacket,
+        val attackSpeed: CreatureStatPacket,
+        val movementSpeed: CreatureStatPacket,
+        val healthPool: CreatureStatPacket,
+    ) : EgressDataPacket(CREATURE_STATS_UPDATE) {
+        data class CreatureStatPacket(
+            val base: Number,
+            val current: Number
+        ) {
+            companion object {
+                fun <T : Number> from(value: StatValue<T>): CreatureStatPacket {
+                    return CreatureStatPacket(
+                        base = value.base,
+                        current = value.current
+                    )
+                }
+            }
+        }
+
+        override fun packData(buffer: ByteBuffer) {
+            packStat(buffer, defense)
+            packStat(buffer, attack)
+            packStat(buffer, attackSpeed)
+            packStat(buffer, movementSpeed)
+            packStat(buffer, healthPool)
+        }
+
+        private fun packStat(buffer: ByteBuffer, stat: CreatureStatPacket) {
+            packNumber(buffer, stat.base)
+            packNumber(buffer, stat.current)
+        }
+
+        private fun packNumber(buffer: ByteBuffer, value: Number) {
+            when (value) {
+                is Int -> buffer.putInt(value)
+                is Float -> buffer.putFloat(value)
+                else -> throw Error("Unsupported Stat Type")
+            }
         }
     }
 }

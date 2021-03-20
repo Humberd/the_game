@@ -62,6 +62,9 @@ namespace Client.scripts.global.udp.ingress
                 case IngressPacketType.PROJECTILE_SEND:
                     _ingressPacketHandler.Handle(IngressDataPacket.ProjectileSend.From(buffer));
                     break;
+                case IngressPacketType.CREATURE_STATS_UPDATE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.CreatureStatsUpdate.From(buffer));
+                    break;
                 default:
                 {
                     Console.WriteLine($"Packet type not supported 0x{packetType:X}");

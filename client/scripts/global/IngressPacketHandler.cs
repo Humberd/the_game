@@ -1,5 +1,7 @@
-﻿using Client.screens.game.scripts;
+﻿using System;
+using Client.screens.game.scripts;
 using Client.screens.game.scripts.ui;
+using Client.screens.inventory;
 using Client.scripts.global.udp.ingress;
 
 namespace Client.scripts.global
@@ -54,6 +56,11 @@ namespace Client.scripts.global
         public void Handle(IngressDataPacket.ProjectileSend action)
         {
             GamePlaneController.Instance.DisplayProjectile(action);
+        }
+
+        public void Handle(IngressDataPacket.CreatureStatsUpdate action)
+        {
+            InventoryScreenController.Instance.DisplayStats(action);
         }
     }
 }

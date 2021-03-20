@@ -50,4 +50,8 @@ class GameActionHandler(
     fun handle(action: IngressPacket.BasicAttackStop) {
         gamesManager.stopBasicAttacking(action.pid)
     }
+
+    fun handle(action: IngressPacket.PlayerStatsUpdateRequest) {
+        gamesManager.requestPlayerStatsUpdate(action.pid)
+    }
 }

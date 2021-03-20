@@ -14,7 +14,8 @@ enum class IngressPacketType(val value: Int) {
     TERRAIN_ITEM_DRAG(0x11),
     SPELL_USAGE(0x12),
     BASIC_ATTACK_START(0x13),
-    BASIC_ATTACK_END(0x14);
+    BASIC_ATTACK_END(0x14),
+    PLAYER_STATS_UPDATE_REQUEST(0x15);
 
     companion object {
         private val map = HashMap<Int, IngressPacketType>()
@@ -100,6 +101,14 @@ sealed class IngressPacket {
                     pid = pid
                 )
             }
+        }
+    }
+
+    data class PlayerStatsUpdateRequest(
+        val pid: PID
+    ) : IngressPacket() {
+        companion object {
+            fun from(buffer: ByteBuffer, pid: PID) = PlayerStatsUpdateRequest(pid)
         }
     }
 }

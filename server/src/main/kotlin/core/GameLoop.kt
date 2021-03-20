@@ -108,6 +108,7 @@ class GameLoop(
             is IngressPacket.SpellUsage -> gameActionHandler.handle(action)
             is IngressPacket.BasicAttackStart -> gameActionHandler.handle(action)
             is IngressPacket.BasicAttackStop -> gameActionHandler.handle(action)
+            is IngressPacket.PlayerStatsUpdateRequest -> gameActionHandler.handle(action)
         }
     }
 

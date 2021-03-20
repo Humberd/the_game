@@ -142,4 +142,17 @@ class StateChangeNotifier(
     fun sendProjectile(to: PID, data: EgressDataPacket.ProjectileSend) {
         egressPacketHandler.notify(to, data)
     }
+
+    fun notifyPlayerStats(player: Player) {
+        egressPacketHandler.notify(
+            player.pid,
+            EgressDataPacket.CreatureStatsUpdate(
+                defense = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.defense),
+                attack = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.attack),
+                attackSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.attackSpeed),
+                movementSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.movementSpeed),
+                healthPool = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.healthPool),
+            )
+        )
+    }
 }

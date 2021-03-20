@@ -63,6 +63,11 @@ class GamesManager(
         getMap(pid).stopAttacking(pid)
     }
 
+    fun requestPlayerStatsUpdate(pid: PID) {
+        val player = getMap(pid).creatures.get(pid)
+        notifier.notifyPlayerStats(player)
+    }
+
     //region Utilities
     private fun getMap(pid: PID): GameMap {
         return maps[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
