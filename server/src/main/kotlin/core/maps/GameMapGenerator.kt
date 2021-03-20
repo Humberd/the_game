@@ -2,10 +2,10 @@ package core.maps
 
 import core.StateChangeNotifier
 import core.maps.entities.GameMap
-import core.maps.entities.Monster
-import core.maps.entities.MonsterSeed
 import core.maps.entities.Tile
 import core.maps.entities.creatures.CreatureSeed
+import core.maps.entities.creatures.monster.Monster
+import core.maps.entities.creatures.monster.MonsterSeed
 import core.types.*
 
 private const val GRAVEL_SPRITE: UShort = 0u

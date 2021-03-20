@@ -1,4 +1,4 @@
-package core.maps.entities
+package core.maps.entities.creatures.monster
 
 import core.maps.entities.creatures.CreatureHooks
 
