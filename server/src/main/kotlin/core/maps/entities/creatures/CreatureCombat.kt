@@ -5,8 +5,8 @@ import core.GameLoop
 import core.maps.entities.creatures.player.Player
 import core.types.SpriteId
 import infrastructure.udp.egress.EgressDataPacket
+import utils.Milliseconds
 import utils.getDistance
-import utils.ms
 import utils.sec
 
 class CreatureCombat(private val creature: Creature) {
@@ -50,12 +50,10 @@ class CreatureCombat(private val creature: Creature) {
         attackedTarget = target
         target.combat.attackedByTargets.add(creature)
 
-        val attackSpeed = 1000.ms
-        val damage = 10u
-
         val projectileUnitsPerSecond = 3f
 
-        attackTask = GameLoop.instance.requestAsyncTask(attackSpeed) {
+        val attackSpeed = 1000 / creature.stats.attackSpeed.current
+        attackTask = GameLoop.instance.requestAsyncTask(Milliseconds(attackSpeed.toUInt())) {
             val distanceToTarget = getDistance(creature.position, target.position)
             val projectileDelay = (distanceToTarget.toFloat() / projectileUnitsPerSecond).sec
 
@@ -85,7 +83,7 @@ class CreatureCombat(private val creature: Creature) {
                 }
 
             GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
-                target.combat.takeDamage(damage)
+                target.combat.takeDamage(creature.stats.attack.current.toUInt())
             }
         }
 
