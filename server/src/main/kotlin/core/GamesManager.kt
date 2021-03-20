@@ -1,10 +1,10 @@
 package core
 
 import core.maps.GameMapGenerator
-import core.maps.entities.CreatureSeed
 import core.maps.entities.GameMap
 import core.maps.entities.Player
 import core.maps.entities.PlayerSeed
+import core.maps.entities.creatures.CreatureSeed
 import core.types.*
 
 class GamesManager(
@@ -39,7 +39,7 @@ class GamesManager(
         getMap(pid).creatures.moveTo(pid, targetPosition)
     }
 
-    fun dragItemOnTerrain(pid: PID, iid: IID, targetPosition: WorldPosition) {
+    fun dragItemOnTerrain(pid: PID, itemInstanceId: ItemInstanceId, targetPosition: WorldPosition) {
         val map = getMap(pid)
 //        map.moveItemOnTerrain(pid, iid, targetPosition)
     }

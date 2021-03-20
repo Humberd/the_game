@@ -1,7 +1,11 @@
 package core.maps
 
 import core.StateChangeNotifier
-import core.maps.entities.*
+import core.maps.entities.GameMap
+import core.maps.entities.Monster
+import core.maps.entities.MonsterSeed
+import core.maps.entities.Tile
+import core.maps.entities.creatures.CreatureSeed
 import core.types.*
 
 private const val GRAVEL_SPRITE: UShort = 0u
@@ -23,7 +27,7 @@ object GameMapGenerator {
             gridWidth = width,
             gridHeight = height,
             grid = grid,
-            items = listOf(
+            gameMapObjects = listOf(
 //                Item(
 //                    iid = IID.unique(),
 //                    itemDef = ItemDefinitionStore.get(ItemType.JUST_A_KNIFE),
@@ -62,11 +66,9 @@ object GameMapGenerator {
             Monster(
                 creatureSeed = CreatureSeed(
                     name = CreatureName("Ghost"),
-                    baseHealth = 300u,
-                    currentHealth = 300u,
+                    experience = Experience(1000L),
                     spriteId = SpriteId(6u),
                     position = WorldPosition(6f, 2f),
-                    velocity = 1f,
                     tilesViewRadius = TileRadius(3),
                     bodyRadius = 0.5f
                 ),

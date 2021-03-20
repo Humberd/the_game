@@ -49,14 +49,14 @@ sealed class IngressPacket {
 
     data class TerrainItemDrag(
         val pid: PID,
-        val iid: IID,
+        val itemInstanceId: ItemInstanceId,
         val targetPosition: WorldPosition
     ) : IngressPacket() {
         companion object {
             fun from(buffer: ByteBuffer, pid: PID): TerrainItemDrag {
                 return TerrainItemDrag(
                     pid = pid,
-                    iid = IID(buffer.uInt()),
+                    itemInstanceId = ItemInstanceId(buffer.uInt()),
                     targetPosition = WorldPosition(buffer.float, buffer.float)
                 )
             }

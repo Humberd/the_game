@@ -16,7 +16,8 @@ enum class EgressPacketType(val value: Int) {
     EQUIPPED_SPELLS_UPDATE(0x26),
     SPELL_USE(0x27),
     DAMAGE_TAKEN(0x28),
-    PROJECTILE_SEND(0x29)
+    PROJECTILE_SEND(0x29),
+    EQUIPMENT_UPDATE(0x2A)
 }
 
 sealed class EgressDataPacket(
@@ -37,8 +38,8 @@ sealed class EgressDataPacket(
     data class CreatureUpdate(
         val cid: CID,
         val name: CreatureName,
-        val baseHealth: UInt,
-        val currentHealth: UInt,
+        val baseHealth: Int,
+        val currentHealth: Int,
         val position: WorldPosition,
         val spriteId: SpriteId,
         val bodyRadius: Float,
@@ -48,8 +49,8 @@ sealed class EgressDataPacket(
         override fun packData(buffer: ByteBuffer) {
             buffer.putUInt(cid.value)
             buffer.putString(name.value)
-            buffer.putUInt(baseHealth)
-            buffer.putUInt(currentHealth)
+            buffer.putInt(baseHealth)
+            buffer.putInt(currentHealth)
             buffer.putVector(position)
             buffer.putUShort(spriteId.value)
             buffer.putFloat(bodyRadius)
@@ -98,14 +99,14 @@ sealed class EgressDataPacket(
         val items: List<ItemData>
     ) : EgressDataPacket(TERRAIN_ITEMS_UPDATE) {
         data class ItemData(
-            val iid: IID,
+            val itemInstanceId: ItemInstanceId,
             val type: ItemType,
             val position: WorldPosition
         )
 
         override fun packData(buffer: ByteBuffer) {
             buffer.putList(items) {
-                buffer.putUInt(it.iid.value)
+                buffer.putUInt(it.itemInstanceId.value)
                 buffer.putUInt(it.type.id.toUInt())
                 buffer.putFloat(it.position.x)
                 buffer.putFloat(it.position.y)
@@ -193,6 +194,23 @@ sealed class EgressDataPacket(
             buffer.putVector(sourcePosition)
             buffer.putVector(targetPosition)
             buffer.putUInt(duration.value)
+        }
+    }
+
+    data class EquipmentUpdate(
+        val helmetSlot: EquipmentSlot,
+        val armorSlot: EquipmentSlot,
+        val legsSlot: EquipmentSlot,
+        val bootsSlot: EquipmentSlot,
+        val leftHandSlot: EquipmentSlot,
+        val rightHandSlot: EquipmentSlot,
+    ) : EgressDataPacket(EQUIPMENT_UPDATE) {
+        data class EquipmentSlot(
+            private val itemInstanceId: ItemInstanceId
+        )
+
+        override fun packData(buffer: ByteBuffer) {
+
         }
     }
 }

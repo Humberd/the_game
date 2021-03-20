@@ -3,6 +3,7 @@ package core.maps.entities
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
+import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
 import core.types.*
 import mu.KotlinLogging
@@ -15,7 +16,7 @@ class GameMap(
     val gridWidth: Int,
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
-    items: List<Item>,
+    gameMapObjects: List<GameMapObject>,
 ) {
     //region Creatures Store
     val creatures = CreaturesContainer()
@@ -220,8 +221,8 @@ class GameMap(
         return getTileAt(toGridPosition(creature.position))
     }
 
-    fun getTileFor(item: Item): Tile {
-        return getTileAt(toGridPosition(item.position))
+    fun getTileFor(gameMapObject: GameMapObject): Tile {
+        return getTileAt(toGridPosition(gameMapObject.position))
     }
     //endregion
 }

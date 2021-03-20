@@ -1,6 +1,8 @@
 package core.maps.entities
 
 import core.StateChangeNotifier
+import core.maps.entities.creatures.Creature
+import core.maps.entities.creatures.CreatureHooks
 import core.maps.shapes.Wall
 import infrastructure.udp.egress.EgressDataPacket
 import mu.KotlinLogging

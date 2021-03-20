@@ -1,5 +1,6 @@
-package core.maps.entities
+package core.maps.entities.creatures
 
+import core.maps.entities.GameMap
 import core.maps.shapes.Wall
 
 interface CreatureHooks {

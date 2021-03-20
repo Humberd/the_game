@@ -1,14 +1,14 @@
 package core.maps.entities
 
 import core.maps.ItemDef
-import core.types.IID
+import core.types.ItemInstanceId
 import core.types.WorldPosition
 import core.types.WorldRadius
 import gameland.ItemActionHandler
 import utils.getDistance
 
-data class Item(
-    val iid: IID,
+data class GameMapObject(
+    val itemInstanceId: ItemInstanceId,
     val itemDef: ItemDef,
     var position: WorldPosition,
     val actionHandler: ItemActionHandler = ItemActionHandler.defaultImpl

@@ -1,6 +1,8 @@
 package core.maps.entities
 
 import core.StateChangeNotifier
+import core.maps.entities.creatures.Creature
+import core.maps.entities.creatures.CreatureSeed
 import core.types.PID
 import core.types.SID
 import core.types.SpriteId

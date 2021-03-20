@@ -16,11 +16,17 @@ inline class CID(val value: UInt) {
         fun unique() = CID(++counter)
     }
 }
-// Unique ItemId
+inline class ItemInstanceId(val value: UInt) {
+    companion object {
+        private var counter = 0u
+        fun unique() = ItemInstanceId(++counter)
+    }
+}
+
 inline class IID(val value: UInt) {
     companion object {
         private var counter = 0u
-        fun unique() = IID(++counter)
+        fun unique() = ItemInstanceId(++counter)
     }
 }
 
@@ -51,6 +57,20 @@ inline class TileRadius(val value: Int) {
 inline class WorldRadius(val value: Int) {
     init {
         require(value >= 0)
+    }
+}
+inline class ResourceId(val value: UShort)
+inline class Experience(val value: Long) {
+    init {
+        require(value > 0)
+    }
+    fun toLevel(): Level {
+        return Level((value / 100f).toInt() + 1  )
+    }
+}
+inline class Level(val value: Int) {
+    init {
+        require(value > 0)
     }
 }
 

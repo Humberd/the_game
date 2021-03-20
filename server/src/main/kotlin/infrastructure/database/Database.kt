@@ -1,9 +1,13 @@
 package infrastructure.database
 
 import core.types.*
+import infrastructure.database.types.Equippable
+import infrastructure.database.types.ItemDAO
+import infrastructure.database.types.ModifierDAO
 import infrastructure.database.types.PlayerCharacterDAO
 
 class Database {
+    //region Characters
     private val chars: HashMap<PID, PlayerCharacterDAO>
 
     init {
@@ -11,22 +15,18 @@ class Database {
              PID(1u) to PlayerCharacterDAO(
                  pid = PID(1u),
                  name = CreatureName("Alice"),
-                 baseHealth = 150u,
-                 currentHealth = 100u,
+                 experience = Experience(1500L),
                  spriteId = SpriteId(5u),
                  position = WorldPosition(3f, 3f),
-                 velocity = 3f,
                  tilesViewRadius = TileRadius(3),
                  bodyRadius = 0.5f
              ),
              PID(2u) to PlayerCharacterDAO(
                  pid = PID(2u),
                  name = CreatureName("Bob"),
-                 baseHealth = 150u,
-                 currentHealth = 30u,
+                 experience = Experience(1500L),
                  spriteId = SpriteId(5u),
                  position = WorldPosition(5f, 4.5f),
-                 velocity = 2.5f,
                  tilesViewRadius = TileRadius(2),
                  bodyRadius = 0.75f
              )
@@ -36,4 +36,37 @@ class Database {
     fun getPlayer(pid: PID): PlayerCharacterDAO {
         return chars[pid] ?: throw Error("PlayerCharacterDao not found for ${pid}")
     }
+    //endregion
+
+    //region Items
+    private val items: HashMap<IID, ItemDAO>
+    init {
+        items = hashMapOf(
+            IID(1u) to ItemDAO(
+                iid = IID(1u),
+                name = "Brana Shield",
+                resourceId = ResourceId(1u),
+                equippable = Equippable.within(Equippable.Slot.LEFT_HAND, Equippable.Slot.RIGHT_HAND),
+                modifiers = listOf(
+                    ModifierDAO(
+                        attribute = "defence",
+                        value = 25,
+                        type = "flat"
+                    ),
+                    ModifierDAO(
+                        attribute = "attack",
+                        value = -5,
+                        type = "flat"
+                    ),
+                    ModifierDAO(
+                        attribute = "attack_speed",
+                        value = 10,
+                        type = "percent"
+                    )
+                )
+            )
+        )
+    }
+
+    //endregion
 }

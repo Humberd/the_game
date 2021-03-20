@@ -1,8 +1,8 @@
 package core
 
-import core.maps.entities.Creature
 import core.maps.entities.Monster
 import core.maps.entities.Player
+import core.maps.entities.creatures.Creature
 import core.types.PID
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
@@ -16,8 +16,8 @@ class StateChangeNotifier(
             EgressDataPacket.CreatureUpdate(
                 cid = creature.cid,
                 name = creature.name,
-                baseHealth = creature.baseHealth,
-                currentHealth = creature.currentHealth,
+                baseHealth = creature.stats.healthPool.current,
+                currentHealth = creature.stats.healthCurrent,
                 position = creature.position,
                 spriteId = creature.spriteId,
                 bodyRadius = creature.bodyRadius,
@@ -91,7 +91,7 @@ class StateChangeNotifier(
             EgressDataPacket.TerrainItemsUpdate(
                 items = player.getVisibleItems().map {
                     EgressDataPacket.TerrainItemsUpdate.ItemData(
-                        iid = it.iid,
+                        itemInstanceId = it.itemInstanceId,
                         type = it.itemDef.type,
                         position = it.position
                     )

@@ -1,6 +1,8 @@
 package core.maps.entities
 
 import core.StateChangeNotifier
+import core.maps.entities.creatures.Creature
+import core.maps.entities.creatures.CreatureSeed
 
 data class MonsterSeed(
     val attackTriggerRadius: Float

@@ -1,4 +1,4 @@
-package core.maps.entities
+package core.maps.entities.creatures
 
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.CircleShape
@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import core.AsyncGameTask
 import core.GameLoop
 import core.StateChangeNotifier
+import core.maps.entities.*
 import core.types.*
 import infrastructure.udp.egress.EgressDataPacket
 import utils.getDistance
@@ -16,11 +17,9 @@ import utils.toGridPosition
 
 data class CreatureSeed(
     val name: CreatureName,
-    val baseHealth: UInt,
-    val currentHealth: UInt,
+    val experience: Experience,
     val spriteId: SpriteId,
     val position: WorldPosition,
-    val velocity: Float,
     val tilesViewRadius: TileRadius,
     val bodyRadius: Float
 )
@@ -36,10 +35,10 @@ abstract class Creature(
     var name: CreatureName = creatureSeed.name
         private set
 
-    var baseHealth: UInt = creatureSeed.baseHealth
+    var experience: Experience = creatureSeed.experience
         private set
 
-    var currentHealth: UInt = creatureSeed.currentHealth
+    var level: Level = experience.toLevel()
         private set
 
     var spriteId: SpriteId = creatureSeed.spriteId
@@ -47,9 +46,6 @@ abstract class Creature(
 
     val position: WorldPosition
         get() = fixture.body.position
-
-    var velocity: Float = creatureSeed.velocity
-        private set
 
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
@@ -162,8 +158,8 @@ abstract class Creature(
 
     fun startMovingTo(targetPosition: WorldPosition) {
         val velocity = targetPosition.cpy().sub(position).nor()
-        velocity.x *= this.velocity
-        velocity.y *= this.velocity
+        velocity.x *= stats.movementSpeed.current
+        velocity.y *= stats.movementSpeed.current
         this.targetPosition = targetPosition
         fixture.body.setLinearVelocity(velocity)
     }
@@ -174,7 +170,7 @@ abstract class Creature(
             return
         }
 
-        val distanceToStopMoving = deltaTime * velocity
+        val distanceToStopMoving = deltaTime * stats.movementSpeed.current
         val currentDistance = getDistance(position, targetPosition!!)
         if (distanceToStopMoving > currentDistance) {
             stopMoving()
@@ -231,8 +227,8 @@ abstract class Creature(
         }
     }
 
-    fun getVisibleItems(): List<Item> {
-        val buffer = arrayListOf<Item>()
+    fun getVisibleItems(): List<GameMapObject> {
+        val buffer = arrayListOf<GameMapObject>()
 
         lastUpdate.tileSlice.forEach {
             it.forEach {
@@ -259,6 +255,8 @@ abstract class Creature(
         return getGreedyVisibleCreatures().contains(otherCreature)
     }
 
+    val stats = CreatureStats(this)
+
     //region Combat
     var combat = Combat()
 
@@ -269,13 +267,13 @@ abstract class Creature(
         private var attackTask: AsyncGameTask? = null
 
         fun takeDamage(damage: UInt) {
-            val newHealth = currentHealth.toInt() - damage.toInt()
+            val newHealth = stats.healthCurrent - damage.toInt()
 
             if (newHealth <= 0) {
-                currentHealth = 0u
+                stats.healthCurrent = 0
                 die()
             } else {
-                currentHealth = newHealth.toUInt()
+                stats.healthCurrent = newHealth
             }
 
             hooks.onSelfDamageTaken(damage)
@@ -361,7 +359,7 @@ abstract class Creature(
         }
 
         fun isCurrentlyAttacking(): Boolean {
-            return attackedTarget != null;
+            return attackedTarget != null
         }
     }
 

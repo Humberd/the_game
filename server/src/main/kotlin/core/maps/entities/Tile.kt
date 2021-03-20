@@ -1,8 +1,9 @@
 package core.maps.entities
 
+import core.maps.entities.creatures.Creature
 import core.types.CID
 import core.types.GridPosition
-import core.types.IID
+import core.types.ItemInstanceId
 import core.types.SpriteId
 
 
@@ -10,7 +11,7 @@ import core.types.SpriteId
 data class Tile(
     val spriteId: SpriteId,
     val gridPosition: GridPosition,
-    val items: TileContainer<IID, Item> = TileContainer(),
+    val items: TileContainer<ItemInstanceId, GameMapObject> = TileContainer(),
     val creatures: TileContainer<CID, Creature> = TileContainer()
 ) {
 
