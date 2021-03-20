@@ -9,11 +9,6 @@ namespace Client.scripts.login_screen
         [Export]
         private uint _pid;
 
-        public override void _Ready()
-        {
-            base._Ready();
-        }
-
         public override void _Pressed()
         {
             ActionSenderMono.Instance.Send(new EgressDataPacket.AuthLogin(_pid));

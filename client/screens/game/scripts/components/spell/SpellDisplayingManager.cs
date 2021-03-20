@@ -1,8 +1,7 @@
-﻿using System;
-using Client.scripts.global.udp.ingress;
+﻿using Client.scripts.global.udp.ingress;
 using Godot;
 
-namespace Client.scripts.components.spell
+namespace Client.screens.game.scripts.components.spell
 {
     public class SpellDisplayingManager : Node2D
     {

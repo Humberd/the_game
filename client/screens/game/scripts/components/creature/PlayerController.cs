@@ -2,7 +2,7 @@
 using Client.scripts.global.udp.egress;
 using Godot;
 
-namespace Client.scripts.components.creature
+namespace Client.screens.game.scripts.components.creature
 {
     public class PlayerController : CreatureController
     {

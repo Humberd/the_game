@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Client.scripts.components.creature;
-using Client.scripts.components.spell;
-using Client.scripts.components.terrain;
-using Client.scripts.global.udp.ingress;
+using Client.screens.game.scripts.components.creature;
+using Client.screens.game.scripts.components.spell;
+using Client.screens.game.scripts.components.terrain;
 using Client.scripts.global;
+using Client.scripts.global.udp.ingress;
 using Godot;
 using CID = System.UInt32;
 
-namespace Client.scripts
+namespace Client.screens.game.scripts
 {
     public class GamePlaneController : Node2D
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using Client.scripts.global.udp.ingress;
+﻿using Client.scripts.global.udp.ingress;
 using Godot;
 
-namespace Client.scripts.components.terrain
+namespace Client.screens.game.scripts.components.terrain
 {
     public class TerrainController : Node2D
     {

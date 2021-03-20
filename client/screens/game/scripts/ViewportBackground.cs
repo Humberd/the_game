@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace Client.scripts
+namespace Client.screens.game.scripts
 {
     public class ViewportBackground : Sprite
     {

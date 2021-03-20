@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Client.scripts;
 using Client.scripts.global.udp.ingress;
 using Godot;
 
-namespace Client.scripts
+namespace Client.screens.game.scripts.ui
 {
     public class GameMapUiController : GridContainer
     {

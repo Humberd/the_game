@@ -12,7 +12,8 @@ namespace Client.scripts.global.udp.egress
         TERRAIN_ITEM_DRAG = 0x11,
         SPELL_USAGE = 0x12,
         BASIC_ATTACK_START = 0x13,
-        BASIC_ATTACK_END = 0x14
+        BASIC_ATTACK_END = 0x14,
+        PLAYER_STATS_UPDATE_REQUEST = 0x15
     }
 
     public abstract class EgressDataPacket
@@ -143,6 +144,18 @@ namespace Client.scripts.global.udp.egress
         public class BasicAttackStop : EgressDataPacket
         {
             public BasicAttackStop() : base(EgressPacketType.BASIC_ATTACK_END)
+            {
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                // not sending any data
+            }
+        }
+
+        public class PlayerStatsUpdateRequest : EgressDataPacket
+        {
+            public PlayerStatsUpdateRequest() : base(EgressPacketType.PLAYER_STATS_UPDATE_REQUEST)
             {
             }
 

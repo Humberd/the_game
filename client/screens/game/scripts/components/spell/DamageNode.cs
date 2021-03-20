@@ -1,7 +1,7 @@
-﻿using global::Client.scripts.global;
+﻿using Client.scripts.global;
 using Godot;
 
-namespace Client.scripts.components.spell
+namespace Client.screens.game.scripts.components.spell
 {
     public class DamageNode : Node2D
     {

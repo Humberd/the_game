@@ -1,7 +1,7 @@
 ﻿using Client.scripts.global;
 using Godot;
 
-namespace Client.scripts.components.spell
+namespace Client.screens.game.scripts.components.spell
 {
     public class EffectNode : Sprite
     {

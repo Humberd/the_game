@@ -1,13 +1,11 @@
-﻿using System;
-using Client.scripts.global.udp.ingress;
-using Client.scripts.global;
+﻿using Client.scripts.global;
 using Client.scripts.global.udp.egress;
+using Client.scripts.global.udp.ingress;
 using Godot;
-using PID = System.UInt32;
 using CID = System.UInt32;
 using SpriteId = System.UInt16;
 
-namespace Client.scripts.components.creature
+namespace Client.screens.game.scripts.components.creature
 {
     public class CreatureController : KinematicBody2D
     {

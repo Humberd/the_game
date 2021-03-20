@@ -1,4 +1,4 @@
-﻿namespace Client.scripts.global
+﻿namespace Client.screens.game.scripts
 {
     public enum RenderLayer
     {

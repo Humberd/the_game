@@ -1,25 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://components/GamePlane.tscn" type="PackedScene" id=1]
-[ext_resource path="res://components/LoginScreen.tscn" type="PackedScene" id=2]
-[ext_resource path="res://components/GamePlaneUI.tscn" type="PackedScene" id=3]
+[ext_resource path="res://screens/ScreensManager.cs" type="Script" id=1]
 
 [node name="Node2D" type="Node2D"]
 
 [node name="Control" type="Control" parent="."]
 margin_right = 1024.0
 margin_bottom = 600.0
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="GamePlane" parent="Control" instance=ExtResource( 1 )]
-position = Vector2( 212, 0 )
-
-[node name="LoginScreen" parent="Control" instance=ExtResource( 2 )]
-
-[node name="GamePlaneUI" parent="Control" instance=ExtResource( 3 )]
-margin_left = 237.13
-margin_top = 500.649
-margin_right = 824.13
-margin_bottom = 602.649

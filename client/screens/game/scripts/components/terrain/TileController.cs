@@ -1,8 +1,8 @@
-﻿using global::Client.scripts.global;
+﻿using Client.scripts.global;
 using Godot;
 using Font = Godot.Font;
 
-namespace Client.scripts.components.terrain
+namespace Client.screens.game.scripts.components.terrain
 {
     public class TileController : Sprite
     {

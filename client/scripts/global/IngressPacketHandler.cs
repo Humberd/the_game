@@ -1,4 +1,6 @@
-﻿using Client.scripts.global.udp.ingress;
+﻿using Client.screens.game.scripts;
+using Client.screens.game.scripts.ui;
+using Client.scripts.global.udp.ingress;
 
 namespace Client.scripts.global
 {
