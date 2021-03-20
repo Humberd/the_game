@@ -10,6 +10,8 @@ namespace Client.screens
         private Node _loginScreenNode;
         [Export] private PackedScene _gameScreen;
         private Node _gameScreenNode;
+        [Export] private PackedScene _inventoryScreen;
+        private Node _inventoryScreenNode;
 
         public override void _Ready()
         {
@@ -30,6 +32,20 @@ namespace Client.screens
 
             _gameScreenNode = _gameScreen.Instance();
             AddChild(_gameScreenNode);
+        }
+
+        public void ToggleInventoryScreen()
+        {
+            if (_inventoryScreenNode == null)
+            {
+                _inventoryScreenNode = _inventoryScreen.Instance();
+                AddChild(_inventoryScreenNode);
+            }
+            else
+            {
+                _inventoryScreenNode.QueueFree();
+                _inventoryScreenNode = null;
+            }
         }
     }
 }
