@@ -8,6 +8,7 @@ import core.AsyncGameTask
 import core.GameLoop
 import core.StateChangeNotifier
 import core.maps.entities.*
+import core.maps.entities.creatures.player.Player
 import core.types.*
 import infrastructure.udp.egress.EgressDataPacket
 import utils.getDistance

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import core.maps.entities.creatures.Creature
+import core.maps.entities.creatures.player.Player
 import core.maps.shapes.Wall
 import core.types.*
 import mu.KotlinLogging

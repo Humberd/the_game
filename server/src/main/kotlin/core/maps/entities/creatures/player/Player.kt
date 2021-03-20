@@ -1,6 +1,8 @@
-package core.maps.entities
+package core.maps.entities.creatures.player
 
 import core.StateChangeNotifier
+import core.maps.entities.CollisionCategory
+import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureSeed
 import core.types.PID

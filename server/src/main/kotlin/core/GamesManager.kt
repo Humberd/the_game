@@ -2,9 +2,9 @@ package core
 
 import core.maps.GameMapGenerator
 import core.maps.entities.GameMap
-import core.maps.entities.Player
-import core.maps.entities.PlayerSeed
 import core.maps.entities.creatures.CreatureSeed
+import core.maps.entities.creatures.player.Player
+import core.maps.entities.creatures.player.PlayerSeed
 import core.types.*
 
 class GamesManager(

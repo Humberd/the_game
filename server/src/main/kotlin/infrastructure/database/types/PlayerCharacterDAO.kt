@@ -1,8 +1,8 @@
 package infrastructure.database.types
 
-import core.maps.entities.PlayerSeed
-import core.maps.entities.SpellsContainer
 import core.maps.entities.creatures.CreatureSeed
+import core.maps.entities.creatures.player.PlayerSeed
+import core.maps.entities.creatures.player.SpellsContainer
 import core.types.*
 
 data class PlayerCharacterDAO(

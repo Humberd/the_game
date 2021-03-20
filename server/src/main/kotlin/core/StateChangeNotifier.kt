@@ -1,8 +1,8 @@
 package core
 
 import core.maps.entities.Monster
-import core.maps.entities.Player
 import core.maps.entities.creatures.Creature
+import core.maps.entities.creatures.player.Player
 import core.types.PID
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
