@@ -10,8 +10,8 @@ namespace Client.screens.login
 
         public override void _Pressed()
         {
+            ScreensManager.Instance.LoadGame();
             ActionSenderMono.Instance.Send(new EgressDataPacket.AuthLogin(_pid));
-            GetParent().QueueFree();
         }
     }
 }

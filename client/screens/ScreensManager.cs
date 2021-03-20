@@ -9,6 +9,7 @@ namespace Client.screens
         [Export] private PackedScene _loginScreen;
         private Node _loginScreenNode;
         [Export] private PackedScene _gameScreen;
+        private Node _gameScreenNode;
 
         public override void _Ready()
         {
@@ -20,6 +21,15 @@ namespace Client.screens
         public override void _ExitTree()
         {
             Instance = null;
+        }
+
+        public void LoadGame()
+        {
+            _loginScreenNode.QueueFree();
+            _loginScreenNode = null;
+
+            _gameScreenNode = _gameScreen.Instance();
+            AddChild(_gameScreenNode);
         }
     }
 }
