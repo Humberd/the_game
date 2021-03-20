@@ -1,8 +1,7 @@
 using Client.scripts.global.udp.egress;
-using global::Client.scripts.global;
 using Godot;
 
-namespace Client.scripts.login_screen
+namespace Client.screens.login
 {
     public class LoginButton : Button
     {
