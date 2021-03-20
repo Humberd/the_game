@@ -21,7 +21,7 @@ enum class StatType {
     },
     MOVEMENT_SPEED {
         override fun calculateBase(level: Level): Float {
-            return (level.value * 1.1).toFloat()
+            return (level.value * 0.05 + 1).toFloat()
         }
     },
     HEALTH_POOL {

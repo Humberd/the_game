@@ -13,6 +13,9 @@ abstract class StatValue<T : Number>(
         protected set
 
     abstract fun updateBase(experience: Experience)
+    fun updateCurrent() {
+        current = base
+    }
 }
 
 class IntStatValue(statType: StatType) : StatValue<Int>(statType, 0, 0) {

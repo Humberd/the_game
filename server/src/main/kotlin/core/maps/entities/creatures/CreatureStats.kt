@@ -24,7 +24,11 @@ class CreatureStats(private val creature: Creature) {
     }
 
     fun updateCurrent() {
-
+        defense.updateCurrent()
+        attack.updateCurrent()
+        attackSpeed.updateCurrent()
+        movementSpeed.updateCurrent()
+        healthPool.updateCurrent()
     }
 }
 

@@ -4,31 +4,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
-import core.AsyncGameTask
-import core.GameLoop
 import core.StateChangeNotifier
 import core.maps.entities.*
-import core.maps.entities.creatures.player.Player
 import core.types.*
-import infrastructure.udp.egress.EgressDataPacket
 import utils.getDistance
-import utils.ms
-import utils.sec
 import utils.toGridPosition
-
-data class CreatureSeed(
-    val name: CreatureName,
-    val experience: Experience,
-    val spriteId: SpriteId,
-    val position: WorldPosition,
-    val tilesViewRadius: TileRadius,
-    val bodyRadius: Float
-)
 
 abstract class Creature(
     creatureSeed: CreatureSeed,
     protected val gameMap: GameMap,
-    protected val notifier: StateChangeNotifier
+    val notifier: StateChangeNotifier
 ) {
     //region Properties
     val cid = CID.unique()
@@ -37,9 +22,6 @@ abstract class Creature(
         private set
 
     var experience: Experience = creatureSeed.experience
-        private set
-
-    var level: Level = experience.toLevel()
         private set
 
     var spriteId: SpriteId = creatureSeed.spriteId
@@ -62,7 +44,6 @@ abstract class Creature(
         var gridPosition: GridPosition,
         var tileSlice: Array<Array<Tile>>
     )
-
 
     init {
         val gridPosition = toGridPosition(creatureSeed.position)
@@ -257,112 +238,5 @@ abstract class Creature(
     }
 
     val stats = CreatureStats(this)
-
-    //region Combat
-    var combat = Combat()
-
-    inner class Combat {
-        var attackedTarget: Creature? = null
-            private set
-        val attackedByTargets: MutableSet<Creature> = mutableSetOf()
-        private var attackTask: AsyncGameTask? = null
-
-        fun takeDamage(damage: UInt) {
-            val newHealth = stats.healthCurrent - damage.toInt()
-
-            if (newHealth <= 0) {
-                stats.healthCurrent = 0
-                die()
-            } else {
-                stats.healthCurrent = newHealth
-            }
-
-            hooks.onSelfDamageTaken(damage)
-            creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(this@Creature, damage) }
-        }
-
-        private fun die() {
-            attackedByTargets.toTypedArray().forEach { it.combat.stopAttacking() }
-            hooks.onDeath()
-        }
-
-        fun startAttacking(target: Creature) {
-            if (isCurrentlyAttacking()) {
-                if (target === attackedTarget) {
-                    throw IllegalStateException("Cannot attack the same target again")
-                }
-
-                stopAttacking()
-            }
-
-            if (!canSee(target)) {
-                throw Error("Creature can't see the target")
-            }
-
-            attackedTarget = target
-            target.combat.attackedByTargets.add(this@Creature)
-
-            val attackSpeed = 1000.ms
-            val damage = 10u
-
-            val projectileUnitsPerSecond = 3f
-
-            attackTask = GameLoop.instance.requestAsyncTask(attackSpeed) {
-                val distanceToTarget = getDistance(position, target.position)
-                val projectileDelay = (distanceToTarget.toFloat() / projectileUnitsPerSecond).sec
-
-                // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
-                if (this@Creature is Player) {
-                    notifier.sendProjectile(
-                        pid, EgressDataPacket.ProjectileSend(
-                            spriteId = SpriteId(13u),
-                            sourcePosition = position,
-                            targetPosition = target.position,
-                            duration = projectileDelay
-                        )
-                    )
-                }
-                creaturesThatSeeMe
-                    .forEach {
-                        if (it is Player) {
-                            notifier.sendProjectile(
-                                it.pid, EgressDataPacket.ProjectileSend(
-                                    spriteId = SpriteId(13u),
-                                    sourcePosition = position,
-                                    targetPosition = target.position,
-                                    duration = projectileDelay
-                                )
-                            )
-                        }
-                    }
-
-                GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
-                    target.combat.takeDamage(damage)
-                }
-            }
-
-            hooks.onStartAttackOtherCreature(target)
-            target.hooks.onBeingAttackedBy(this@Creature)
-        }
-
-        fun stopAttacking() {
-            val task = attackTask
-            check(task != null)
-            val target = attackedTarget
-            check(target != null)
-
-            task.cancel()
-            attackedTarget = null
-            target.combat.attackedByTargets.remove(this@Creature)
-            attackTask = null
-
-            hooks.onStoppedAttackOtherCreature(target)
-        }
-
-        fun isCurrentlyAttacking(): Boolean {
-            return attackedTarget != null
-        }
-    }
-
-    //endregion
+    var combat = CreatureCombat(this)
 }
