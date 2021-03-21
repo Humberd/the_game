@@ -17,8 +17,10 @@ namespace Client.screens.game.scripts.components.terrain
             _gridCoordinates = gridCoordinates;
             _vecSize = new Vector2(_size, _size);
 
-            Translate(new Vector3(gridCoordinates.x, gridCoordinates.y, 0));
-            Scale = new Vector3(100f / _size, 100f / _size, 0f);
+            Translate(new Vector3(gridCoordinates.x, 0, gridCoordinates.y));
+            PixelSize = 0.01f / (_size / 100f);
+            Axis = Vector3.Axis.Y;
+            Offset = new Vector2(0, -_size);
             // ZIndex = (int) RenderLayer.BackgroundTerrain;
             _font = new Label().GetFont("");
             Centered = false;

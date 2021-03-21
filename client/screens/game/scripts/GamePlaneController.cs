@@ -23,7 +23,6 @@ namespace Client.screens.game.scripts
         {
             Instance = this;
             Console.WriteLine("Hello from GamePlaneController C#");
-            RotateX(Mathf.Deg2Rad(90));
 
             CreateTerrain();
         }

@@ -1,25 +1,22 @@
 ﻿using System;
-using Client.scripts.global.udp.egress;
 using Godot;
 
 namespace Client.screens.game.scripts.components.creature
 {
     public class PlayerController : CreatureController
     {
-        private Camera2D _camera2D;
         private bool _isRequestingPositionChange;
 
         public override void _Ready()
         {
             Console.WriteLine("Hello from Main Player Controller C#");
+            // CameraController.Instance.Track(this);
+        }
 
-            _camera2D = new Camera2D
-            {
-                // Current = true,
-                SmoothingEnabled = true,
-            };
-
-            AddChild(_camera2D);
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            // CameraController.Instance.Untrack();
         }
 
 
@@ -52,7 +49,7 @@ namespace Client.screens.game.scripts.components.creature
 
         private void SendPositionChange()
         {
-            ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(GetGlobalMousePosition() / 64f));
+            // ActionSenderMono.Instance.Send(new EgressDataPacket.PositionChange(GetGlobalMousePosition() / 64f));
         }
     }
 }

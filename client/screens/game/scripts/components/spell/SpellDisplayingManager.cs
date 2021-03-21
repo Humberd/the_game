@@ -5,6 +5,11 @@ namespace Client.screens.game.scripts.components.spell
 {
     public class SpellDisplayingManager : Node2D
     {
+        public override void _Ready()
+        {
+            Name = "SpellDisplayingManager";
+        }
+
         public void DisplaySpell(IngressDataPacket.SpellUse action)
         {
             for (var i = 0; i < action.Effects.Length; i++)

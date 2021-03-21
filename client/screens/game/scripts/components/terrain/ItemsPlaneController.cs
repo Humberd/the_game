@@ -9,6 +9,11 @@ namespace Client.screens.game.scripts.components.terrain
     {
         private readonly Dictionary<uint, ItemController> _items = new Dictionary<uint, ItemController>();
 
+        public override void _Ready()
+        {
+            Name = "ItemsPlaneController";
+        }
+
         public void DrawItems(IngressDataPacket.TerrainItemsUpdate action)
         {
             var idsToRemove = _items.Keys.Except(action.Items.Select(item => item.Iid));
