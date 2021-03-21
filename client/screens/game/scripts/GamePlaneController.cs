@@ -10,12 +10,12 @@ using CID = System.UInt32;
 
 namespace Client.screens.game.scripts
 {
-    public class GamePlaneController : Node2D
+    public class GamePlaneController : Spatial
     {
         private TerrainController _terrainController;
         private ItemsPlaneController _itemsPlaneController;
         private SpellDisplayingManager _spellDisplayingManager;
-        private readonly Dictionary<CID, CreatureController> _allCreatures = new Dictionary<CID, CreatureController>();
+        private readonly Dictionary<CID, CreatureController> _allCreatures = new();
 
         public static GamePlaneController Instance;
 
@@ -23,6 +23,7 @@ namespace Client.screens.game.scripts
         {
             Instance = this;
             Console.WriteLine("Hello from GamePlaneController C#");
+            RotateX(Mathf.Deg2Rad(90));
 
             CreateTerrain();
         }

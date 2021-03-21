@@ -15,7 +15,7 @@ namespace Client.screens.game.scripts.components.creature
 
             _camera2D = new Camera2D
             {
-                Current = true,
+                // Current = true,
                 SmoothingEnabled = true,
             };
 
