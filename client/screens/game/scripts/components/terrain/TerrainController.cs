@@ -14,12 +14,15 @@ namespace Client.screens.game.scripts.components.terrain
         {
             Name = "TerrainController";
 
+            PackedScene tileScene = ResourceLoader.Load<PackedScene>("res://screens/game/scripts/components/terrain/Tile.tscn");
+
             for (int x = 0; x < GRID_SIZE; x++)
             {
                 for (int y = 0; y < GRID_SIZE; y++)
                 {
-                    var tile = new TileController(TILE_SIZE, new Vector2(x, y));
+                    var tile = (TileController) tileScene.Instance();
                     _tiles[x, y] = tile;
+                    tile.Load(TILE_SIZE, new Vector2(x, y));
                     AddChild(tile);
                 }
             }
