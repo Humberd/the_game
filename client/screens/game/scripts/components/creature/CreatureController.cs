@@ -1,6 +1,4 @@
 ﻿using Client.scripts.extensions;
-using Client.scripts.global;
-using Client.scripts.global.udp.egress;
 using Client.scripts.global.udp.ingress;
 using Godot;
 using CID = System.UInt32;
@@ -45,8 +43,7 @@ namespace Client.screens.game.scripts.components.creature
 
         public void UpdatePosition(Vector2 position)
         {
-
-            Translate(position.To3D());
+            Translate(position.To3D() - Transform.origin);
         }
 
         public void UpdateName(string name)

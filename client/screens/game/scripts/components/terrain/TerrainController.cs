@@ -3,7 +3,7 @@ using Godot;
 
 namespace Client.screens.game.scripts.components.terrain
 {
-    public class TerrainController : Spatial
+    public class TerrainController : Area
     {
         private static int GRID_SIZE = 20;
         private static int TILE_SIZE = 64;

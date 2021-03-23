@@ -8,5 +8,10 @@ namespace Client.scripts.extensions
         {
             return new(vector.x, 0, vector.y);
         }
+
+        public static Vector2 to2D(this Vector3 vector)
+        {
+            return new(vector.x, vector.z);
+        }
     }
 }
