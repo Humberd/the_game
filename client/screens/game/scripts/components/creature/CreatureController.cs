@@ -1,4 +1,7 @@
-﻿using Client.scripts.extensions;
+﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Client.scripts.extensions;
 using Client.scripts.global.udp.ingress;
 using Godot;
 using CID = System.UInt32;
@@ -9,7 +12,7 @@ namespace Client.screens.game.scripts.components.creature
     public class CreatureController : Spatial
     {
         [Export] private NodePath _bodyPath;
-        private Spatial _body;
+        private BodyController _body;
         private CreatureInfoController _creatureInfoController = new();
 
         private CID _cid;
@@ -21,11 +24,44 @@ namespace Client.screens.game.scripts.components.creature
 
         private SpriteId _spriteId;
 
+        private Subject<bool> _isMoving = new();
+        private readonly Subject<bool> _unsubscribe = new();
+
         public override void _Ready()
         {
-            _body = GetNode<Spatial>(_bodyPath);
-            var animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
-            animationPlayer.Play();
+            _body = GetNode<BodyController>(_bodyPath);
+            _isMoving
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .TakeUntil(_unsubscribe)
+                .Subscribe(new IsMovingListener(this));
+        }
+
+        private class IsMovingListener : IObserver<bool>
+        {
+            private readonly CreatureController _creatureController;
+
+            public IsMovingListener(CreatureController creatureController)
+            {
+                _creatureController = creatureController;
+            }
+
+            public void OnNext(bool value)
+            {
+                _creatureController._body.StopWalking();
+            }
+
+            public void OnError(Exception error)
+            {
+            }
+
+            public void OnCompleted()
+            {
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _unsubscribe.OnNext(true);
         }
 
         public void SetIsMe(bool isMe)
@@ -48,9 +84,10 @@ namespace Client.screens.game.scripts.components.creature
             Translation = position.To3D();
             if (radsAngle != 0)
             {
-                GD.Print(radsAngle);
                 _body.Rotation = new Vector3(0, -radsAngle - Mathf.Deg2Rad(90), 0);
             }
+            _body.StartWalking();
+            _isMoving.OnNext(true);
         }
 
         public void UpdateName(string name)
