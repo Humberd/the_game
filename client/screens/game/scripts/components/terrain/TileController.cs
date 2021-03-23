@@ -1,7 +1,6 @@
 ﻿using Client.scripts.extensions;
 using Client.scripts.global;
 using Godot;
-using Font = Godot.Font;
 
 namespace Client.screens.game.scripts.components.terrain
 {
@@ -10,12 +9,6 @@ namespace Client.screens.game.scripts.components.terrain
         private int _size;
         private Vector2 _gridCoordinates;
         private Vector2 _vecSize;
-        private Font _font;
-
-        public TileController()
-        {
-
-        }
 
         // public override void _Draw()
         // {
@@ -31,6 +24,7 @@ namespace Client.screens.game.scripts.components.terrain
 
             Translate(gridCoordinates.To3D());
             Name = $"Tile({_gridCoordinates.x}, {_gridCoordinates.y})";
+            UnsetTile();
             // ZIndex = (int) RenderLayer.BackgroundTerrain;
         }
 

@@ -6,7 +6,7 @@ namespace Client.scripts.extensions
     {
         public static Vector3 To3D(this Vector2 vector)
         {
-            return new Vector3(vector.x, 0, vector.y);
+            return new(vector.x, 0, vector.y);
         }
     }
 }

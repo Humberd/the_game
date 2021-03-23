@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://assets/tiles/1.png" type="Texture" id=1]
 [ext_resource path="res://screens/game/scripts/components/terrain/TileController.cs" type="Script" id=2]
+[ext_resource path="res://assets/resources/sprites/box-border.png" type="Texture" id=3]
 
 [node name="Tile" type="Sprite3D"]
 cast_shadow = 0
@@ -14,3 +15,12 @@ texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 64, 64 )
 script = ExtResource( 2 )
+
+[node name="Debug border" type="Sprite3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0 )
+centered = false
+offset = Vector2( 0, -64 )
+pixel_size = 0.0157
+axis = 1
+double_sided = false
+texture = ExtResource( 3 )
