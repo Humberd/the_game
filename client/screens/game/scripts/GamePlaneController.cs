@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Client.screens.game.scripts.components.creature;
 using Client.screens.game.scripts.components.spell;
 using Client.screens.game.scripts.components.terrain;
-using Client.scripts.global;
 using Client.scripts.global.udp.ingress;
+using global::Client.scripts.global;
 using Godot;
 using CID = System.UInt32;
 
@@ -57,9 +57,9 @@ namespace Client.screens.game.scripts
             CreatureController newCreature = (CreatureController) _creatureComponent.Instance();
             newCreature.SetIsMe(isMe);
 
+            AddChild(newCreature);
             newCreature.UpdateData(action);
             _allCreatures[action.Cid] = newCreature;
-            AddChild(newCreature);
         }
 
         public void CreatureDisappear(CID cid)

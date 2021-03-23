@@ -8,7 +8,9 @@ namespace Client.screens.game.scripts.components.creature
 {
     public class CreatureController : Spatial
     {
-        private readonly CreatureInfoController _creatureInfoController;
+        [Export] private NodePath _bodyPath;
+        private Spatial _body;
+        private CreatureInfoController _creatureInfoController = new();
 
         private CID _cid;
         private uint _health;
@@ -19,12 +21,11 @@ namespace Client.screens.game.scripts.components.creature
 
         private SpriteId _spriteId;
 
-        public CreatureController()
+        public override void _Ready()
         {
-            // ZIndex = (int) RenderLayer.Creatures;
-
-            _creatureInfoController = new CreatureInfoController();
-            // AddChild(_creatureInfoController);
+            _body = GetNode<Spatial>(_bodyPath);
+            var animationPlayer = GetNode<AnimationPlayer>("Body/AnimationPlayer");
+            animationPlayer.Play();
         }
 
         public void SetIsMe(bool isMe)
@@ -43,7 +44,13 @@ namespace Client.screens.game.scripts.components.creature
 
         public void UpdatePosition(Vector2 position)
         {
-            Translate(position.To3D() - Transform.origin);
+            var radsAngle = Transform.origin.to2D().AngleToPoint(position);
+            Translation = position.To3D();
+            if (radsAngle != 0)
+            {
+                GD.Print(radsAngle);
+                _body.Rotation = new Vector3(0, -radsAngle - Mathf.Deg2Rad(90), 0);
+            }
         }
 
         public void UpdateName(string name)
