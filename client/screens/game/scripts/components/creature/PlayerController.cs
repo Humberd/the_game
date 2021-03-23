@@ -3,22 +3,14 @@ using Godot;
 
 namespace Client.screens.game.scripts.components.creature
 {
-    public class PlayerController : CreatureController
+    public class PlayerController : Spatial
     {
         private bool _isRequestingPositionChange;
 
         public override void _Ready()
         {
             Console.WriteLine("Hello from Main Player Controller C#");
-            // CameraController.Instance.Track(this);
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            // CameraController.Instance.Untrack();
-        }
-
 
         public override void _Input(InputEvent @event)
         {

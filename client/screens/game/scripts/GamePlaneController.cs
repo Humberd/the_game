@@ -12,6 +12,8 @@ namespace Client.screens.game.scripts
 {
     public class GamePlaneController : Spatial
     {
+        [Export] private PackedScene _creatureComponent;
+
         private TerrainController _terrainController;
         private ItemsPlaneController _itemsPlaneController;
         private SpellDisplayingManager _spellDisplayingManager;
@@ -52,15 +54,8 @@ namespace Client.screens.game.scripts
             }
 
             var isMe = UserService.Instance.GetCid() == action.Cid;
-            CreatureController newCreature;
-            if (isMe)
-            {
-                newCreature = new PlayerController();
-            }
-            else
-            {
-                newCreature = new CreatureController();
-            }
+            CreatureController newCreature = (CreatureController) _creatureComponent.Instance();
+            newCreature.SetIsMe(isMe);
 
             newCreature.UpdateData(action);
             _allCreatures[action.Cid] = newCreature;
