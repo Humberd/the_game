@@ -13,12 +13,15 @@ namespace Client.screens.game.scripts.components.creature
     {
         [Export] private NodePath _bodyPath;
         private BodyController _body;
+
+        [Export] private NodePath _bodyAreaPath;
+        private Spatial _bodyArea;
+
         private CreatureInfoController _creatureInfoController = new();
 
         private CID _cid;
         private uint _health;
         private string _name;
-        private float _bodyRadius;
         private float _attackTriggerRadius;
         private byte _isBeingAttackedByMe;
 
@@ -30,6 +33,7 @@ namespace Client.screens.game.scripts.components.creature
         public override void _Ready()
         {
             _body = GetNode<BodyController>(_bodyPath);
+            _bodyArea = GetNode<Spatial>(_bodyAreaPath);
             _isMoving
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .TakeUntil(_unsubscribe)
@@ -117,6 +121,11 @@ namespace Client.screens.game.scripts.components.creature
             }
         }
 
+        public void UpdateBodyRadius(float bodyRadius)
+        {
+            _bodyArea.Scale = new Vector3(bodyRadius, 0.01f, bodyRadius);
+        }
+
         public void UpdateData(IngressDataPacket.PlayerUpdate playerUpdate)
         {
             UpdateCid(playerUpdate.Cid);
@@ -124,10 +133,9 @@ namespace Client.screens.game.scripts.components.creature
             UpdateName(playerUpdate.Name);
             UpdateHealth(playerUpdate.BaseHealth, playerUpdate.CurrentHealth);
             UpdateOutfit(playerUpdate.SpriteId);
-            _bodyRadius = playerUpdate.BodyRadius * 64;
+            UpdateBodyRadius(playerUpdate.BodyRadius);
             _attackTriggerRadius = playerUpdate.AttackTriggerRadius;
             _isBeingAttackedByMe = playerUpdate.IsBeingAttackedByMe;
-            // Update();
         }
 
         public override void _Input(InputEvent @event)
