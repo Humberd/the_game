@@ -88,7 +88,8 @@ abstract class Creature(
     }
     //endregion
 
-    abstract val hooks: CreatureHooks
+    abstract fun initHooks(): CreatureHooks
+    val hooks = initHooks()
     abstract fun collisionCategory(): CollisionCategory
 
     //region Creatures Visibility Cache
@@ -238,5 +239,12 @@ abstract class Creature(
     }
 
     val stats = CreatureStats(this)
-    var combat = CreatureCombat(this)
+    val combat = CreatureCombat(this)
+    val equipment = CreatureEquipment(this)
+
+    init {
+        creatureSeed.equipment.forEach { type, item ->
+            type.getSlot(equipment).equip(item)
+        }
+    }
 }

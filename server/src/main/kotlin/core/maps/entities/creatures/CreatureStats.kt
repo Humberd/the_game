@@ -11,24 +11,24 @@ class CreatureStats(private val creature: Creature) {
 
     init {
         updateBase()
-        updateCurrent()
+        recalculateCurrent()
         healthCurrent = healthPool.current
     }
 
     fun updateBase() {
-        defense.updateBase(creature.experience)
-        attack.updateBase(creature.experience)
-        attackSpeed.updateBase(creature.experience)
-        movementSpeed.updateBase(creature.experience)
-        healthPool.updateBase(creature.experience)
+        defense.recalculateBase(creature.experience)
+        attack.recalculateBase(creature.experience)
+        attackSpeed.recalculateBase(creature.experience)
+        movementSpeed.recalculateBase(creature.experience)
+        healthPool.recalculateBase(creature.experience)
     }
 
-    fun updateCurrent() {
-        defense.updateCurrent()
-        attack.updateCurrent()
-        attackSpeed.updateCurrent()
-        movementSpeed.updateCurrent()
-        healthPool.updateCurrent()
+    fun recalculateCurrent() {
+        defense.recalculateCurrent()
+        attack.recalculateCurrent()
+        attackSpeed.recalculateCurrent()
+        movementSpeed.recalculateCurrent()
+        healthPool.recalculateCurrent()
     }
 }
 

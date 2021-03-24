@@ -52,7 +52,8 @@ class Player(
     val pid = playerSeed.pid
     val spellsContainer = playerSeed.spellsContainer
 
-    override val hooks = PlayerHooks(this, notifier)
+    override fun initHooks() = PlayerHooks(this, notifier)
+
     override fun collisionCategory() = CollisionCategory.PLAYER
 
     override fun toString(): String {

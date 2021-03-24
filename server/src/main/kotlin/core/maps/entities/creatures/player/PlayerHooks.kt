@@ -4,6 +4,7 @@ import core.StateChangeNotifier
 import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
+import core.maps.entities.items.Item
 import core.maps.shapes.Wall
 import infrastructure.udp.egress.EgressDataPacket
 import mu.KotlinLogging
@@ -102,5 +103,9 @@ class PlayerHooks(
 
     override fun onStoppedAttackOtherCreature(otherCreature: Creature) {
         notifier.notifyCreatureUpdate(player, otherCreature)
+    }
+
+    override fun onItemEquipped(item: Item) {
+        notifier.notifyPlayerStats(player)
     }
 }

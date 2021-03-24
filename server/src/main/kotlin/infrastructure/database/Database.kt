@@ -1,9 +1,7 @@
 package infrastructure.database
 
 import core.types.*
-import infrastructure.database.types.Equippable
 import infrastructure.database.types.ItemDAO
-import infrastructure.database.types.ModifierDAO
 import infrastructure.database.types.PlayerCharacterDAO
 
 class Database {
@@ -42,29 +40,29 @@ class Database {
     private val items: HashMap<IID, ItemDAO>
     init {
         items = hashMapOf(
-            IID(1u) to ItemDAO(
-                iid = IID(1u),
-                name = "Brana Shield",
-                resourceId = ResourceId(1u),
-                equippable = Equippable.within(Equippable.Slot.LEFT_HAND, Equippable.Slot.RIGHT_HAND),
-                modifiers = listOf(
-                    ModifierDAO(
-                        attribute = "defence",
-                        value = 25,
-                        type = "flat"
-                    ),
-                    ModifierDAO(
-                        attribute = "attack",
-                        value = -5,
-                        type = "flat"
-                    ),
-                    ModifierDAO(
-                        attribute = "attack_speed",
-                        value = 10,
-                        type = "percent"
-                    )
-                )
-            )
+//            IID(1u) to ItemDAO(
+//                iid = IID(1u),
+//                name = "Brana Shield",
+//                resourceId = ResourceId(1u),
+//                equippable = Equippable.within(Equippable.Slot.LEFT_HAND, Equippable.Slot.RIGHT_HAND),
+//                modifiers = listOf(
+//                    ModifierDAO(
+//                        attribute = "defence",
+//                        value = 25,
+//                        type = "flat"
+//                    ),
+//                    ModifierDAO(
+//                        attribute = "attack",
+//                        value = -5,
+//                        type = "flat"
+//                    ),
+//                    ModifierDAO(
+//                        attribute = "attack_speed",
+//                        value = 10,
+//                        type = "percent"
+//                    )
+//                )
+//            )
         )
     }
 

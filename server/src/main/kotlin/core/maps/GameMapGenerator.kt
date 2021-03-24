@@ -70,7 +70,8 @@ object GameMapGenerator {
                     spriteId = SpriteId(6u),
                     position = WorldPosition(6f, 2f),
                     tilesViewRadius = TileRadius(3),
-                    bodyRadius = 0.5f
+                    bodyRadius = 0.5f,
+                    equipment = emptyMap()
                 ),
                 gameMap = gameMap,
                 notifier = notifier,

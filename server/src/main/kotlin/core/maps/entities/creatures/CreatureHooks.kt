@@ -1,6 +1,7 @@
 package core.maps.entities.creatures
 
 import core.maps.entities.GameMap
+import core.maps.entities.items.Item
 import core.maps.shapes.Wall
 
 interface CreatureHooks {
@@ -21,4 +22,7 @@ interface CreatureHooks {
     fun onSelfDamageTaken(damage: UInt) {}
     fun onOtherCreatureDamageTaken(otherCreature: Creature, damage: UInt) {}
     fun onDeath() {}
+
+    fun onItemEquipped(item: Item) {}
+    fun onItemUnEquipped(item: Item) {}
 }
