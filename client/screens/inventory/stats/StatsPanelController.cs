@@ -9,11 +9,7 @@ namespace Client.screens.inventory.stats
     {
         [Export] private PackedScene _statRowTemplate;
 
-        private List<StatRowController> _statRows = new List<StatRowController>();
-
-        public override void _Ready()
-        {
-        }
+        private List<StatRowController> _statRows = new();
 
         public void LoadStats(IngressDataPacket.CreatureStatsUpdate action)
         {

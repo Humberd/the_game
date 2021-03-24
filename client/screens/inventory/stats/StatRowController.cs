@@ -24,7 +24,8 @@ namespace Client.screens.inventory.stats
             var bonus = currentValue - baseValue;
             if (bonus != 0)
             {
-                _bonusValue.Text = $"({bonus})";
+                var prefix = bonus > 0 ? "+" : "-";
+                _bonusValue.Text = $"({prefix}{bonus})";
             }
             else
             {
@@ -40,7 +41,8 @@ namespace Client.screens.inventory.stats
             var bonus = currentValue - baseValue;
             if (bonus != 0)
             {
-                _bonusValue.Text = $"({bonus})";
+                var prefix = bonus > 0 ? "+" : "-";
+                _bonusValue.Text = $"({prefix}{bonus})";
             }
             else
             {
