@@ -1,4 +1,7 @@
-﻿using Client.scripts.extensions;
+﻿using System;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using Client.scripts.extensions;
 using Client.scripts.global.udp.egress;
 using Godot;
 
@@ -8,11 +11,22 @@ namespace Client.screens.game.scripts.components.creature
     {
         private bool _isRequestingPositionChange;
         private Camera _camera;
+        private Subject<bool> _requestPositionChange = new();
+        private Subject<bool> _unsubscribe = new();
 
         public override void _Ready()
         {
             GD.Print("Hello from Main Player Controller C#");
             _camera = GetNode<Camera>("Camera");
+            _requestPositionChange
+                .ThrottleTime(TimeSpan.FromMilliseconds(200))
+                .TakeUntil(_unsubscribe)
+                .Subscribe(RxObserverAdapter<bool>.Get(_ => SendPositionChange()));
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _unsubscribe.OnNext(true);
         }
 
         public override void _Input(InputEvent @event)
@@ -24,7 +38,7 @@ namespace Client.screens.game.scripts.components.creature
                     if (eventMouseButton.Pressed)
                     {
                         _isRequestingPositionChange = true;
-                        SendPositionChange();
+                        RequestPositionUpdate();
                     }
                     else
                     {
@@ -38,8 +52,13 @@ namespace Client.screens.game.scripts.components.creature
         {
             if (_isRequestingPositionChange)
             {
-                SendPositionChange();
+                RequestPositionUpdate();
             }
+        }
+
+        private void RequestPositionUpdate()
+        {
+            _requestPositionChange.OnNext(true);
         }
 
         private void SendPositionChange()

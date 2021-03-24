@@ -35,32 +35,10 @@ namespace Client.screens.game.scripts.components.creature
             _body = GetNode<BodyController>(_bodyPath);
             _bodyArea = GetNode<Spatial>(_bodyAreaPath);
             _isMoving
+                // This is really a debounce
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .TakeUntil(_unsubscribe)
-                .Subscribe(new IsMovingListener(this));
-        }
-
-        private class IsMovingListener : IObserver<bool>
-        {
-            private readonly CreatureController _creatureController;
-
-            public IsMovingListener(CreatureController creatureController)
-            {
-                _creatureController = creatureController;
-            }
-
-            public void OnNext(bool value)
-            {
-                _creatureController._body.StopWalking();
-            }
-
-            public void OnError(Exception error)
-            {
-            }
-
-            public void OnCompleted()
-            {
-            }
+                .Subscribe(RxObserverAdapter<bool>.Get(_ => _body.StopWalking()));
         }
 
         protected override void Dispose(bool disposing)
@@ -90,6 +68,7 @@ namespace Client.screens.game.scripts.components.creature
             {
                 _body.Rotation = new Vector3(0, -radsAngle - Mathf.Deg2Rad(90), 0);
             }
+
             _body.StartWalking();
             _isMoving.OnNext(true);
         }
