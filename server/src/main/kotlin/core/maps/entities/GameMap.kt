@@ -40,6 +40,7 @@ class GameMap(
 
             creatures[creature.cid] = creature
 
+            creature.onInit()
             creature.hooks.onAddedToMap(this@GameMap)
         }
 
@@ -83,7 +84,7 @@ class GameMap(
 
         fun moveTo(cid: CID, targetPosition: WorldPosition) {
             val creature = get(cid)
-            creature.startMovingTo(targetPosition)
+            creature.movement.startMovingTo(targetPosition)
         }
     }
     //endregion

@@ -9,7 +9,7 @@ class CreatureStats(private val creature: Creature) {
 
     var healthCurrent: Int = 0
 
-    init {
+    fun onInit() {
         updateBase()
         recalculateCurrent()
         healthCurrent = healthPool.current

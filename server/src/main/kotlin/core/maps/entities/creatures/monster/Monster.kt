@@ -18,7 +18,7 @@ class Monster(
 ) : Creature(creatureSeed, gameMap, notifier) {
     val attackTriggerRadius = monsterSeed.attackTriggerRadius
 
-    override fun initHooks() = MonsterHooks()
-    override fun collisionCategory() = CollisionCategory.MONSTER
+    override val hooks = MonsterHooks()
+    override val collisionCategory = CollisionCategory.MONSTER
 
 }

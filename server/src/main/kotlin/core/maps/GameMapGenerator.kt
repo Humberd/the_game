@@ -71,7 +71,8 @@ object GameMapGenerator {
                     position = WorldPosition(6f, 2f),
                     tilesViewRadius = TileRadius(3),
                     bodyRadius = 0.5f,
-                    equipment = emptyMap()
+                    equipment = emptyMap(),
+                    backpack = emptyArray()
                 ),
                 gameMap = gameMap,
                 notifier = notifier,

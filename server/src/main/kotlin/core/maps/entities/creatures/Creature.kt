@@ -1,18 +1,16 @@
 package core.maps.entities.creatures
 
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.CircleShape
-import com.badlogic.gdx.physics.box2d.Fixture
-import com.badlogic.gdx.physics.box2d.FixtureDef
 import core.StateChangeNotifier
-import core.maps.entities.*
+import core.maps.entities.CollisionCategory
+import core.maps.entities.GameMap
+import core.maps.entities.GameMapObject
 import core.types.*
 import utils.getDistance
 import utils.toGridPosition
 
 abstract class Creature(
-    creatureSeed: CreatureSeed,
-    protected val gameMap: GameMap,
+    private val creatureSeed: CreatureSeed,
+    val gameMap: GameMap,
     val notifier: StateChangeNotifier
 ) {
     //region Properties
@@ -28,135 +26,47 @@ abstract class Creature(
         private set
 
     val position: WorldPosition
-        get() = fixture.body.position
+        get() = physics.fixture.body.position
 
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
 
     val bodyRadius: Float
-        get() = fixture.shape.radius
+        get() = physics.fixture.shape.radius
     //endregion
 
-    //region LastUpdate
-    val lastUpdate: LastUpdate
+    val lastUpdate =  CreatureLastUpdate(this)
+    val physics = CreaturePhysics(this)
+    val cache = CreatureCache(this)
+    val stats = CreatureStats(this)
+    val movement = CreatureMovement(this)
+    val combat = CreatureCombat(this)
+    val equipment = CreatureEquipment(this)
+    val backpack = CreatureBackpack(this)
 
-    data class LastUpdate(
-        var gridPosition: GridPosition,
-        var tileSlice: Array<Array<Tile>>
-    )
 
-    init {
-        val gridPosition = toGridPosition(creatureSeed.position)
-        lastUpdate = LastUpdate(
-            gridPosition = gridPosition,
-            tileSlice = gameMap.getTilesAround(gridPosition, tilesViewRadius.value)
-        )
-        gameMap.getTileAt(gridPosition).creatures.put(cid, this)
-    }
-    //endregion
-
-    //region Physics Definition
-    val fixture: Fixture
-
-    init {
-        val bodyDef = BodyDef().also {
-            it.type = BodyDef.BodyType.DynamicBody
-            it.position.set(creatureSeed.position)
-        }
-
-        val body = gameMap.physics.createBody(bodyDef)
-
-        val shape = CircleShape().also {
-            it.radius = creatureSeed.bodyRadius
-        }
-
-        // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
-
-        val fixtureDef = FixtureDef().also {
-            it.shape = shape
-            it.density = 0f
-            it.friction = 0f
-            it.restitution = 0f
-            it.filter.categoryBits = collisionCategory().value
-            it.filter.maskBits = collisionCategory().collidesWith()
-        }
-
-        fixture = body.createFixture(fixtureDef).also {
-            it.userData = this@Creature
-        }
-        shape.dispose()
-    }
-    //endregion
-
-    abstract fun initHooks(): CreatureHooks
-    val hooks = initHooks()
-    abstract fun collisionCategory(): CollisionCategory
-
-    //region Creatures Visibility Cache
-    val creaturesThatSeeMe = HashSet<Creature>()
-    val creaturesISee = VisibleCreatures()
-
-    inner class VisibleCreatures {
-        private val set = HashSet<Creature>()
-
-        fun register(creature: Creature) {
-            if (set.contains(creature)) {
-                throw Error("Creature already exists")
-            }
-
-            set.add(creature)
-            creature.creaturesThatSeeMe.add(this@Creature)
-
-            hooks.onOtherCreatureAppearInViewRange(creature)
-        }
-
-        fun unregister(creature: Creature) {
-            if (!set.contains(creature)) {
-                throw Error("Creature doesn't exist")
-            }
-
-            set.remove(creature)
-            creature.creaturesThatSeeMe.remove(this@Creature)
-
-            hooks.onOtherCreatureDisappearFromViewRange(creature)
-        }
-
-        fun getAll(): Collection<Creature> {
-            return ArrayList(set)
-        }
-    }
-    //endregion
-
-    //region Movement
-    protected var targetPosition: WorldPosition? = null
-
-    fun isMoving(): Boolean {
-        return targetPosition != null
+    open fun onInit() {
+        lastUpdate.onInit(creatureSeed.position)
+        physics.onInit(creatureSeed.position, creatureSeed.bodyRadius)
+        cache.onInit()
+        stats.onInit()
+        movement.onInit()
+        equipment.onInit(creatureSeed.equipment)
+        backpack.onInit(creatureSeed.backpack)
     }
 
-    fun stopMoving() {
-        targetPosition = null
-        fixture.body.setLinearVelocity(0f, 0f)
-    }
-
-    fun startMovingTo(targetPosition: WorldPosition) {
-        val velocity = targetPosition.cpy().sub(position).nor()
-        velocity.x *= stats.movementSpeed.current
-        velocity.y *= stats.movementSpeed.current
-        this.targetPosition = targetPosition
-        fixture.body.setLinearVelocity(velocity)
-    }
-    //endregion
+    abstract val hooks: CreatureHooks
+    abstract val collisionCategory: CollisionCategory
 
     fun afterPhysicsUpdate(deltaTime: Float) {
-        if (!isMoving()) {
+        if (!movement.isMoving()) {
             return
         }
 
         val distanceToStopMoving = deltaTime * stats.movementSpeed.current
-        val currentDistance = getDistance(position, targetPosition!!)
+        val currentDistance = getDistance(position, movement.targetPosition!!)
         if (distanceToStopMoving > currentDistance) {
-            stopMoving()
+            movement.stopMoving()
         }
 
         // update tiles in grid
@@ -177,14 +87,14 @@ abstract class Creature(
              */
 
             // Creature Disappear
-            ArrayList(creaturesThatSeeMe).forEach {
+            ArrayList(cache.creaturesThatSeeMe).forEach {
                 if (!it.canSee(this)) {
-                    it.creaturesISee.unregister(this)
+                    it.cache.creaturesISee.unregister(this)
                 }
             }
-            creaturesISee.getAll().forEach {
+            cache.creaturesISee.getAll().forEach {
                 if (!canSee(it)) {
-                    creaturesISee.unregister(it)
+                    cache.creaturesISee.unregister(it)
                 }
             }
 
@@ -192,20 +102,20 @@ abstract class Creature(
             gameMap.creatures.getAllCreatures()
                 .filter { it.cid != cid }
                 .filter { it.canSee(this) }
-                .subtract(creaturesThatSeeMe)
+                .subtract(cache.creaturesThatSeeMe)
                 .forEach {
-                    it.creaturesISee.register(this)
+                    it.cache.creaturesISee.register(this)
                 }
             getGreedyVisibleCreatures()
-                .subtract(creaturesISee.getAll())
+                .subtract(cache.creaturesISee.getAll())
                 .forEach {
-                    creaturesISee.register(it)
+                    cache.creaturesISee.register(it)
                 }
 
         }
 
         hooks.onMoved(tileChanged)
-        creaturesThatSeeMe.forEach {
+        cache.creaturesThatSeeMe.forEach {
             it.hooks.onOtherCreaturePositionChange(this)
         }
     }
@@ -236,15 +146,5 @@ abstract class Creature(
 
     fun canSee(otherCreature: Creature): Boolean {
         return getGreedyVisibleCreatures().contains(otherCreature)
-    }
-
-    val stats = CreatureStats(this)
-    val combat = CreatureCombat(this)
-    val equipment = CreatureEquipment(this)
-
-    init {
-        creatureSeed.equipment.forEach { type, item ->
-            type.getSlot(equipment).equip(item)
-        }
     }
 }

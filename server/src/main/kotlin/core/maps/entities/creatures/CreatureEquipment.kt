@@ -2,7 +2,6 @@ package core.maps.entities.creatures
 
 import core.maps.entities.items.CombatItem
 import core.maps.entities.items.Item
-import errors.NOT_REACHED
 
 class CreatureEquipment(
     private val creature: Creature
@@ -13,6 +12,12 @@ class CreatureEquipment(
     val feetSlot = EquipmentSlot()
     val leftHandSlot = EquipmentSlot()
     val rightHandSlot = EquipmentSlot()
+
+    fun onInit(equipment: Map<EquipmentSlotType, Item>) {
+        equipment.forEach { type, item ->
+            type.getSlot(this).equip(item)
+        }
+    }
 
     inner class EquipmentSlot {
         var item: Item? = null
@@ -36,7 +41,7 @@ class CreatureEquipment(
                 creature.stats.recalculateCurrent()
             }
             item = null
-            creature.hooks.onItemUnEquipped(oldItem)
+//            creature.hooks.onItemUnEquipped(oldItem)
         }
 
         fun equip(newItem: Item) {
@@ -52,47 +57,8 @@ class CreatureEquipment(
                 creature.stats.recalculateCurrent()
             }
             this.item = newItem
-            creature.hooks.onItemEquipped(newItem)
+//            creature.hooks.onItemEquipped(newItem)
         }
     }
 }
 
-enum class EquipmentSlotType(val value: Short) {
-    NONE(0x00) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            NOT_REACHED()
-        }
-    },
-    HEAD(0x01) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.headSlot
-        }
-    },
-    BODY(0x02) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.bodySlot
-        }
-    },
-    LEGS(0x04) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.legsSlot
-        }
-    },
-    FEET(0x08) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.feetSlot
-        }
-    },
-    LEFT_HAND(0x18) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.leftHandSlot
-        }
-    },
-    RIGHT_HAND(0x32) {
-        override fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot {
-            return slot.rightHandSlot
-        }
-    };
-
-    abstract fun getSlot(slot: CreatureEquipment): CreatureEquipment.EquipmentSlot
-}

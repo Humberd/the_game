@@ -29,7 +29,7 @@ data class PlayerCharacterDAO(
                 itemSchema = ItemSchema(
                     id = 123,
                     name = "Rotter Shield",
-                    resourceId = ResourceId(1u),
+                    resourceId = ResourceId(15u),
                     equippable = Equippable.within(EquipmentSlotType.HEAD),
                     isStackable = false
                 ),
@@ -51,6 +51,54 @@ data class PlayerCharacterDAO(
                     )
                 )
             )
+        ),
+        backpack = arrayOf(
+            PrimitiveItem(
+                itemSchema = ItemSchema(
+                    id = 333,
+                    name = "Gold Bar",
+                    resourceId = ResourceId(1u),
+                    equippable = Equippable.within(EquipmentSlotType.LEFT_HAND, EquipmentSlotType.RIGHT_HAND),
+                    isStackable = true
+                ),
+                stackCount = 2u
+            ),
+            CombatItem(
+                itemSchema = ItemSchema(
+                    id = 222,
+                    name = "Naive Sword",
+                    resourceId = ResourceId(1u),
+                    equippable = Equippable.DONT(),
+                    isStackable = false
+                ),
+                modifiers = listOf(
+                    ModificationSlot(
+                        modificationItem= ModificationItem(
+                            itemSchema = ItemSchema(
+                                id = 111,
+                                name = "Attack Boost",
+                                resourceId = ResourceId(2u),
+                                equippable = Equippable.DONT(),
+                                isStackable = false
+                            ),
+                            statType = StatType.ATTACK,
+                            value = 10,
+                            modificationType = ModificationType.BASE_PERCENTAGE
+                        ),
+                        isLocked = false
+                    )
+                )
+            ),
+            PrimitiveItem(
+                itemSchema = ItemSchema(
+                    id = 333,
+                    name = "Gold Bar",
+                    resourceId = ResourceId(1u),
+                    equippable = Equippable.DONT(),
+                    isStackable = true
+                ),
+                stackCount = 1u
+            ),
         )
     )
 

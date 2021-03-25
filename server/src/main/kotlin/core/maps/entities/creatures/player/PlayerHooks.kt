@@ -26,13 +26,13 @@ class PlayerHooks(
             .filter { it.cid != player.cid }
             .filter { it.canSee(player) }
             .forEach {
-                it.creaturesISee.register(player)
+                it.cache.creaturesISee.register(player)
             }
 
         // Tell me about other creatures that I can see
         player.getGreedyVisibleCreatures()
             .forEach {
-                player.creaturesISee.register(it)
+                player.cache.creaturesISee.register(it)
             }
     }
 
@@ -43,12 +43,12 @@ class PlayerHooks(
 
         notifier.notifyCreatureDisappear(player.pid, player)
 
-        player.creaturesThatSeeMe.toTypedArray().forEach {
-            it.creaturesISee.unregister(player)
+        player.cache.creaturesThatSeeMe.toTypedArray().forEach {
+            it.cache.creaturesISee.unregister(player)
         }
 
-        player.creaturesISee.getAll().forEach {
-            player.creaturesISee.unregister(it)
+        player.cache.creaturesISee.getAll().forEach {
+            player.cache.creaturesISee.unregister(it)
         }
     }
 
@@ -61,7 +61,7 @@ class PlayerHooks(
 
     override fun onCollideWith(wall: Wall) {
         logger.debug { "Colliding with Wall" }
-        player.stopMoving()
+        player.movement.stopMoving()
     }
 
     override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {

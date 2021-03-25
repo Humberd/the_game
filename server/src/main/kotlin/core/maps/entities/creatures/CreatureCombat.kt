@@ -26,7 +26,7 @@ class CreatureCombat(private val creature: Creature) {
         }
 
         creature.hooks.onSelfDamageTaken(damage)
-        creature.creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(creature, damage) }
+        creature.cache.creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(creature, damage) }
     }
 
     private fun die() {
@@ -68,7 +68,7 @@ class CreatureCombat(private val creature: Creature) {
                     )
                 )
             }
-            creature.creaturesThatSeeMe
+            creature.cache.creaturesThatSeeMe
                 .forEach {
                     if (it is Player) {
                         creature.notifier.sendProjectile(
