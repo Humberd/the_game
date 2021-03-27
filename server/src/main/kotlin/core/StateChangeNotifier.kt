@@ -86,18 +86,18 @@ class StateChangeNotifier(
     }
 
     fun notifyTerrainItemsUpdate(player: Player) {
-        egressPacketHandler.notify(
-            player.pid,
-            EgressDataPacket.TerrainItemsUpdate(
-                items = player.getVisibleItems().map {
-                    EgressDataPacket.TerrainItemsUpdate.ItemData(
-                        itemInstanceId = it.itemInstanceId,
-                        type = it.itemDef.type,
-                        position = it.position
-                    )
-                }
-            )
-        )
+//        egressPacketHandler.notify(
+//            player.pid,
+//            EgressDataPacket.TerrainItemsUpdate(
+//                items = player.getVisibleItems().map {
+//                    EgressDataPacket.TerrainItemsUpdate.ItemData(
+//                        itemInstanceId = it.itemInstanceId,
+//                        type = it.itemDef.type,
+//                        position = it.position
+//                    )
+//                }
+//            )
+//        )
     }
 
     fun notifyEquippedSpellsChange(player: Player) {
@@ -143,6 +143,15 @@ class StateChangeNotifier(
         egressPacketHandler.notify(to, data)
     }
 
+    fun notifyEquipmentUpdate(player: Player) {
+//        egressPacketHandler.notify(
+//            player.pid,
+//            EgressDataPacket.EquipmentUpdate(
+//
+//            )
+//        )
+    }
+
     fun notifyPlayerStats(player: Player) {
         egressPacketHandler.notify(
             player.pid,
@@ -152,6 +161,23 @@ class StateChangeNotifier(
                 attackSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.attackSpeed),
                 movementSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.movementSpeed),
                 healthPool = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.healthPool),
+            )
+        )
+    }
+
+    fun notifyBackpackUpdate(player: Player) {
+        egressPacketHandler.notify(
+            player.pid,
+            EgressDataPacket.BackpackUpdate(
+                items = player.backpack.getAll().map {
+                    if (it == null) {
+                        return@map null
+                    }
+                    return@map EgressDataPacket.BackpackUpdate.BackpackSlotDTO(
+                        itemSchemaId = it.itemSchema.id,
+                        stackCount = it.stackCount
+                    )
+                }.toTypedArray()
             )
         )
     }

@@ -45,9 +45,27 @@ fun ByteBuffer.putString(value: String) {
     put(utf8Bytes)
 }
 
+// FIXME: 26.03.2021 There must be a better way to pack multiple booleans
+fun ByteBuffer.putBoolean(value: Boolean) {
+    put(if (value) 1 else 0)
+}
+
 fun <T> ByteBuffer.putArray(value: Array<T>, itemPut: (T) -> Unit) {
     putUShort(value.size.toUShort())
     value.forEach { itemPut.invoke(it) }
+}
+
+// FIXME: 26.03.2021 There must be a better way to pack a nullable array
+fun <T> ByteBuffer.putNullableArray(value: Array<T?>, itemPut: (T) -> Unit) {
+    putUShort(value.size.toUShort())
+    value.forEach {
+        if (it == null){
+            put(0)
+        } else {
+            put(1)
+            itemPut.invoke(it)
+        }
+    }
 }
 
 fun <T> ByteBuffer.putList(value: Collection<T>, itemPut: (T) -> Unit) {
@@ -58,12 +76,4 @@ fun <T> ByteBuffer.putList(value: Collection<T>, itemPut: (T) -> Unit) {
 fun ByteBuffer.putVector(value: Vector2) {
     putFloat(value.x)
     putFloat(value.y)
-}
-
-// fixme
-fun ByteBuffer.putBooleanMask(vararg values: Boolean) {
-    require(values.size <= 0)
-    values.forEach {
-
-    }
 }

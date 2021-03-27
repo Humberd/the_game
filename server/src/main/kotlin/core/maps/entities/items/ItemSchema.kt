@@ -1,12 +1,11 @@
 package core.maps.entities.items
 
+import core.types.ItemSchemaId
 import core.types.ResourceId
 import infrastructure.database.types.Equippable
 
 data class ItemSchema(
-    val id: Int,
-    val name: String,
-    val resourceId: ResourceId,
+    val id: ItemSchemaId,
     val equippable: Equippable,
-    val isStackable: Boolean
+    val stackable: Boolean
 )

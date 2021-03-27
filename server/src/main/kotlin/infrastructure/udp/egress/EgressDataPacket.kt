@@ -1,8 +1,8 @@
 package infrastructure.udp.egress
 
-import core.maps.ItemType
 import core.maps.entities.creatures.StatValue
 import core.types.*
+import infrastructure.database.types.Equippable
 import infrastructure.udp.egress.EgressPacketType.*
 import utils.*
 import java.nio.ByteBuffer
@@ -19,7 +19,8 @@ enum class EgressPacketType(val value: Int) {
     DAMAGE_TAKEN(0x28),
     PROJECTILE_SEND(0x29),
     EQUIPMENT_UPDATE(0x2A),
-    CREATURE_STATS_UPDATE(0x2B)
+    CREATURE_STATS_UPDATE(0x2B),
+    BACKPACK_UPDATE(0x2C)
 }
 
 sealed class EgressDataPacket(
@@ -102,14 +103,14 @@ sealed class EgressDataPacket(
     ) : EgressDataPacket(TERRAIN_ITEMS_UPDATE) {
         data class ItemData(
             val itemInstanceId: ItemInstanceId,
-            val type: ItemType,
+            val type: Any,
             val position: WorldPosition
         )
 
         override fun packData(buffer: ByteBuffer) {
             buffer.putList(items) {
                 buffer.putUInt(it.itemInstanceId.value)
-                buffer.putUInt(it.type.id.toUInt())
+//                buffer.putUInt(it.type.id.toUInt())
                 buffer.putFloat(it.position.x)
                 buffer.putFloat(it.position.y)
             }
@@ -200,14 +201,14 @@ sealed class EgressDataPacket(
     }
 
     data class EquipmentUpdate(
-        val helmetSlot: EquipmentSlot,
-        val armorSlot: EquipmentSlot,
-        val legsSlot: EquipmentSlot,
-        val bootsSlot: EquipmentSlot,
-        val leftHandSlot: EquipmentSlot,
-        val rightHandSlot: EquipmentSlot,
+        val headSlot: EquipmentSlotDTO,
+        val bodySlot: EquipmentSlotDTO,
+        val legsSlot: EquipmentSlotDTO,
+        val feetSlot: EquipmentSlotDTO,
+        val leftHandSlot: EquipmentSlotDTO,
+        val rightHandSlot: EquipmentSlotDTO,
     ) : EgressDataPacket(EQUIPMENT_UPDATE) {
-        data class EquipmentSlot(
+        data class EquipmentSlotDTO(
             private val itemInstanceId: ItemInstanceId
         )
 
@@ -255,6 +256,22 @@ sealed class EgressDataPacket(
                 is Int -> buffer.putInt(value)
                 is Float -> buffer.putFloat(value)
                 else -> throw Error("Unsupported Stat Type")
+            }
+        }
+    }
+
+    data class BackpackUpdate(
+        val items: Array<BackpackSlotDTO?>
+    ) : EgressDataPacket(BACKPACK_UPDATE) {
+        data class BackpackSlotDTO(
+            val itemSchemaId: ItemSchemaId,
+            val stackCount: UShort
+        )
+
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putNullableArray(items) {
+                buffer.putUShort(it.itemSchemaId.value)
+                buffer.putUShort(it.stackCount)
             }
         }
     }

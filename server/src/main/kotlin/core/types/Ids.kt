@@ -23,6 +23,8 @@ inline class ItemInstanceId(val value: UInt) {
     }
 }
 
+inline class ItemSchemaId(val value: UShort)
+
 inline class IID(val value: UInt) {
     companion object {
         private var counter = 0u

@@ -2,7 +2,7 @@ import core.GameActionHandler
 import core.GameLoop
 import core.GamesManager
 import core.StateChangeNotifier
-import core.maps.ItemDefinitionStore
+import core.maps.ItemSchemaStore
 import infrastructure.database.Database
 import infrastructure.udp.UdpClientStore
 import infrastructure.udp.UdpConnectionPersistor
@@ -18,7 +18,7 @@ private val logger = KotlinLogging.logger {}
 fun main() {
     logger.info { "Hello from server" }
 
-    ItemDefinitionStore.readItemsFromJson();
+    ItemSchemaStore.readItemsFromJson();
     val database = Database()
 
     val udpClientStore = UdpClientStore()

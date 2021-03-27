@@ -10,7 +10,6 @@ config_version=4
 
 _global_script_classes=[  ]
 _global_script_class_icons={
-
 }
 
 [application]
@@ -24,6 +23,7 @@ config/icon="res://icon.png"
 UserService="*res://scripts/global/UserService.cs"
 UdpClientMono="*res://scripts/global/udp/UdpClientMono.cs"
 ActionSenderMono="*res://scripts/global/udp/egress/ActionSenderMono.cs"
+ItemSchemaStore="*res://scripts/global/ItemSchemaStore.cs"
 
 [display]
 

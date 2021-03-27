@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Client.scripts.extensions;
 using Client.scripts.extensions.bigendian;
+using Godot;
 
 namespace Client.scripts.global.udp.ingress
 {
@@ -65,9 +65,12 @@ namespace Client.scripts.global.udp.ingress
                 case IngressPacketType.CREATURE_STATS_UPDATE:
                     _ingressPacketHandler.Handle(IngressDataPacket.CreatureStatsUpdate.From(buffer));
                     break;
+                case IngressPacketType.BACKPACK_UPDATE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.BackpackUpdate.From(buffer));
+                    break;
                 default:
                 {
-                    Console.WriteLine($"Packet type not supported 0x{packetType:X}");
+                    GD.Print($"Packet type not supported 0x{packetType:X}");
                     break;
                 }
             }

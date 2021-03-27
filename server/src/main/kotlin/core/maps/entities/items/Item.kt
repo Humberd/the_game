@@ -11,7 +11,7 @@ abstract class Item(
     var stackCount: UShort = stackCount
         private set(value) {
             require(value > 0u && value <= MAX_STACK_COUNT)
-            if (!itemSchema.isStackable) require(value == (1).toUShort())
+            if (!itemSchema.stackable) require(value == (1).toUShort())
             field = value
         }
 }

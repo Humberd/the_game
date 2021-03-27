@@ -62,5 +62,10 @@ namespace Client.scripts.global
         {
             InventoryScreenController.Instance.DisplayStats(action);
         }
+
+        public void Handle(IngressDataPacket.BackpackUpdate action)
+        {
+            InventoryScreenController.Instance.DisplayBackpack(action);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using Godot;
 
@@ -34,9 +35,34 @@ namespace Client.scripts.extensions
             return result;
         }
 
+        public static T?[] ReadServerNullableArray<T>(this BinaryReader buffer, Func<T> callback) where T : class
+        {
+            var length = buffer.ReadUInt16();
+            if (length == 0)
+            {
+                return new T?[0];
+            }
+
+            var result = new T?[length];
+            for (int i = 0; i < length; i++)
+            {
+                var hasContent = buffer.ReadByte();
+                if (hasContent == 0)
+                {
+                    result[i] = null;
+                }
+                else
+                {
+                    result[i] = callback.Invoke();
+                }
+            }
+
+            return result;
+        }
+
         public static Vector2 ReadVector2(this BinaryReader buffer)
         {
-            return new Vector2(buffer.ReadSingle(), buffer.ReadSingle());
+            return new (buffer.ReadSingle(), buffer.ReadSingle());
         }
 
         public static void PutVector2(this StreamPeerBuffer buffer, Vector2 value)

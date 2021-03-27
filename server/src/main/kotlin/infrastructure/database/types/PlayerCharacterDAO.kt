@@ -1,5 +1,6 @@
 package infrastructure.database.types
 
+import core.maps.ItemSchemaStore
 import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.EquipmentSlotType
 import core.maps.entities.creatures.StatType
@@ -26,23 +27,11 @@ data class PlayerCharacterDAO(
         bodyRadius,
         equipment = mapOf(
             EquipmentSlotType.HEAD to CombatItem(
-                itemSchema = ItemSchema(
-                    id = 123,
-                    name = "Rotter Shield",
-                    resourceId = ResourceId(15u),
-                    equippable = Equippable.within(EquipmentSlotType.HEAD),
-                    isStackable = false
-                ),
+                itemSchema = ItemSchemaStore.get(ItemSchemaId(1u)),
                 modifiers = listOf(
                     ModificationSlot(
                         modificationItem= ModificationItem(
-                            itemSchema = ItemSchema(
-                                id = 321,
-                                name = "Health Boost",
-                                resourceId = ResourceId(2u),
-                                equippable = Equippable.DONT(),
-                                isStackable = false
-                            ),
+                            itemSchema = ItemSchemaStore.get(ItemSchemaId(2u)),
                             statType = StatType.HEALTH_POOL,
                             value = 30,
                             modificationType = ModificationType.FLAT
@@ -54,33 +43,15 @@ data class PlayerCharacterDAO(
         ),
         backpack = arrayOf(
             PrimitiveItem(
-                itemSchema = ItemSchema(
-                    id = 333,
-                    name = "Gold Bar",
-                    resourceId = ResourceId(1u),
-                    equippable = Equippable.within(EquipmentSlotType.LEFT_HAND, EquipmentSlotType.RIGHT_HAND),
-                    isStackable = true
-                ),
+                itemSchema = ItemSchemaStore.get(ItemSchemaId(3u)),
                 stackCount = 2u
             ),
             CombatItem(
-                itemSchema = ItemSchema(
-                    id = 222,
-                    name = "Naive Sword",
-                    resourceId = ResourceId(1u),
-                    equippable = Equippable.DONT(),
-                    isStackable = false
-                ),
+                itemSchema = ItemSchemaStore.get(ItemSchemaId(4u)),
                 modifiers = listOf(
                     ModificationSlot(
                         modificationItem= ModificationItem(
-                            itemSchema = ItemSchema(
-                                id = 111,
-                                name = "Attack Boost",
-                                resourceId = ResourceId(2u),
-                                equippable = Equippable.DONT(),
-                                isStackable = false
-                            ),
+                            itemSchema = ItemSchemaStore.get(ItemSchemaId(5u)),
                             statType = StatType.ATTACK,
                             value = 10,
                             modificationType = ModificationType.BASE_PERCENTAGE
@@ -90,13 +61,7 @@ data class PlayerCharacterDAO(
                 )
             ),
             PrimitiveItem(
-                itemSchema = ItemSchema(
-                    id = 333,
-                    name = "Gold Bar",
-                    resourceId = ResourceId(1u),
-                    equippable = Equippable.DONT(),
-                    isStackable = true
-                ),
+                itemSchema = ItemSchemaStore.get(ItemSchemaId(3u)),
                 stackCount = 1u
             ),
         )

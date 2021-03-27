@@ -22,5 +22,5 @@ class CreatureBackpack(
         list[firstFreeSlot] = item
     }
 
-
+    fun getAll() = list.clone()
 }

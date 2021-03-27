@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#nullable enable
+using System.IO;
 using Client.scripts.extensions;
 using Godot;
 using PID = System.UInt32;
@@ -20,7 +21,8 @@ namespace Client.scripts.global.udp.ingress
         DAMAGE_TAKEN = 0x28,
         PROJECTILE_SEND = 0x29,
         EQUIPMENT_UPDATE = 0x2A,
-        CREATURE_STATS_UPDATE = 0x2B
+        CREATURE_STATS_UPDATE = 0x2B,
+        BACKPACK_UPDATE = 0x2C
     }
 
     public class IngressDataPacket
@@ -338,7 +340,9 @@ namespace Client.scripts.global.udp.ingress
             public readonly FloatCreatureStatPacket MovementSpeed;
             public readonly IntCreatureStatPacket HealthPool;
 
-            public CreatureStatsUpdate(IntCreatureStatPacket defense, IntCreatureStatPacket attack, FloatCreatureStatPacket attackSpeed, FloatCreatureStatPacket movementSpeed, IntCreatureStatPacket healthPool)
+            public CreatureStatsUpdate(IntCreatureStatPacket defense, IntCreatureStatPacket attack,
+                FloatCreatureStatPacket attackSpeed, FloatCreatureStatPacket movementSpeed,
+                IntCreatureStatPacket healthPool)
             {
                 Defense = defense;
                 Attack = attack;
@@ -395,6 +399,38 @@ namespace Client.scripts.global.udp.ingress
                 return new FloatCreatureStatPacket(
                     baseValue: buffer.ReadSingle(),
                     currentValue: buffer.ReadSingle()
+                );
+            }
+        }
+
+        public class BackpackUpdate
+        {
+            public readonly BackpackSlotDto?[] Items;
+
+            public BackpackUpdate(BackpackSlotDto?[] items)
+            {
+                Items = items;
+            }
+
+            public class BackpackSlotDto
+            {
+                public readonly ushort ItemSchemaId;
+                public readonly ushort StackCount;
+
+                public BackpackSlotDto(ushort itemSchemaId, ushort stackCount)
+                {
+                    ItemSchemaId = itemSchemaId;
+                    StackCount = stackCount;
+                }
+            }
+
+            public static BackpackUpdate From(BinaryReader buffer)
+            {
+                return new BackpackUpdate(
+                    items: buffer.ReadServerNullableArray(() => new BackpackSlotDto(
+                        itemSchemaId: buffer.ReadUInt16(),
+                        stackCount: buffer.ReadUInt16()
+                    ))
                 );
             }
         }

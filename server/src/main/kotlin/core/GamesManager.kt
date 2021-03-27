@@ -66,6 +66,7 @@ class GamesManager(
     fun requestPlayerStatsUpdate(pid: PID) {
         val player = getMap(pid).creatures.get(pid)
         notifier.notifyPlayerStats(player)
+        notifier.notifyBackpackUpdate(player)
     }
 
     //region Utilities

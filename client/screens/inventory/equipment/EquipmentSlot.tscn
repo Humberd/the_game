@@ -1,0 +1,61 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://screens/inventory/equipment/EquipmentSlotController.cs" type="Script" id=1]
+[ext_resource path="res://assets/resources/sprites/8.png" type="Texture" id=2]
+[ext_resource path="res://assets/resources/sprites/box-border.png" type="Texture" id=3]
+[ext_resource path="res://assets/fonts/montserrat/Montserrat-Regular.ttf" type="DynamicFontData" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+outline_size = 1
+outline_color = Color( 0, 0, 0, 0.341176 )
+font_data = ExtResource( 4 )
+
+[node name="EquipmentSlot" type="Control"]
+margin_right = 64.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 64, 64 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+_textureNodePath = NodePath("TextureRect")
+_labelNodePath = NodePath("Label")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_right = 64.0
+margin_bottom = 64.0
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Border" type="TextureRect" parent="."]
+rect_min_size = Vector2( 64, 64 )
+texture = ExtResource( 3 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -21.7081
+margin_top = -19.9405
+margin_right = -3.70811
+margin_bottom = 1.05947
+grow_horizontal = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_fonts/font = SubResource( 1 )
+text = "44"
+align = 2
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
