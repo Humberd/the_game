@@ -22,7 +22,8 @@ namespace Client.scripts.global.udp.ingress
         PROJECTILE_SEND = 0x29,
         EQUIPMENT_UPDATE = 0x2A,
         CREATURE_STATS_UPDATE = 0x2B,
-        BACKPACK_UPDATE = 0x2C
+        BACKPACK_UPDATE = 0x2C,
+        PING_RESPONSE = 0x2D
     }
 
     public class IngressDataPacket
@@ -212,7 +213,7 @@ namespace Client.scripts.global.udp.ingress
                 }
             }
 
-            private EquippedSpellsUpdate(SpellUpdate[] spells)
+            private EquippedSpellsUpdate(SpellUpdate?[] spells)
             {
                 Spells = spells;
             }
@@ -434,5 +435,14 @@ namespace Client.scripts.global.udp.ingress
                 );
             }
         }
+
+        public class PingResponse
+        {
+            public static PingResponse From(BinaryReader buffer)
+            {
+                return new PingResponse();
+            }
+        }
     }
+
 }

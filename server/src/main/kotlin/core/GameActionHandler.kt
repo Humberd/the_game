@@ -27,6 +27,10 @@ class GameActionHandler(
         gamesManager.addPlayer(creatureSeed, playerSeed)
     }
 
+    fun handle(action: IngressPacket.PingRequest) {
+        gamesManager.ping(action.pid)
+    }
+
     fun handle(action: IngressPacket.PositionChange) {
         gamesManager.movePlayerTo(action.pid, action.targetPosition)
     }

@@ -67,5 +67,10 @@ namespace Client.scripts.global
         {
             InventoryScreenController.Instance.DisplayBackpack(action);
         }
+
+        public void Handle(IngressDataPacket.PingResponse action)
+        {
+            DebugInfoController.Instance.ReceivePingResponse(action);
+        }
     }
 }

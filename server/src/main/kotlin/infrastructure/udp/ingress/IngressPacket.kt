@@ -33,6 +33,7 @@ enum class IngressPacketType(val value: Int) {
 sealed class IngressPacket {
     data class ConnectionHello(val _foo: String = "Connection hello 🖐") : IngressPacket()
     data class Disconnect(val pid: PID?) : IngressPacket()
+    data class PingRequest(val pid: PID): IngressPacket()
     data class AuthLogin(val pid: PID) : IngressPacket()
     data class PositionChange(
         val pid: PID,

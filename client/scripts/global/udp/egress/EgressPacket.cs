@@ -7,6 +7,7 @@ namespace Client.scripts.global.udp.egress
     {
         CONNECTION_HELLO = 0x00,
         DISCONNECT = 0x01,
+        PING_REQUEST = 0x02,
         AUTH_LOGIN = 0x05,
         POSITION_CHANGE = 0x10,
         TERRAIN_ITEM_DRAG = 0x11,
@@ -42,6 +43,18 @@ namespace Client.scripts.global.udp.egress
         public class ConnectionHello : EgressDataPacket
         {
             public ConnectionHello() : base(EgressPacketType.CONNECTION_HELLO)
+            {
+            }
+
+            protected override void PackData(StreamPeerBuffer buffer)
+            {
+                // nothing to send
+            }
+        }
+
+        public class PingRequest : EgressDataPacket
+        {
+            public PingRequest() : base(EgressPacketType.PING_REQUEST)
             {
             }
 

@@ -102,6 +102,7 @@ class GameLoop(
         return when (action) {
             is IngressPacket.ConnectionHello -> Unit
             is IngressPacket.Disconnect -> gameActionHandler.handle(action)
+            is IngressPacket.PingRequest -> gameActionHandler.handle(action)
             is IngressPacket.AuthLogin -> gameActionHandler.handle(action)
             is IngressPacket.PositionChange -> gameActionHandler.handle(action)
             is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(action)

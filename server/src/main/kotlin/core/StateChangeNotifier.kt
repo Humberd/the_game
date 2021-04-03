@@ -181,4 +181,11 @@ class StateChangeNotifier(
             )
         )
     }
+
+    fun notifyPingResponse(pid: PID) {
+        egressPacketHandler.notify(
+            pid,
+            EgressDataPacket.PingResponse()
+        )
+    }
 }

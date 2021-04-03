@@ -20,7 +20,8 @@ enum class EgressPacketType(val value: Int) {
     PROJECTILE_SEND(0x29),
     EQUIPMENT_UPDATE(0x2A),
     CREATURE_STATS_UPDATE(0x2B),
-    BACKPACK_UPDATE(0x2C)
+    BACKPACK_UPDATE(0x2C),
+    PING_RESPONSE(0x2D)
 }
 
 sealed class EgressDataPacket(
@@ -274,5 +275,13 @@ sealed class EgressDataPacket(
                 buffer.putUShort(it.stackCount)
             }
         }
+    }
+
+    class PingResponse: EgressDataPacket(PING_RESPONSE) {
+        override fun packData(buffer: ByteBuffer) {
+            // nothing to send
+        }
+
+        override fun toString() = "PingResponse()"
     }
 }

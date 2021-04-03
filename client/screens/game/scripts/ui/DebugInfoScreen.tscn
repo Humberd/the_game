@@ -14,9 +14,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 _fpsLabelPath = NodePath("FpsLabel")
+_pingLabelPath = NodePath("PingLabel")
 
 [node name="FpsLabel" type="Label" parent="."]
 margin_right = 40.0
 margin_bottom = 14.0
 custom_fonts/font = SubResource( 1 )
 text = "25 fps"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PingLabel" type="Label" parent="."]
+margin_left = 65.5993
+margin_right = 111.599
+margin_bottom = 21.0
+custom_fonts/font = SubResource( 1 )
+text = "10 ms"
+__meta__ = {
+"_edit_use_anchors_": false
+}

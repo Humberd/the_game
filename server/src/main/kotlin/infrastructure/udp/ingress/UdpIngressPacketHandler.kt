@@ -64,6 +64,7 @@ class UdpIngressPacketHandler(
                     gameLoop.requestAction(IngressPacket.Disconnect(pid))
                 }
                 IngressPacketType.PING_REQUEST -> {
+                    gameLoop.requestAction(IngressPacket.PingRequest(getPID(clientId)))
                     udpConnectionPersistor.register(client)
                 }
                 IngressPacketType.AUTH_LOGIN -> {

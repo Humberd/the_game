@@ -69,6 +69,11 @@ class GamesManager(
         notifier.notifyBackpackUpdate(player)
     }
 
+    fun ping(pid: PID) {
+        notifier.notifyPingResponse(pid)
+    }
+
+
     //region Utilities
     private fun getMap(pid: PID): GameMap {
         return maps[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
