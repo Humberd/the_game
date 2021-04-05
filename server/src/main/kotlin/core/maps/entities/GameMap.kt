@@ -28,7 +28,7 @@ class GameMap(
     val physics: World
 
     init {
-        physics = createWorld(gravity = Vector2.Zero, allowSleep = true)
+        physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
         initMapBounds()
         GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
