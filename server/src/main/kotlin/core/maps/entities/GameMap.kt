@@ -1,12 +1,16 @@
 package core.maps.entities
 
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
-import core.types.*
+import core.types.CID
+import core.types.GameMapId
+import core.types.GridPosition
+import core.types.PID
+import ktx.box2d.body
 import ktx.box2d.createWorld
+import ktx.box2d.loop
 import mu.KotlinLogging
 import utils.toGridPosition
 
@@ -31,42 +35,23 @@ class GameMap(
     }
 
     private fun initMapBounds() {
-        val vertices = listOf(
-            Pair(Vector2(0f, 0f), gridWidth),
-            Pair(Vector2(gridWidth.toFloat(), 0f), gridHeight),
-            Pair(Vector2(gridWidth.toFloat(), gridHeight.toFloat()), gridWidth),
-            Pair(Vector2(0f, gridHeight.toFloat()), gridHeight),
-        )
+        val wall = Wall()
+        physics.body {
+            userData = wall
 
-        vertices.forEachIndexed { index, pair ->
-            val width = pair.second
-            val startingPosition = pair.first
-
-            val bodyDef = BodyDef().also {
-                it.type = BodyDef.BodyType.StaticBody
+            loop(
+                Vector2(0f, 0f),
+                Vector2(gridWidth.toFloat(), 0f),
+                Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
+                Vector2(0f, gridHeight.toFloat())
+            ) {
+                userData = wall
+                density = 0f
+                friction = 0f
+                restitution = 0f
+                filter.categoryBits = CollisionCategory.TERRAIN.value
+                filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
-
-            val shape = EdgeShape().also {
-                it.set(Vector2(0f, 0f), Vector2(width.toFloat(), 0f))
-            }
-
-            val fixtureDef = FixtureDef().also {
-                it.shape = shape
-                it.density = 0f
-                it.friction = 0f
-                it.restitution = 0f
-                it.filter.categoryBits = CollisionCategory.TERRAIN.value
-                it.filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
-            }
-
-            physics.createBody(bodyDef).also {
-                it.createFixture(fixtureDef).also {
-                    it.userData = Wall()
-                }
-                it.setTransform(startingPosition, 90 * MathUtils.degreesToRadians * index)
-            }
-
-            shape.dispose()
         }
     }
 

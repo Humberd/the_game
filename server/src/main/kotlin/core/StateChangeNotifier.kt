@@ -1,5 +1,6 @@
 package core
 
+import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
@@ -186,6 +187,15 @@ class StateChangeNotifier(
         egressPacketHandler.notify(
             pid,
             EgressDataPacket.PingResponse()
+        )
+    }
+
+    fun notifyWallsUpdate(pid: PID, gameMap: GameMap) {
+        egressPacketHandler.notify(
+            pid,
+            EgressDataPacket.TerrainWallsUpdate(
+                chains = emptyArray()
+            )
         )
     }
 }

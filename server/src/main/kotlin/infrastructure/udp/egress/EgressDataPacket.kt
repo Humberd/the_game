@@ -2,7 +2,6 @@ package infrastructure.udp.egress
 
 import core.maps.entities.creatures.StatValue
 import core.types.*
-import infrastructure.database.types.Equippable
 import infrastructure.udp.egress.EgressPacketType.*
 import utils.*
 import java.nio.ByteBuffer
@@ -21,7 +20,8 @@ enum class EgressPacketType(val value: Int) {
     EQUIPMENT_UPDATE(0x2A),
     CREATURE_STATS_UPDATE(0x2B),
     BACKPACK_UPDATE(0x2C),
-    PING_RESPONSE(0x2D)
+    PING_RESPONSE(0x2D),
+    TERRAIN_WALLS_UPDATE(0x2E)
 }
 
 sealed class EgressDataPacket(
@@ -279,11 +279,24 @@ sealed class EgressDataPacket(
     }
 
     @Spammable
-    class PingResponse: EgressDataPacket(PING_RESPONSE) {
+    class PingResponse : EgressDataPacket(PING_RESPONSE) {
         override fun packData(buffer: ByteBuffer) {
             // nothing to send
         }
 
         override fun toString() = "PingResponse()"
+    }
+
+    data class TerrainWallsUpdate(
+        val chains: Array<Array<WorldPosition>>
+    ) : EgressDataPacket(TERRAIN_WALLS_UPDATE) {
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putArray(chains) {
+                buffer.putArray(it) {
+                    buffer.putFloat(it.x)
+                    buffer.putFloat(it.y)
+                }
+            }
+        }
     }
 }
