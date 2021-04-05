@@ -6,8 +6,6 @@ import core.types.GridPosition
 import core.types.ItemInstanceId
 import core.types.SpriteId
 
-
-
 data class Tile(
     val spriteId: SpriteId,
     val gridPosition: GridPosition,

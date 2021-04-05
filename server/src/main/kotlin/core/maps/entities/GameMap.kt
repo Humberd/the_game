@@ -17,7 +17,6 @@ class GameMap(
     val gridWidth: Int,
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
-    gameMapObjects: List<GameMapObject>,
 ) {
     //region Creatures Store
     val creatures = CreaturesContainer()
