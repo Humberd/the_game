@@ -56,6 +56,6 @@ class Player(
     override val collisionCategory = CollisionCategory.PLAYER
 
     override fun toString(): String {
-        return pid.toString()
+        return "Player(${pid})"
     }
 }

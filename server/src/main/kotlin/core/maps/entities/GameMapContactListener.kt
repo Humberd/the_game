@@ -14,7 +14,7 @@ private val logger = KotlinLogging.logger {}
 
 class GameMapContactListener : ContactListener {
     override fun beginContact(contact: Contact) {
-//        logger.debug { "Collision" }
+        logger.debug { "Collision ${contact.fixtureA.userData} with ${contact.fixtureB.userData}" }
         handleContacts(contact.fixtureA.userData, contact.fixtureB.userData)
         handleContacts(contact.fixtureB.userData, contact.fixtureA.userData)
     }

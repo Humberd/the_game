@@ -26,7 +26,7 @@ class GameMap(
     init {
         physics = createWorld(gravity = Vector2.Zero, allowSleep = true)
         initMapBounds()
-//        GameMapDebugRenderer(this)
+        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
     }
 
