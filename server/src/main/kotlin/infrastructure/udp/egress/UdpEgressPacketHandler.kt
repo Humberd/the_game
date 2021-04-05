@@ -3,7 +3,9 @@ package infrastructure.udp.egress
 import core.types.PID
 import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
+import utils.Spammable
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.reflect.full.hasAnnotation
 
 private val logger = KotlinLogging.logger {}
 
@@ -22,7 +24,8 @@ class UdpEgressPacketHandler(
     }
 
     fun notify(to: PID, dataPacket: EgressDataPacket) {
-        if (!(dataPacket is EgressDataPacket.CreaturePositionUpdate)) {
+        @Suppress("TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING")
+        if (!dataPacket::class.hasAnnotation<Spammable>()) {
             logger.debug { "${to} -> ${dataPacket}" }
         }
         val client = udpClientStore.getClient(to)

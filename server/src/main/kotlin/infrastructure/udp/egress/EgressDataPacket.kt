@@ -71,6 +71,7 @@ sealed class EgressDataPacket(
         }
     }
 
+    @Spammable
     data class CreaturePositionUpdate(
         val cid: CID,
         val position: WorldPosition
@@ -277,6 +278,7 @@ sealed class EgressDataPacket(
         }
     }
 
+    @Spammable
     class PingResponse: EgressDataPacket(PING_RESPONSE) {
         override fun packData(buffer: ByteBuffer) {
             // nothing to send

@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
 import core.types.*
+import ktx.box2d.createWorld
 import mu.KotlinLogging
 import utils.toGridPosition
 
@@ -23,8 +24,7 @@ class GameMap(
     val physics: World
 
     init {
-        val gravity = Vector2(0f, 0f)
-        physics = World(gravity, true)
+        physics = createWorld(gravity = Vector2.Zero, allowSleep = true)
         initMapBounds()
 //        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())

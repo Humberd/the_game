@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
 
     // Logging
@@ -32,6 +33,10 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:1.9.14")
     implementation("com.badlogicgames.gdx:gdx-platform:1.9.14:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.14")
+
+    // ktx
+    implementation("io.github.libktx:ktx-box2d:1.9.14-b1")
+    implementation("io.github.libktx:ktx-math:1.9.14-b1")
 }
 
 kotlin {
