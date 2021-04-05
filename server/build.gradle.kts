@@ -44,4 +44,5 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
     )
+    kotlinOptions.useIR = true
 }
