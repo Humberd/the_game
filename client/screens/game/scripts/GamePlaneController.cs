@@ -111,5 +111,10 @@ namespace Client.screens.game.scripts
         {
             _spellDisplayingManager.DisplayProjectile(action);
         }
+
+        public void DisplayWalls(IngressDataPacket.TerrainWallsUpdate action)
+        {
+            _terrainController.DisplayWalls(action);
+        }
     }
 }

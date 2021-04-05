@@ -1,5 +1,6 @@
 ﻿using System;
 using Client.screens.game.scripts;
+using Client.screens.game.scripts.components.terrain;
 using Client.screens.game.scripts.ui;
 using Client.screens.inventory;
 using Client.scripts.global.udp.ingress;
@@ -71,6 +72,11 @@ namespace Client.scripts.global
         public void Handle(IngressDataPacket.PingResponse action)
         {
             DebugInfoController.Instance.ReceivePingResponse(action);
+        }
+
+        public void Handle(IngressDataPacket.TerrainWallsUpdate action)
+        {
+            GamePlaneController.Instance.DisplayWalls(action);
         }
     }
 }

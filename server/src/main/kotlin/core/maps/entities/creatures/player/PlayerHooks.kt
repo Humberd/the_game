@@ -20,6 +20,7 @@ class PlayerHooks(
         notifier.notifyPlayerDetails(player.pid, player)
         notifier.notifyCreatureUpdate(player, player)
         notifier.notifyTerrainUpdate(player)
+        notifier.notifyWallsUpdate(player.pid, player.gameMap)
 
         // Make aware other creatures that can see me
         gameMap.creatures.getAllCreatures()

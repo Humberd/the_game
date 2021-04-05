@@ -57,7 +57,6 @@ namespace Client.screens.game.scripts.ui
                 _shouldSendPingRequest = false;
                 _pingRequestTimeMillis = DateTime.Now.Millisecond;
                 ActionSenderMono.Instance.Send(new EgressDataPacket.PingRequest());
-                Debug.Print("Send ping Request");
             }
         }
 
@@ -68,7 +67,6 @@ namespace Client.screens.game.scripts.ui
 
         public void ReceivePingResponse(IngressDataPacket.PingResponse action)
         {
-            Debug.Print("Receive ping Request");
             var nowMilliseconds = DateTime.Now.Millisecond;
             var diff = nowMilliseconds - _pingRequestTimeMillis;
             UpdatePingCountLabel(diff);

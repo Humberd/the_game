@@ -1,13 +1,11 @@
 package core.maps.entities
 
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
-import core.types.CID
-import core.types.GameMapId
-import core.types.GridPosition
-import core.types.PID
+import core.types.*
 import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.box2d.loop
@@ -23,6 +21,7 @@ class GameMap(
     private val grid: Array<Array<Tile>>,
 ) {
     val creatures = GameMapCreaturesContainer(this)
+    var walls = ArrayList<Body>()
 
     //region Physics Initialization
     val physics: World
@@ -34,17 +33,13 @@ class GameMap(
         physics.setContactListener(GameMapContactListener())
     }
 
-    private fun initMapBounds() {
-        val wall = Wall()
-        physics.body {
+    fun createWallsPolygon(
+        vararg vertices: WorldPosition
+    ) {
+        val body = physics.body {
+            val wall = Wall()
             userData = wall
-
-            loop(
-                Vector2(0f, 0f),
-                Vector2(gridWidth.toFloat(), 0f),
-                Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
-                Vector2(0f, gridHeight.toFloat())
-            ) {
+            loop(*vertices) {
                 userData = wall
                 density = 0f
                 friction = 0f
@@ -53,6 +48,16 @@ class GameMap(
                 filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
         }
+        walls.add(body)
+    }
+
+    private fun initMapBounds() {
+        createWallsPolygon(
+            Vector2(0f, 0f),
+            Vector2(gridWidth.toFloat(), 0f),
+            Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
+            Vector2(0f, gridHeight.toFloat())
+        )
     }
 
     //endregion

@@ -23,7 +23,8 @@ namespace Client.scripts.global.udp.ingress
         EQUIPMENT_UPDATE = 0x2A,
         CREATURE_STATS_UPDATE = 0x2B,
         BACKPACK_UPDATE = 0x2C,
-        PING_RESPONSE = 0x2D
+        PING_RESPONSE = 0x2D,
+        TERRAIN_WALLS_UPDATE = 0x2E
     }
 
     public class IngressDataPacket
@@ -443,6 +444,25 @@ namespace Client.scripts.global.udp.ingress
                 return new PingResponse();
             }
         }
-    }
 
+        public class TerrainWallsUpdate
+        {
+            public readonly Vector2[][] Chains;
+
+            public TerrainWallsUpdate(Vector2[][] chains)
+            {
+                Chains = chains;
+            }
+
+            public static TerrainWallsUpdate From(BinaryReader buffer)
+            {
+                return new TerrainWallsUpdate(
+                    chains: buffer.ReadServerArray(() => buffer.ReadServerArray(() => new Vector2(
+                        buffer.ReadSingle(),
+                        buffer.ReadSingle()
+                    )))
+                );
+            }
+        }
+    }
 }

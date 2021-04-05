@@ -53,6 +53,14 @@ object GameMapGenerator {
             gameMap.creatures.add(it)
         }
 
+        gameMap.createWallsPolygon(
+            WorldPosition(2f, 4f),
+            WorldPosition(3f, 4.5f),
+            WorldPosition(3f, 5.2f),
+            WorldPosition(2f, 5f),
+            WorldPosition(1.5f, 4.5f),
+        )
+
         return gameMap
     }
 }
