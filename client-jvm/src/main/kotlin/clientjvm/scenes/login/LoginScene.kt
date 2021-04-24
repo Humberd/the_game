@@ -1,4 +1,4 @@
-package clientjvm.scenes.game
+package clientjvm.scenes.login
 
 import godot.PanelContainer
 import godot.annotation.RegisterClass
@@ -6,10 +6,6 @@ import godot.annotation.RegisterFunction
 
 @RegisterClass
 class LoginScene : PanelContainer() {
-
-    // Declare member variables here. Examples:
-    // val a = 2;
-    // val b = "text";
 
     // Called when the node enters the scene tree for the first time.
     @RegisterFunction

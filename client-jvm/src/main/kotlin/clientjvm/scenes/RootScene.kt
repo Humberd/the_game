@@ -1,4 +1,4 @@
-package clientjvm
+package clientjvm.scenes
 
 import godot.Node
 import godot.PackedScene
@@ -53,11 +53,11 @@ object RootSceneManager : GodotStatic {
     }
 
     fun initializeFromRoot(rootScene: RootScene) {
-        this.rootScene = rootScene
+        RootSceneManager.rootScene = rootScene
     }
 
     override fun collect() {
-        this.clearCurrentScene()
+        clearCurrentScene()
     }
 
     fun loadScene(scene: SCENE) {
@@ -65,7 +65,7 @@ object RootSceneManager : GodotStatic {
             throw Error("Scene already instantiated")
         }
 
-        this.clearCurrentScene()
+        clearCurrentScene()
         val instance: Node = when (scene) {
             SCENE.LOGIN -> rootScene.loginScene.instance()!!
             SCENE.GAME -> rootScene.gameScene.instance()!!
