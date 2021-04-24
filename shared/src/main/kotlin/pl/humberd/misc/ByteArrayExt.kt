@@ -1,4 +1,4 @@
-package utils
+package pl.humberd.misc
 
 private val HEX_CHARS = "0123456789ABCDEF".toCharArray()
 

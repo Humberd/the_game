@@ -1,5 +1,6 @@
 package clientjvm.scenes
 
+import clientjvm.global.ClientDataSender
 import godot.Node
 import godot.PackedScene
 import godot.ResourceLoader
@@ -7,6 +8,7 @@ import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
+import pl.humberd.udp.packets.clientserver.ConnectionHello
 
 @RegisterClass
 class RootScene : Spatial() {
@@ -14,6 +16,8 @@ class RootScene : Spatial() {
     override fun _ready() {
         RootSceneManager.initializeFromRoot(this)
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
+
+        ClientDataSender.send(ConnectionHello())
     }
 }
 

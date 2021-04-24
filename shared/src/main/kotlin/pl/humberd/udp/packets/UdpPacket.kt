@@ -1,4 +1,4 @@
-package pl.humberd.upd.packets
+package pl.humberd.udp.packets
 
 abstract class UdpPacket<T : UdpPacketType>(private val type: T) {
     fun pack(buffer: WriteBuffer) {
@@ -6,5 +6,5 @@ abstract class UdpPacket<T : UdpPacketType>(private val type: T) {
         packData(buffer)
     }
 
-    abstract fun packData(buffer: WriteBuffer);
+    protected abstract fun packData(buffer: WriteBuffer);
 }

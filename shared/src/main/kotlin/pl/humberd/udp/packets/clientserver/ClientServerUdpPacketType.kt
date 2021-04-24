@@ -1,6 +1,6 @@
-package pl.humberd.upd.packets.clientserver
+package pl.humberd.udp.packets.clientserver
 
-import pl.humberd.upd.packets.UdpPacketType
+import pl.humberd.udp.packets.UdpPacketType
 
 enum class ClientServerUdpPacketType(override val value: Int) : UdpPacketType {
     CONNECTION_HELLO(0x00),

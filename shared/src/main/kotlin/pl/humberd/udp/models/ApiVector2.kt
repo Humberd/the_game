@@ -1,4 +1,4 @@
-package pl.humberd.upd.models
+package pl.humberd.udp.models
 
 data class ApiVector2(
     val x: Float,

@@ -43,7 +43,5 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
-    )
+    kotlinOptions.freeCompilerArgs += listOf()
 }

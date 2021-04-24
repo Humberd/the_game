@@ -1,6 +1,6 @@
-package pl.humberd.upd.packets
+package pl.humberd.udp.packets
 
-import pl.humberd.upd.models.ApiVector2
+import pl.humberd.udp.models.ApiVector2
 import java.nio.ByteBuffer
 
 class WriteBuffer(var buffer: ByteBuffer) {

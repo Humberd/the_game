@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+
+    implementation("io.github.microutils:kotlin-logging-jvm:2.0.2")
 }
 
 kotlin {
@@ -20,8 +22,8 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
-    )
+    kotlinOptions.freeCompilerArgs += listOf()
+    kotlinOptions.languageVersion = "1.5"
+    kotlinOptions.apiVersion = "1.5"
 }
 
