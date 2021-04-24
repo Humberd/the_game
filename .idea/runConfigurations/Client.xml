@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Client" type="godotConfiguration" factoryName="Godot" executable="D:\Repositories\game\executables\godot\godot.exe" workingDirectory="D:\Repositories\game\client-jvm" parameters="--path &quot;./&quot;">
+  <configuration default="false" name="Client" type="godotConfiguration" factoryName="Godot" executable="D:\Repositories\game\executables\godot\godot.exe" workingDirectory="D:\Repositories\game\client-jvm" parameters="--path &quot;D:\Repositories\game\client-jvm&quot;">
     <method v="2">
       <option name="Gradle.BeforeRunTask" enabled="false" tasks="buildNeeded" externalProjectPath="$PROJECT_DIR$/shared" vmOptions="" scriptParameters="" />
       <option name="Gradle.BeforeRunTask" enabled="true" tasks="buildNeeded" externalProjectPath="$PROJECT_DIR$/client-jvm" vmOptions="" scriptParameters="" />
