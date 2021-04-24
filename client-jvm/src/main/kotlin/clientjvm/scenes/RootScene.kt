@@ -18,8 +18,8 @@ class RootScene : Spatial() {
 }
 
 object RootSceneManager : GodotStatic {
-    var loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene?
-    var gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene?
+    private var loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene?
+    private var gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene?
 
     enum class SCENE {
         LOGIN,

@@ -21,4 +21,4 @@ size_flags_horizontal = 2
 size_flags_vertical = 2
 custom_styles/panel = SubResource( 1 )
 
-[node name="Spatial" type="Spatial" parent="Viewport"]
+[node name="Spatial" type="Spatial" parent="Viewport/PanelContainer"]
