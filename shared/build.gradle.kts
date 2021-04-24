@@ -12,3 +12,16 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
 }
+
+kotlin {
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("InlineClasses")
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += listOf(
+        "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
+    )
+}
+
