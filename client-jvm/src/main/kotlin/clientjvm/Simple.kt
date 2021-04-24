@@ -1,4 +1,4 @@
-package pl.humberd.game.client
+package clientjvm
 
 import godot.Spatial
 import godot.annotation.RegisterClass
@@ -8,8 +8,8 @@ import godot.global.GD
 @RegisterClass
 class Simple: Spatial() {
 
-    @RegisterFunction
-    override fun _ready() {
-        GD.print("Hello world!")
-    }
+	@RegisterFunction
+	override fun _ready() {
+		GD.print("Hello world!")
+	}
 }

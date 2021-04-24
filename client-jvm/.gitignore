@@ -9,3 +9,6 @@ build
 
 # Ignore embedded jre
 jre
+/.import/
+*.import
+/src/main/resources/META-INF/services/godot.runtime.Entry
