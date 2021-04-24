@@ -1,2 +1,2 @@
 ﻿rootProject.name = "game"
-include("shared", "server")
+include("shared", "server", "client-jvm")

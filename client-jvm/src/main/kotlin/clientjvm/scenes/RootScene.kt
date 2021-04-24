@@ -7,6 +7,7 @@ import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
+import pl.humberd.shared
 
 @RegisterClass
 class RootScene : Spatial() {
@@ -16,6 +17,7 @@ class RootScene : Spatial() {
     // Called when the node enters the scene tree for the first time.
     @RegisterFunction
     override fun _ready() {
+        shared.hello()
         loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene
         RootSceneManager.initializeFromRoot(this)
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
