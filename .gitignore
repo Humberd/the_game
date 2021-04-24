@@ -76,3 +76,4 @@ fabric.properties
 /shared/build/
 /src/main/resources/META-INF/services/godot.runtime.Entry
 /build/
+*.log

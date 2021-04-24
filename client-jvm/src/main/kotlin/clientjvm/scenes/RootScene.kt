@@ -18,8 +18,8 @@ class RootScene : Spatial() {
 }
 
 object RootSceneManager : GodotStatic {
-    val loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene
-    val gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene
+    var loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene?
+    var gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene?
 
     enum class SCENE {
         LOGIN,
@@ -44,8 +44,8 @@ object RootSceneManager : GodotStatic {
 
     override fun collect() {
         clearCurrentScene()
-        loginScene.free()
-        gameScene.free()
+        loginScene = null
+        gameScene = null
     }
 
     fun loadScene(scene: SCENE) {
@@ -55,8 +55,8 @@ object RootSceneManager : GodotStatic {
 
         clearCurrentScene()
         val instance: Node = when (scene) {
-            SCENE.LOGIN -> loginScene.instance()!!
-            SCENE.GAME -> gameScene.instance()!!
+            SCENE.LOGIN -> loginScene?.instance()!!
+            SCENE.GAME -> gameScene?.instance()!!
         }
 
         currentScene = CurrentScene(scene, instance).also {

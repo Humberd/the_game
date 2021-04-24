@@ -18,7 +18,11 @@ __meta__ = {
 }
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-size_flags_horizontal = 2
-size_flags_vertical = 2
+margin_right = 1024.0
+margin_bottom = 600.0
 
-[node name="Node2D" parent="CenterContainer" instance=ExtResource( 2 )]
+[node name="GameViewportScene" parent="CenterContainer" instance=ExtResource( 2 )]
+margin_left = 212.0
+margin_right = 812.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
