@@ -7,7 +7,11 @@ import godot.annotation.RegisterFunction
 @RegisterClass
 class LoginScene : PanelContainer() {
     @RegisterFunction
-    fun player1() {
+    fun player1Pressed() {
         println("clicked player1")
+    }
+    @RegisterFunction
+    fun player2Pressed() {
+        println("clicked player2")
     }
 }

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm")
 }
 
 group = "org.example"
@@ -32,6 +32,8 @@ dependencies {
     implementation("com.badlogicgames.gdx:gdx:1.9.14")
     implementation("com.badlogicgames.gdx:gdx-platform:1.9.14:natives-desktop")
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.14")
+
+    implementation(project(":shared"))
 }
 
 kotlin {

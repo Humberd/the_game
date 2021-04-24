@@ -11,11 +11,13 @@ import infrastructure.udp.egress.UpdEgressServer
 import infrastructure.udp.ingress.UdpIngressPacketHandler
 import infrastructure.udp.ingress.UdpIngressServer
 import mu.KotlinLogging
+import pl.humberd.shared
 import java.net.DatagramSocket
 
 private val logger = KotlinLogging.logger {}
 
 fun main() {
+    shared.hello()
     logger.info { "Hello from server" }
 
     ItemSchemaStore.readItemsFromJson();
