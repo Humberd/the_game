@@ -8,6 +8,7 @@ import infrastructure.udp.UdpClient
 import infrastructure.udp.UdpClientStore
 import infrastructure.udp.UdpConnectionPersistor
 import mu.KotlinLogging
+import pl.humberd.misc.toHex
 import utils.uInt
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
@@ -35,9 +36,9 @@ class UdpIngressPacketHandler(
     fun handle(packet: ByteBuffer, client: UdpClient) {
         val clientId = client.getIdentifier()
 
-//        println(
-//            "Packet from $clientId (${packet.limit()})${packet.array().sliceArray(0..packet.limit() - 1).toHex()}"
-//        )
+        logger.info {
+            "Packet from $clientId (${packet.limit()})${packet.array().sliceArray(0..packet.limit() - 1).toHex()}"
+        }
 
         if (packet.limit() < 5) {
             logger.warn { "Invalid packet size: ${packet.limit()}" }
@@ -59,7 +60,11 @@ class UdpIngressPacketHandler(
                     gameLoop.requestAction(IngressPacket.ConnectionHello())
                 }
                 IngressPacketType.DISCONNECT -> {
-                    val pid = getPID(clientId)
+                    val pid = try {
+                        getPID(clientId)
+                    } catch (e: UnknownPID) {
+                        null
+                    }
                     udpClientStore.remove(clientId)
                     gameLoop.requestAction(IngressPacket.Disconnect(pid))
                 }

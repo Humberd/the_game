@@ -95,6 +95,7 @@ class GameLoop(
     }
 
     fun requestAction(action: IngressPacket) {
+        logger.info { action }
         queue.add(action)
     }
 

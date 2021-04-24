@@ -9,6 +9,7 @@ import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
 import pl.humberd.udp.packets.clientserver.ConnectionHello
+import pl.humberd.udp.packets.clientserver.Disconnect
 
 @RegisterClass
 class RootScene : Spatial() {
@@ -18,6 +19,10 @@ class RootScene : Spatial() {
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
 
         ClientDataSender.send(ConnectionHello())
+    }
+
+    override fun _onDestroy() {
+        ClientDataSender.send(Disconnect())
     }
 }
 
