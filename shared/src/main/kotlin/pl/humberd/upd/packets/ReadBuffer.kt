@@ -19,7 +19,7 @@ class ReadBuffer(var buffer: ByteBuffer) {
     fun getULong() = getLong().toULong()
 
     // complex
-    fun getBoolean() = getUByte() > 0u
+    fun getBoolean() = getUByte() > UByte.MIN_VALUE
     fun getVector2() = ApiVector2(getFloat(), getFloat())
     inline fun <reified T> getArray(noinline mapper: (index: Int) -> T) =
         Array(getUShort().toInt(), mapper)

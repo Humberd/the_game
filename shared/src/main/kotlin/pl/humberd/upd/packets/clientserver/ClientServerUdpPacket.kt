@@ -2,10 +2,9 @@ package pl.humberd.upd.packets.clientserver
 
 import pl.humberd.upd.models.ApiVector2
 import pl.humberd.upd.packets.ReadBuffer
-import pl.humberd.upd.models.putVector
 import pl.humberd.upd.packets.UdpPacket
+import pl.humberd.upd.packets.WriteBuffer
 import pl.humberd.upd.packets.clientserver.ClientServerUdpPacketType.*
-import java.nio.ByteBuffer
 
 sealed class ClientServerUdpPacket(type: ClientServerUdpPacketType) :
     UdpPacket<ClientServerUdpPacketType>(type) {
@@ -13,7 +12,7 @@ sealed class ClientServerUdpPacket(type: ClientServerUdpPacketType) :
     class ConnectionHello() : ClientServerUdpPacket(CONNECTION_HELLO) {
         constructor(buffer: ReadBuffer) : this()
 
-        override fun packData(buffer: ByteBuffer) {
+        override fun packData(buffer: WriteBuffer) {
             // nothing to pack
         }
     }
@@ -21,7 +20,7 @@ sealed class ClientServerUdpPacket(type: ClientServerUdpPacketType) :
     class Disconnect() : ClientServerUdpPacket(DISCONNECT) {
         constructor(buffer: ReadBuffer) : this()
 
-        override fun packData(buffer: ByteBuffer) {
+        override fun packData(buffer: WriteBuffer) {
             // nothing to pack
         }
     }
@@ -29,7 +28,7 @@ sealed class ClientServerUdpPacket(type: ClientServerUdpPacketType) :
     class AuthLogin() : ClientServerUdpPacket(AUTH_LOGIN) {
         constructor(buffer: ReadBuffer) : this()
 
-        override fun packData(buffer: ByteBuffer) {
+        override fun packData(buffer: WriteBuffer) {
             // nothing to pack
         }
     }
@@ -42,8 +41,8 @@ sealed class ClientServerUdpPacket(type: ClientServerUdpPacketType) :
             targetPosition = buffer.getVector2()
         )
 
-        override fun packData(buffer: ByteBuffer) {
-            buffer.putVector(targetPosition)
+        override fun packData(buffer: WriteBuffer) {
+            buffer.putVector2(targetPosition)
         }
 
     }
