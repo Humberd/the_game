@@ -2,29 +2,23 @@ package clientjvm.scenes
 
 import godot.Node
 import godot.PackedScene
+import godot.ResourceLoader
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.annotation.RegisterProperty
-import godot.core.NodePath
 import godot.core.memory.GodotStatic
 
 @RegisterClass
 class RootScene : Spatial() {
-    @RegisterProperty
     lateinit var loginScene: PackedScene
-
-    @RegisterProperty
     lateinit var gameScene: PackedScene
-
 
     // Called when the node enters the scene tree for the first time.
     @RegisterFunction
     override fun _ready() {
+        loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene
         RootSceneManager.initializeFromRoot(this)
-        println("xxxx")
-        NodePath()
-//        RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
+        RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
