@@ -7,30 +7,20 @@ import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
-import pl.humberd.shared
 
 @RegisterClass
 class RootScene : Spatial() {
-    lateinit var loginScene: PackedScene
-    lateinit var gameScene: PackedScene
-
-    // Called when the node enters the scene tree for the first time.
     @RegisterFunction
     override fun _ready() {
-        shared.hello()
-        loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene
         RootSceneManager.initializeFromRoot(this)
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
-    }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    @RegisterFunction
-    override fun _process(delta: Double) {
-
     }
 }
 
 object RootSceneManager : GodotStatic {
+    val loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene
+    val gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene
+
     enum class SCENE {
         LOGIN,
         GAME
@@ -54,6 +44,8 @@ object RootSceneManager : GodotStatic {
 
     override fun collect() {
         clearCurrentScene()
+        loginScene.free()
+        gameScene.free()
     }
 
     fun loadScene(scene: SCENE) {
@@ -63,8 +55,8 @@ object RootSceneManager : GodotStatic {
 
         clearCurrentScene()
         val instance: Node = when (scene) {
-            SCENE.LOGIN -> rootScene.loginScene.instance()!!
-            SCENE.GAME -> rootScene.gameScene.instance()!!
+            SCENE.LOGIN -> loginScene.instance()!!
+            SCENE.GAME -> gameScene.instance()!!
         }
 
         currentScene = CurrentScene(scene, instance).also {
@@ -73,7 +65,7 @@ object RootSceneManager : GodotStatic {
     }
 
     private fun clearCurrentScene() {
-        currentScene?.instance?.free()
+        currentScene?.instance?.queueFree()
         currentScene = null
     }
 

@@ -1,5 +1,6 @@
 package clientjvm.scenes.login
 
+import clientjvm.scenes.RootSceneManager
 import godot.PanelContainer
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -8,7 +9,7 @@ import godot.annotation.RegisterFunction
 class LoginScene : PanelContainer() {
     @RegisterFunction
     fun player1Pressed() {
-        println("clicked player1")
+        RootSceneManager.loadScene(RootSceneManager.SCENE.GAME)
     }
     @RegisterFunction
     fun player2Pressed() {

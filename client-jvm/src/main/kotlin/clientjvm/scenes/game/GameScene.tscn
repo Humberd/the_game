@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/GameScene.kt" type="Script" id=1]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/GameViewportScene.tscn" type="PackedScene" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.0627451, 0.101961, 0.133333, 1 )
+
+[node name="GameScene" type="PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+size_flags_horizontal = 2
+size_flags_vertical = 2
+
+[node name="Node2D" parent="CenterContainer" instance=ExtResource( 2 )]
