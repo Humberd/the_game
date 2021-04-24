@@ -1,11 +1,11 @@
-package clientjvm
+package clientjvm.scenes.`game-scene`
 
-import godot.Spatial
+import godot.PanelContainer
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 
 @RegisterClass
-class RootScene : Spatial() {
+class LoginScene : PanelContainer() {
 
     // Declare member variables here. Examples:
     // val a = 2;
@@ -14,7 +14,7 @@ class RootScene : Spatial() {
     // Called when the node enters the scene tree for the first time.
     @RegisterFunction
     override fun _ready() {
-        println("heeheh")
+
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

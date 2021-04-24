@@ -8,20 +8,15 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Spatial",
-"class": "clientjvm_RootScene",
-"language": "Kotlin",
-"path": "res://src/main/kotlin/clientjvm/RootScene.kt"
-} ]
+_global_script_classes=[  ]
 _global_script_class_icons={
-"clientjvm_RootScene": ""
+
 }
 
 [application]
 
 config/name="client-jvm"
-run/main_scene="res://src/main/kotlin/clientjvm/RootScene.tscn"
+run/main_scene="res://src/main/kotlin/clientjvm/scenes/RootScene.tscn"
 config/icon="res://icon.png"
 
 [rendering]
