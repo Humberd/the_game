@@ -2,20 +2,6 @@ package core.types
 
 import com.badlogic.gdx.math.Vector2
 
-// Unique PlayerId
-inline class PID(val value: UInt) {
-    companion object {
-        private var counter = 0u;
-        fun unique() = PID(++counter)
-    }
-}
-// Unique CreatureId
-inline class CID(val value: UInt) {
-    companion object {
-        private var counter = 0u
-        fun unique() = CID(++counter)
-    }
-}
 inline class ItemInstanceId(val value: UInt) {
     companion object {
         private var counter = 0u

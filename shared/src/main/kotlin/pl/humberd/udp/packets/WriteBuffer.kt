@@ -1,6 +1,7 @@
 package pl.humberd.udp.packets
 
 import pl.humberd.udp.models.ApiVector2
+import pl.humberd.udp.models.CID
 import java.nio.ByteBuffer
 
 class WriteBuffer(var buffer: ByteBuffer) {
@@ -46,4 +47,7 @@ class WriteBuffer(var buffer: ByteBuffer) {
         putUShort(v.length.toUShort())
         buffer.put(v.encodeToByteArray())
     }
+
+    // ids
+    fun putCID(v: CID) = putUInt(v.value)
 }

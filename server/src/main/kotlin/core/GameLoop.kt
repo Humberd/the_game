@@ -5,10 +5,7 @@ import infrastructure.udp.ServerUdpReceiveQueuePacket
 import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
 import pl.humberd.misc.exhaustive
-import pl.humberd.udp.packets.clientserver.AuthLogin
-import pl.humberd.udp.packets.clientserver.ConnectionHello
-import pl.humberd.udp.packets.clientserver.Disconnect
-import pl.humberd.udp.packets.clientserver.PositionChange
+import pl.humberd.udp.packets.clientserver.*
 import utils.Milliseconds
 import utils.ms
 import utils.sec
@@ -97,7 +94,9 @@ class GameLoop(
             is Disconnect -> gameActionHandler.handle(packet, udpClientStore.getPidOrNull(connectionId))
             is AuthLogin -> gameActionHandler.handle(packet) { udpClientStore.setPID(connectionId, it) }
             is PositionChange -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
-            else -> TODO()
+            is BasicAttackStart -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is BasicAttackEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is PlayerStatsUpdateRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
         }.exhaustive
     }
 

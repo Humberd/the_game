@@ -2,12 +2,19 @@ package core.maps.entities
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.EdgeShape
+import com.badlogic.gdx.physics.box2d.FixtureDef
+import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.player.Player
 import core.maps.shapes.Wall
-import core.types.*
+import core.types.GameMapId
+import core.types.GridPosition
+import core.types.WorldPosition
 import mu.KotlinLogging
+import pl.humberd.udp.models.CID
+import pl.humberd.udp.models.PID
 import utils.toGridPosition
 
 private val logger = KotlinLogging.logger {}

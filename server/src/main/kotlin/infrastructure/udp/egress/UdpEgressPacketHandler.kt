@@ -1,8 +1,8 @@
 package infrastructure.udp.egress
 
-import core.types.PID
 import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
+import pl.humberd.udp.models.PID
 import java.util.concurrent.ConcurrentLinkedQueue
 
 private val logger = KotlinLogging.logger {}

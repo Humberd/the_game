@@ -2,8 +2,9 @@ package infrastructure.udp.egress
 
 import core.maps.entities.creatures.StatValue
 import core.types.*
-import infrastructure.database.types.Equippable
 import infrastructure.udp.egress.EgressPacketType.*
+import pl.humberd.udp.models.CID
+import pl.humberd.udp.models.PID
 import utils.*
 import java.nio.ByteBuffer
 

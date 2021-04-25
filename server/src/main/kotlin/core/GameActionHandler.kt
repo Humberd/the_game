@@ -1,14 +1,11 @@
 package core
 
-import core.types.PID
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
 import infrastructure.udp.models.convert
 import mu.KotlinLogging
-import pl.humberd.udp.packets.clientserver.AuthLogin
-import pl.humberd.udp.packets.clientserver.ConnectionHello
-import pl.humberd.udp.packets.clientserver.Disconnect
-import pl.humberd.udp.packets.clientserver.PositionChange
+import pl.humberd.udp.models.PID
+import pl.humberd.udp.packets.clientserver.*
 
 private val logger = KotlinLogging.logger {}
 
@@ -43,6 +40,18 @@ class GameActionHandler(
         gamesManager.movePlayerTo(pid, packet.targetPosition.convert())
     }
 
+    fun handle(packet: BasicAttackStart, pid: PID) {
+        gamesManager.startBasicAttacking(pid, packet.targetCid)
+    }
+
+    fun handle(packet: BasicAttackEnd, pid: PID) {
+        gamesManager.stopBasicAttacking(pid)
+    }
+
+    fun handle(packet: PlayerStatsUpdateRequest, pid: PID) {
+        gamesManager.requestPlayerStatsUpdate(pid)
+    }
+
     fun handle(action: IngressPacket.TerrainItemDrag) {
         gamesManager.dragItemOnTerrain(action.pid, action.itemInstanceId, action.targetPosition)
     }
@@ -53,14 +62,6 @@ class GameActionHandler(
 
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
-    }
-
-    fun handle(action: IngressPacket.BasicAttackStart) {
-        gamesManager.startBasicAttacking(action.pid, action.targetCid)
-    }
-
-    fun handle(action: IngressPacket.BasicAttackStop) {
-        gamesManager.stopBasicAttacking(action.pid)
     }
 
     fun handle(action: IngressPacket.PlayerStatsUpdateRequest) {

@@ -5,7 +5,12 @@ import core.maps.entities.GameMap
 import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.player.Player
 import core.maps.entities.creatures.player.PlayerSeed
-import core.types.*
+import core.types.GameMapId
+import core.types.ItemInstanceId
+import core.types.SID
+import core.types.WorldPosition
+import pl.humberd.udp.models.CID
+import pl.humberd.udp.models.PID
 
 class GamesManager(
     private val notifier: StateChangeNotifier,

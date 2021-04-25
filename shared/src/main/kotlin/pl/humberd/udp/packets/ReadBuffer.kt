@@ -1,6 +1,7 @@
 package pl.humberd.udp.packets
 
 import pl.humberd.udp.models.ApiVector2
+import pl.humberd.udp.models.CID
 import java.nio.ByteBuffer
 
 class ReadBuffer(var buffer: ByteBuffer) {
@@ -41,6 +42,9 @@ class ReadBuffer(var buffer: ByteBuffer) {
         buffer.get(bytes, 0, length)
         return String(bytes, Charsets.UTF_8)
     }
+
+    // ids
+    fun getCID() = CID(getUInt())
 }
 
 

@@ -1,11 +1,10 @@
 package core.maps.entities
 
 import core.maps.entities.creatures.Creature
-import core.types.CID
 import core.types.GridPosition
 import core.types.ItemInstanceId
 import core.types.SpriteId
-
+import pl.humberd.udp.models.CID
 
 
 data class Tile(

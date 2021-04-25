@@ -3,9 +3,9 @@ package core
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
-import core.types.PID
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
+import pl.humberd.udp.models.PID
 
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler
