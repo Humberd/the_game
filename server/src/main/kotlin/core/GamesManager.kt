@@ -6,11 +6,10 @@ import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.player.Player
 import core.maps.entities.creatures.player.PlayerSeed
 import core.types.GameMapId
-import core.types.ItemInstanceId
-import core.types.SID
 import core.types.WorldPosition
 import pl.humberd.udp.models.CID
 import pl.humberd.udp.models.PID
+import pl.humberd.udp.models.SID
 
 class GamesManager(
     private val notifier: StateChangeNotifier,
@@ -42,11 +41,6 @@ class GamesManager(
 
     fun movePlayerTo(pid: PID, targetPosition: WorldPosition) {
         getMap(pid).creatures.moveTo(pid, targetPosition)
-    }
-
-    fun dragItemOnTerrain(pid: PID, itemInstanceId: ItemInstanceId, targetPosition: WorldPosition) {
-        val map = getMap(pid)
-//        map.moveItemOnTerrain(pid, iid, targetPosition)
     }
 
     fun useSpell(pid: PID, sid: SID) {

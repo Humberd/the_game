@@ -1,13 +1,9 @@
 package core
 
 import infrastructure.database.Database
-import infrastructure.udp.ingress.IngressPacket
 import infrastructure.udp.models.convert
-import mu.KotlinLogging
 import pl.humberd.udp.models.PID
 import pl.humberd.udp.packets.clientserver.*
-
-private val logger = KotlinLogging.logger {}
 
 class GameActionHandler(
     private val gamesManager: GamesManager,
@@ -52,19 +48,11 @@ class GameActionHandler(
         gamesManager.requestPlayerStatsUpdate(pid)
     }
 
-    fun handle(action: IngressPacket.TerrainItemDrag) {
-        gamesManager.dragItemOnTerrain(action.pid, action.itemInstanceId, action.targetPosition)
-    }
-
-    fun handle(action: IngressPacket.SpellUsage) {
-        gamesManager.useSpell(action.pid, action.sid)
+    fun handle(packet: SpellUsage, pid: PID) {
+        gamesManager.useSpell(pid, packet.sid)
     }
 
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
-    }
-
-    fun handle(action: IngressPacket.PlayerStatsUpdateRequest) {
-        gamesManager.requestPlayerStatsUpdate(action.pid)
     }
 }

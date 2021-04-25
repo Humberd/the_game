@@ -14,7 +14,7 @@ sealed class ClientServerUdpPacket(type: Type) : UdpPacket<ClientServerUdpPacket
         PING_REQUEST(0x02),
         AUTH_LOGIN(0x05, { AuthLogin(it) }),
         POSITION_CHANGE(0x10, { PositionChange(it) }),
-        SPELL_USAGE(0x12),
+        SPELL_USAGE(0x12, { SpellUsage(it) }),
         BASIC_ATTACK_START(0x13, { BasicAttackStart(it) }),
         BASIC_ATTACK_END(0x14, { BasicAttackEnd(it) }),
         PLAYER_STATS_UPDATE_REQUEST(0x15, { PlayerStatsUpdateRequest(it) });

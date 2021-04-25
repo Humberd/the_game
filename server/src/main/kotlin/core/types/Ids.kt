@@ -18,13 +18,6 @@ inline class IID(val value: UInt) {
     }
 }
 
-//Unique SpellId
-inline class SID(val value: UInt) {
-    companion object {
-        private var counter = 0u
-        fun unique() = SID(++counter)
-    }
-}
 inline class GameMapId(val value: UInt)
 inline class SpriteId(val value: UShort)
 inline class Coordinate(val value: Int)

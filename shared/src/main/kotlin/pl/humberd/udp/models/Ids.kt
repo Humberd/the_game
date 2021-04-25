@@ -26,3 +26,16 @@ value class CID(val value: UInt) {
         fun unique() = CID(++counter)
     }
 }
+
+/**
+ * Spell ID
+ *
+ * Uniquely identifies a spell
+ */
+@JvmInline
+value class SID(val value: UInt) {
+    companion object {
+        private var counter = 0u
+        fun unique() = SID(++counter)
+    }
+}

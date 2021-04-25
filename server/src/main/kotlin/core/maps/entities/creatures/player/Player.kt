@@ -5,9 +5,9 @@ import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureSeed
-import core.types.SID
 import core.types.SpriteId
 import pl.humberd.udp.models.PID
+import pl.humberd.udp.models.SID
 import utils.Milliseconds
 
 data class Spell(

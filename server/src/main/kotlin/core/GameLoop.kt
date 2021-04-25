@@ -97,6 +97,7 @@ class GameLoop(
             is BasicAttackStart -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is BasicAttackEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is PlayerStatsUpdateRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is SpellUsage -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
         }.exhaustive
     }
 
