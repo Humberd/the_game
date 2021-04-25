@@ -5,7 +5,9 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
-import core.types.*
+import core.types.GameMapId
+import core.types.GridPosition
+import core.types.WorldPosition
 import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.box2d.loop
@@ -31,7 +33,7 @@ class GameMap(
     init {
         physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
         initMapBounds()
-        GameMapDebugRenderer(this)
+//        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
     }
 

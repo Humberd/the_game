@@ -2,9 +2,9 @@ package core.maps.entities
 
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.player.Player
-import core.types.CID
-import core.types.PID
 import core.types.WorldPosition
+import pl.humberd.udp.models.CID
+import pl.humberd.udp.models.PID
 
 class GameMapCreaturesContainer(private val map: GameMap) {
     private val players = HashMap<PID, Player>()
