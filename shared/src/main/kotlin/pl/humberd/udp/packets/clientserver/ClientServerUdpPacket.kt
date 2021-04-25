@@ -3,8 +3,9 @@ package pl.humberd.udp.packets.clientserver
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.UdpPacket
 import pl.humberd.udp.packets.UdpPacketType
+import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket.Type
 
-sealed class ClientServerUdpPacket(type: Type) : UdpPacket<ClientServerUdpPacket.Type>(type) {
+sealed class ClientServerUdpPacket(type: Type) : UdpPacket<Type>(type) {
     enum class Type(
         override val value: Int,
         val serialize: (buffer: ReadBuffer) -> ClientServerUdpPacket = { TODO() }
