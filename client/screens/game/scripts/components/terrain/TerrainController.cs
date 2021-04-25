@@ -1,5 +1,7 @@
-﻿using Client.scripts.global.udp.ingress;
+using System.Linq;
+using Client.scripts.global.udp.ingress;
 using Godot;
+using Godot.Collections;
 
 namespace Client.screens.game.scripts.components.terrain
 {
@@ -14,7 +16,8 @@ namespace Client.screens.game.scripts.components.terrain
         {
             Name = "TerrainController";
 
-            PackedScene tileScene = ResourceLoader.Load<PackedScene>("res://screens/game/scripts/components/terrain/Tile.tscn");
+            PackedScene tileScene =
+                ResourceLoader.Load<PackedScene>("res://screens/game/scripts/components/terrain/Tile.tscn");
 
             for (int x = 0; x < GRID_SIZE; x++)
             {
@@ -56,6 +59,29 @@ namespace Client.screens.game.scripts.components.terrain
             foreach (var tileController in _tiles)
             {
                 tileController.UnsetTile();
+            }
+        }
+
+        public void DisplayWalls(IngressDataPacket.TerrainWallsUpdate action)
+        {
+            foreach (var chain in action.Chains)
+            {
+                var arr = new Array();
+                arr.Resize((int) Mesh.ArrayType.Max);
+                arr[(int) Mesh.ArrayType.Vertex] = chain;
+                var arrayMesh = new ArrayMesh();
+                arrayMesh.AddSurfaceFromArrays(
+                    primitive: Mesh.PrimitiveType.LineStrip,
+                    arrays: arr
+                );
+
+                var meshInstance = new MeshInstance();
+                meshInstance.Mesh = arrayMesh;
+                meshInstance.Name = "__wall";
+                meshInstance.RotationDegrees = new Vector3(90, 0f, 0);
+                meshInstance.Translation = new Vector3(0f, .5f, 0);
+                AddChild(meshInstance);
+                GD.Print(meshInstance.Mesh);
             }
         }
     }

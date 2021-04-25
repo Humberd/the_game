@@ -22,7 +22,9 @@ enum class EgressPacketType(val value: Int) {
     PROJECTILE_SEND(0x29),
     EQUIPMENT_UPDATE(0x2A),
     CREATURE_STATS_UPDATE(0x2B),
-    BACKPACK_UPDATE(0x2C)
+    BACKPACK_UPDATE(0x2C),
+    PING_RESPONSE(0x2D),
+    TERRAIN_WALLS_UPDATE(0x2E)
 }
 
 sealed class EgressDataPacket(
@@ -72,6 +74,7 @@ sealed class EgressDataPacket(
         }
     }
 
+    @Spammable
     data class CreaturePositionUpdate(
         val cid: CID,
         val position: WorldPosition
@@ -274,6 +277,28 @@ sealed class EgressDataPacket(
             buffer.putNullableArray(items) {
                 buffer.putUShort(it.itemSchemaId.value)
                 buffer.putUShort(it.stackCount)
+            }
+        }
+    }
+
+    @Spammable
+    class PingResponse : EgressDataPacket(PING_RESPONSE) {
+        override fun packData(buffer: ByteBuffer) {
+            // nothing to send
+        }
+
+        override fun toString() = "PingResponse()"
+    }
+
+    data class TerrainWallsUpdate(
+        val chains: Array<Array<WorldPosition>>
+    ) : EgressDataPacket(TERRAIN_WALLS_UPDATE) {
+        override fun packData(buffer: ByteBuffer) {
+            buffer.putArray(chains) {
+                buffer.putArray(it) {
+                    buffer.putFloat(it.x)
+                    buffer.putFloat(it.y)
+                }
             }
         }
     }

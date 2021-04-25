@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import core.types.WorldPosition
+import ktx.box2d.body
+import ktx.box2d.circle
 
 class CreaturePhysics(
     private val thisCreature: Creature
@@ -13,31 +15,20 @@ class CreaturePhysics(
         private set
 
     fun onInit(position: WorldPosition, bodyRadius: Float) {
-        val bodyDef = BodyDef().also {
-            it.type = BodyDef.BodyType.DynamicBody
-            it.position.set(position)
-        }
-
-        val body = thisCreature.gameMap.physics.createBody(bodyDef)
-
-        val shape = CircleShape().also {
-            it.radius = bodyRadius
-        }
-
         // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
+        val body = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
+            this.position.set(position)
+            userData = thisCreature
 
-        val fixtureDef = FixtureDef().also {
-            it.shape = shape
-            it.density = 0f
-            it.friction = 0f
-            it.restitution = 0f
-            it.filter.categoryBits = thisCreature.collisionCategory.value
-            it.filter.maskBits = thisCreature.collisionCategory.collidesWith()
+            circle(radius = bodyRadius) {
+                density = 0f
+                friction = 0f
+                restitution = 0f
+                filter.categoryBits = thisCreature.collisionCategory.value
+                filter.maskBits = thisCreature.collisionCategory.collidesWith()
+                userData = thisCreature
+            }
         }
-
-        fixture = body.createFixture(fixtureDef).also {
-            it.userData = thisCreature
-        }
-        shape.dispose()
+        fixture = body.fixtureList[0]
     }
 }

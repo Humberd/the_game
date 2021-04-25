@@ -22,44 +22,11 @@ object GameMapGenerator {
             }
         }
 
-        val gameMap =  GameMap(
+        val gameMap = GameMap(
             id = GameMapId(1u),
             gridWidth = width,
             gridHeight = height,
-            grid = grid,
-            gameMapObjects = listOf(
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.JUST_A_KNIFE),
-//                    position = WorldPosition(200f, 300f)
-//                ),
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.WOODEN_SHIELD),
-//                    position = WorldPosition(156f, 436f)
-//                ),
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.GOLD_BAR),
-//                    position = WorldPosition(400f, 250f)
-//                ),
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.GOLD_BAR),
-//                    position = WorldPosition(400f, 270f)
-//                ),
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.GOLD_BAR),
-//                    position = WorldPosition(400f, 290f)
-//                ),
-//                Item(
-//                    iid = IID.unique(),
-//                    itemDef = ItemDefinitionStore.get(ItemType.TELEPORT),
-//                    position = WorldPosition(500f, 580f),
-//                    actionHandler = TeleportActionHandler
-//                )
-            ),
+            grid = grid
         )
 
         val monsters = listOf(
@@ -85,6 +52,14 @@ object GameMapGenerator {
         monsters.forEach {
             gameMap.creatures.add(it)
         }
+
+        gameMap.createWallsPolygon(
+            WorldPosition(2f, 4f),
+            WorldPosition(3f, 4.5f),
+            WorldPosition(3f, 5.2f),
+            WorldPosition(2f, 5f),
+            WorldPosition(1.5f, 4.5f),
+        )
 
         return gameMap
     }

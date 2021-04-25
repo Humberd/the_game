@@ -1,18 +1,18 @@
 package core.maps.entities
 
 import core.maps.entities.creatures.Creature
+
 import core.types.GridPosition
 import core.types.ItemInstanceId
 import core.types.SpriteId
-import pl.humberd.udp.models.CID
-
+pl.humberd.udp.models.CID
 
 data class Tile(
     val spriteId: SpriteId,
     val gridPosition: GridPosition,
-    val items: TileContainer<ItemInstanceId, GameMapObject> = TileContainer(),
-    val creatures: TileContainer<CID, Creature> = TileContainer()
 ) {
+    val items: TileContainer<ItemInstanceId, GameMapObject> = TileContainer()
+    val creatures: TileContainer<CID, Creature> = TileContainer()
 
     class TileContainer<Id, Item> {
         private val map = hashMapOf<Id, Item>()

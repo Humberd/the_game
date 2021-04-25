@@ -68,6 +68,12 @@ namespace Client.scripts.global.udp.ingress
                 case IngressPacketType.BACKPACK_UPDATE:
                     _ingressPacketHandler.Handle(IngressDataPacket.BackpackUpdate.From(buffer));
                     break;
+                case IngressPacketType.PING_RESPONSE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.PingResponse.From(buffer));
+                    break;
+                case IngressPacketType.TERRAIN_WALLS_UPDATE:
+                    _ingressPacketHandler.Handle(IngressDataPacket.TerrainWallsUpdate.From(buffer));
+                    break;
                 default:
                 {
                     GD.Print($"Packet type not supported 0x{packetType:X}");

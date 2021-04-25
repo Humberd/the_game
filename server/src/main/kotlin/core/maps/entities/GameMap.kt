@@ -1,17 +1,14 @@
 package core.maps.entities
 
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.EdgeShape
-import com.badlogic.gdx.physics.box2d.FixtureDef
+import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
-import core.maps.entities.creatures.player.Player
 import core.maps.shapes.Wall
-import core.types.GameMapId
-import core.types.GridPosition
-import core.types.WorldPosition
+import core.types.*
+import ktx.box2d.body
+import ktx.box2d.createWorld
+import ktx.box2d.loop
 import mu.KotlinLogging
 import pl.humberd.udp.models.CID
 import pl.humberd.udp.models.PID
@@ -24,127 +21,45 @@ class GameMap(
     val gridWidth: Int,
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
-    gameMapObjects: List<GameMapObject>,
 ) {
-    //region Creatures Store
-    val creatures = CreaturesContainer()
-
-    inner class CreaturesContainer {
-        private val players = HashMap<PID, Player>()
-        private val creatures = HashMap<CID, Creature>()
-
-        fun add(creature: Creature) {
-            if (creatures.containsKey(creature.cid)) {
-                throw Error("Creature already exists")
-            }
-
-            if (creature is Player) {
-                if (players.containsKey(creature.pid)) {
-                    throw Error("Player already exists")
-                }
-                players[creature.pid] = creature
-            }
-
-            creatures[creature.cid] = creature
-
-            creature.onInit()
-            creature.hooks.onAddedToMap(this@GameMap)
-        }
-
-        fun remove(pid: PID) {
-            if (!players.containsKey(pid)) {
-                throw Error("Player doesn't exist")
-            }
-
-            remove(players[pid]!!.cid)
-            val player = players.remove(pid)
-            getTileAt(player!!.lastUpdate.gridPosition).creatures.remove(player!!.cid)
-        }
-
-        fun remove(cid: CID) {
-            if (!creatures.containsKey(cid)) {
-                throw Error("Creature doesn't exist")
-            }
-            val removedCreature = creatures.remove(cid)
-            removedCreature!!.hooks.onRemovedFromMap(this@GameMap)
-        }
-
-        fun get(pid: PID): Player {
-            return players[pid] ?: throw Error("Player not found")
-        }
-
-        fun get(cid: CID): Creature {
-            return creatures[cid] ?: throw Error("Creature not found")
-        }
-
-        fun getAllPlayers(): Collection<Player> {
-            return players.values
-        }
-
-        fun getAllCreatures(): Collection<Creature> {
-            return creatures.values
-        }
-
-        fun moveTo(pid: PID, targetPosition: WorldPosition) {
-            moveTo(get(pid).cid, targetPosition)
-        }
-
-        fun moveTo(cid: CID, targetPosition: WorldPosition) {
-            val creature = get(cid)
-            creature.movement.startMovingTo(targetPosition)
-        }
-    }
-    //endregion
+    val creatures = GameMapCreaturesContainer(this)
+    var walls = ArrayList<Body>()
 
     //region Physics Initialization
     val physics: World
 
     init {
-        val gravity = Vector2(0f, 0f)
-        physics = World(gravity, true)
+        physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
         initMapBounds()
-//        GameMapDebugRenderer(this)
+        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
     }
 
-    private fun initMapBounds() {
-        val vertices = listOf(
-            Pair(Vector2(0f, 0f), gridWidth),
-            Pair(Vector2(gridWidth.toFloat(), 0f), gridHeight),
-            Pair(Vector2(gridWidth.toFloat(), gridHeight.toFloat()), gridWidth),
-            Pair(Vector2(0f, gridHeight.toFloat()), gridHeight),
-        )
-
-        vertices.forEachIndexed { index, pair ->
-            val width = pair.second
-            val startingPosition = pair.first
-
-            val bodyDef = BodyDef().also {
-                it.type = BodyDef.BodyType.StaticBody
+    fun createWallsPolygon(
+        vararg vertices: WorldPosition
+    ) {
+        val body = physics.body {
+            val wall = Wall()
+            userData = wall
+            loop(*vertices) {
+                userData = wall
+                density = 0f
+                friction = 0f
+                restitution = 0f
+                filter.categoryBits = CollisionCategory.TERRAIN.value
+                filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
-
-            val shape = EdgeShape().also {
-                it.set(Vector2(0f, 0f), Vector2(width.toFloat(), 0f))
-            }
-
-            val fixtureDef = FixtureDef().also {
-                it.shape = shape
-                it.density = 0f
-                it.friction = 0f
-                it.restitution = 0f
-                it.filter.categoryBits = CollisionCategory.TERRAIN.value
-                it.filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
-            }
-
-            physics.createBody(bodyDef).also {
-                it.createFixture(fixtureDef).also {
-                    it.userData = Wall()
-                }
-                it.setTransform(startingPosition, 90 * MathUtils.degreesToRadians * index)
-            }
-
-            shape.dispose()
         }
+        walls.add(body)
+    }
+
+    private fun initMapBounds() {
+        createWallsPolygon(
+            Vector2(0f, 0f),
+            Vector2(gridWidth.toFloat(), 0f),
+            Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
+            Vector2(0f, gridHeight.toFloat())
+        )
     }
 
     //endregion
