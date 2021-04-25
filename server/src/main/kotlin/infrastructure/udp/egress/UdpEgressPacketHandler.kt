@@ -25,12 +25,12 @@ class UdpEgressPacketHandler(
         if (!(dataPacket is EgressDataPacket.CreaturePositionUpdate)) {
             logger.debug { "${to} -> ${dataPacket}" }
         }
-        val client = udpClientStore.getClient(to)
-        if (client == null) {
+        val connectionId = udpClientStore.getConnectionIdOrNull(to)
+        if (connectionId == null) {
             println("Client not found")
             return
         }
 
-        queue.add(EgressPacketFrame(client, dataPacket))
+        queue.add(EgressPacketFrame(connectionId, dataPacket))
     }
 }

@@ -1,7 +1,14 @@
 package core
 
-import infrastructure.udp.ingress.IngressPacket
+import infrastructure.udp.ServerUdpReceiveQueue
+import infrastructure.udp.ServerUdpReceiveQueuePacket
+import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
+import pl.humberd.misc.exhaustive
+import pl.humberd.udp.packets.clientserver.AuthLogin
+import pl.humberd.udp.packets.clientserver.ConnectionHello
+import pl.humberd.udp.packets.clientserver.Disconnect
+import pl.humberd.udp.packets.clientserver.PositionChange
 import utils.Milliseconds
 import utils.ms
 import utils.sec
@@ -26,9 +33,10 @@ data class AsyncGameTask(
 
 
 class GameLoop(
-    private val gameActionHandler: GameActionHandler
+    private val gameActionHandler: GameActionHandler,
+    private val serverUdpReceiveQueue: ServerUdpReceiveQueue,
+    private val udpClientStore: UdpClientStore
 ) : Thread("GameLoop") {
-    private val queue = ConcurrentLinkedQueue<IngressPacket>()
     private val asyncGameTasks = ConcurrentLinkedQueue<AsyncGameTask>()
 
     init {
@@ -43,12 +51,10 @@ class GameLoop(
         logger.info { "Starting Game Loop" }
 
         while (true) {
-            while (!queue.isEmpty()) {
-                val packet = queue.poll()
-//                logger.debug { packet }
-
-                handleAction(packet)
+            while (serverUdpReceiveQueue.hasNext()) {
+                handleAction(serverUdpReceiveQueue.popNext())
             }
+
             asyncGameTasks.forEach { task ->
                 if (task.scheduledForDeletion) {
                     return@forEach
@@ -82,6 +88,19 @@ class GameLoop(
         }
     }
 
+    private fun handleAction(queuePacket: ServerUdpReceiveQueuePacket) {
+        val (packet, connectionId) = queuePacket
+        logger.info { packet }
+
+        when (packet) {
+            is ConnectionHello -> gameActionHandler.handle(packet)
+            is Disconnect -> gameActionHandler.handle(packet, udpClientStore.getPidOrNull(connectionId))
+            is AuthLogin -> gameActionHandler.handle(packet) { udpClientStore.setPID(connectionId, it) }
+            is PositionChange -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            else -> TODO()
+        }.exhaustive
+    }
+
     var currentTime = System.currentTimeMillis()
 
     private fun simulatePhysics() {
@@ -94,23 +113,7 @@ class GameLoop(
         gameActionHandler.onPhysicsStep(deltaTimeInSec)
     }
 
-    fun requestAction(action: IngressPacket) {
-        logger.info { action }
-        queue.add(action)
-    }
-
-    private fun handleAction(action: IngressPacket) {
-        return when (action) {
-            is IngressPacket.ConnectionHello -> Unit
-            is IngressPacket.Disconnect -> gameActionHandler.handle(action)
-            is IngressPacket.AuthLogin -> gameActionHandler.handle(action)
-            is IngressPacket.PositionChange -> gameActionHandler.handle(action)
-            is IngressPacket.TerrainItemDrag -> gameActionHandler.handle(action)
-            is IngressPacket.SpellUsage -> gameActionHandler.handle(action)
-            is IngressPacket.BasicAttackStart -> gameActionHandler.handle(action)
-            is IngressPacket.BasicAttackStop -> gameActionHandler.handle(action)
-            is IngressPacket.PlayerStatsUpdateRequest -> gameActionHandler.handle(action)
-        }
+    fun requestAction(action: Any) {
     }
 
     fun requestAsyncTask(task: AsyncGameTask): AsyncGameTask {
@@ -118,7 +121,7 @@ class GameLoop(
         return task
     }
 
-    fun requestAsyncTask(intervalTick: Milliseconds, callback: () -> Unit ): AsyncGameTask {
+    fun requestAsyncTask(intervalTick: Milliseconds, callback: () -> Unit): AsyncGameTask {
         // FIXME: 16.03.2021 Timer without end
         val indefinitely = 100000.sec
         return requestAsyncTask(AsyncGameTask(intervalTick, indefinitely, {}, callback))

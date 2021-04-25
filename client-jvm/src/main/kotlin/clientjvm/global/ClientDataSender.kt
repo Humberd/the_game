@@ -3,23 +3,22 @@ package clientjvm.global
 import clientjvm.infrastructure.ClientUdpSendQueue
 import godot.core.memory.GodotStatic
 import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket
-import pl.humberd.udp.server.UdpSenderServer
+import pl.humberd.udp.server.sender.UdpSenderService
 import java.net.DatagramSocket
 
 object ClientDataSender : GodotStatic {
     private val sendQueue = ClientUdpSendQueue()
-    private val udpSenderServer: UdpSenderServer
+    private val udpSenderService: UdpSenderService
 
     init {
         registerAsSingleton()
 
-        udpSenderServer = UdpSenderServer(DatagramSocket(), sendQueue)
-
-        udpSenderServer.start()
+        udpSenderService = UdpSenderService(DatagramSocket(), sendQueue)
+        udpSenderService.start()
     }
 
     override fun collect() {
-        udpSenderServer.kill()
+        udpSenderService.kill()
     }
 
     fun send(packet: ClientServerUdpPacket) {

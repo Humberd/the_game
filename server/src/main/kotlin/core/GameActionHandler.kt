@@ -1,8 +1,14 @@
 package core
 
+import core.types.PID
 import infrastructure.database.Database
 import infrastructure.udp.ingress.IngressPacket
+import infrastructure.udp.models.convert
 import mu.KotlinLogging
+import pl.humberd.udp.packets.clientserver.AuthLogin
+import pl.humberd.udp.packets.clientserver.ConnectionHello
+import pl.humberd.udp.packets.clientserver.Disconnect
+import pl.humberd.udp.packets.clientserver.PositionChange
 
 private val logger = KotlinLogging.logger {}
 
@@ -10,16 +16,22 @@ class GameActionHandler(
     private val gamesManager: GamesManager,
     private val database: Database
 ) {
-    fun handle(action: IngressPacket.Disconnect) {
-        if (action.pid == null) {
+    fun handle(packet: ConnectionHello) {
+        // nothing
+    }
+
+    fun handle(packet: Disconnect, pid: PID?) {
+        if (pid == null) {
             return
         }
 
-        gamesManager.removePlayer(action.pid)
+        gamesManager.removePlayer(pid)
     }
 
-    fun handle(action: IngressPacket.AuthLogin) {
-        val dbPlayer = database.getPlayer(action.pid)
+    fun handle(packet: AuthLogin, savePid: (PID) -> Unit) {
+        val pid = PID(packet.pid)
+        savePid.invoke(pid)
+        val dbPlayer = database.getPlayer(pid)
 
         val creatureSeed = dbPlayer.toCreatureSeed()
         val playerSeed = dbPlayer.toPlayerSeed()
@@ -27,8 +39,8 @@ class GameActionHandler(
         gamesManager.addPlayer(creatureSeed, playerSeed)
     }
 
-    fun handle(action: IngressPacket.PositionChange) {
-        gamesManager.movePlayerTo(action.pid, action.targetPosition)
+    fun handle(packet: PositionChange, pid: PID) {
+        gamesManager.movePlayerTo(pid, packet.targetPosition.convert())
     }
 
     fun handle(action: IngressPacket.TerrainItemDrag) {

@@ -1,18 +1,14 @@
 package pl.humberd.udp.server
 
 import mu.KotlinLogging
-import java.net.DatagramSocket
+import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
-class UdpSenderServer(
-    private val socket: DatagramSocket,
-    private val sendQueue: UdpSendQueue
-) : Thread("UpdSenderServer") {
-    companion object {
-        private val logger = KotlinLogging.logger {}
-    }
-
+abstract class UdpServer(name: String) : Thread(name) {
     private val running = AtomicBoolean(false)
+    private val buffer = ByteBuffer.allocate(256)
+
+    protected val logger = KotlinLogging.logger {}
 
     fun kill() {
         logger.info { "Stopping" }
@@ -24,13 +20,12 @@ class UdpSenderServer(
         running.set(true)
 
         while (running.get()) {
-            if (!sendQueue.hasNext()) {
-                continue
-            }
-
-            socket.send(sendQueue.popNext().toDatagram())
+            onTick(buffer)
+            buffer.clear()
         }
 
         logger.info { "Stopped" }
     }
+
+    abstract fun onTick(buffer: ByteBuffer)
 }

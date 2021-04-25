@@ -3,7 +3,6 @@ package infrastructure.udp.ingress
 import core.GameLoop
 import core.types.PID
 import errors.UnknownPID
-import infrastructure.udp.ClientId
 import infrastructure.udp.UdpClient
 import infrastructure.udp.UdpClientStore
 import infrastructure.udp.UdpConnectionPersistor
@@ -24,8 +23,8 @@ class UdpIngressPacketHandler(
     init {
         udpConnectionPersistor.onRemoved {
             val clientId = it.getIdentifier()
-            val pid = udpClientStore.getPID(clientId)
-            udpClientStore.remove(clientId)
+            val pid = udpClientStore.getPidOrNull(clientId)
+//            udpClientStore.remove(clientId)
             gameLoop.requestAction(IngressPacket.Disconnect(pid))
         }
     }
@@ -65,7 +64,7 @@ class UdpIngressPacketHandler(
                     } catch (e: UnknownPID) {
                         null
                     }
-                    udpClientStore.remove(clientId)
+//                    udpClientStore.remove(clientId)
                     gameLoop.requestAction(IngressPacket.Disconnect(pid))
                 }
                 IngressPacketType.PING_REQUEST -> {
@@ -73,7 +72,7 @@ class UdpIngressPacketHandler(
                 }
                 IngressPacketType.AUTH_LOGIN -> {
                     val pid = PID(packet.uInt())
-                    udpClientStore.setPID(client, pid)
+//                    udpClientStore.setPID(client, pid)
 
                     gameLoop.requestAction(
                         IngressPacket.AuthLogin(
@@ -119,10 +118,10 @@ class UdpIngressPacketHandler(
     }
 
     private fun getPID(client: UdpClient): PID {
-        return udpClientStore.getPID(client.getIdentifier()) ?: throw UnknownPID(client)
+        return udpClientStore.getPidOrNull(client.getIdentifier()) ?: throw UnknownPID(client)
     }
 
-    private fun getPID(clientId: ClientId): PID {
-        return udpClientStore.getPID(clientId) ?: throw UnknownPID(clientId)
+    private fun getPID(clientId: Any): PID {
+        TODO()
     }
 }
