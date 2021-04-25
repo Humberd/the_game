@@ -5,7 +5,7 @@ import pl.humberd.udp.models.CID
 import pl.humberd.udp.models.SID
 import java.nio.ByteBuffer
 
-class ReadBuffer(var buffer: ByteBuffer) {
+class ReadBuffer(private val buffer: ByteBuffer) {
     // signed
     fun getByte() = buffer.get()
     fun getShort() = buffer.short

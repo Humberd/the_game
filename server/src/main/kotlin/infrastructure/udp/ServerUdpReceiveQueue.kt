@@ -26,7 +26,7 @@ class ServerUdpReceiveQueue : UdpReceiveQueue {
         val connectionId = ConnectionId(socketAddress)
 
         logger.info {
-            "Packet from $connectionId (${buffer.limit()})${buffer.array().sliceArray(0..buffer.limit() - 1).toHex()}"
+            "[FROM] $connectionId (${buffer.limit()}B) ${buffer.array().sliceArray(0..buffer.limit() - 1).toHex()}"
         }
 
         if (buffer.limit() < 5) {

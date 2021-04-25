@@ -7,23 +7,29 @@ import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
 import core.types.WorldPosition
+import infrastructure.udp.ServerUdpSendQueue
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
+import infrastructure.udp.models.convert
 import pl.humberd.udp.models.PID
+import pl.humberd.udp.packets.serverclient.CreatureDisappear
+import pl.humberd.udp.packets.serverclient.CreaturePositionUpdate
+import pl.humberd.udp.packets.serverclient.CreatureUpdate
 
 class StateChangeNotifier(
-    private val egressPacketHandler: UdpEgressPacketHandler
+    private val egressPacketHandler: UdpEgressPacketHandler,
+    private val queue: ServerUdpSendQueue
 ) {
     fun notifyCreatureUpdate(to: Player, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to.pid,
-            EgressDataPacket.CreatureUpdate(
+            CreatureUpdate(
                 cid = creature.cid,
-                name = creature.name,
+                name = creature.name.value,
                 baseHealth = creature.stats.healthPool.current,
                 currentHealth = creature.stats.healthCurrent,
-                position = creature.position,
-                spriteId = creature.spriteId,
+                position = creature.position.convert(),
+                spriteId = creature.spriteId.value,
                 bodyRadius = creature.bodyRadius,
                 attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
                 isBeingAttackedByMe = to.combat.attackedTarget === creature
@@ -32,18 +38,18 @@ class StateChangeNotifier(
     }
 
     fun notifyCreatureDisappear(to: PID, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.CreatureDisappear(creature.cid)
+            CreatureDisappear(creature.cid)
         )
     }
 
     fun notifyCreaturePositionUpdate(to: PID, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.CreaturePositionUpdate(
-                creature.cid,
-                position = creature.position
+            CreaturePositionUpdate(
+                cid = creature.cid,
+                position = creature.position.convert()
             )
         )
     }

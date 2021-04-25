@@ -10,9 +10,9 @@ sealed class ServerClientUdpPacket(type: Type) : UdpPacket<Type>(type) {
         override val value: Int,
         val serialize: (buffer: ReadBuffer) -> ServerClientUdpPacket = { TODO() }
     ) : UdpPacketType {
-        CREATURE_UPDATE(0x20),
-        CREATURE_DISAPPEAR(0x21),
-        CREATURE_POSITION_UPDATE(0x22),
+        CREATURE_UPDATE(0x20, { CreatureUpdate(it) }),
+        CREATURE_DISAPPEAR(0x21, { CreatureDisappear(it) }),
+        CREATURE_POSITION_UPDATE(0x22, { CreaturePositionUpdate(it) }),
         TERRAIN_UPDATE(0x23),
         TERRAIN_ITEMS_UPDATE(0x24),
         PLAYER_DETAILS(0x25),
@@ -22,7 +22,9 @@ sealed class ServerClientUdpPacket(type: Type) : UdpPacket<Type>(type) {
         PROJECTILE_SEND(0x29),
         EQUIPMENT_UPDATE(0x2A),
         CREATURE_STATS_UPDATE(0x2B),
-        BACKPACK_UPDATE(0x2C);
+        BACKPACK_UPDATE(0x2C),
+        PING_RESPONSE(0x2D),
+        TERRAIN_WALLS_UPDATE(0x2E);
 
 
         companion object {
