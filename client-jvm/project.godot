@@ -8,9 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Spatial",
+"class": "clientjvm_scenes_RootScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/RootScene.kt"
+}, {
+"base": "PanelContainer",
+"class": "clientjvm_scenes_game_GameScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/GameScene.kt"
+}, {
+"base": "PanelContainer",
+"class": "clientjvm_scenes_login_LoginScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/login/LoginScene.kt"
+} ]
 _global_script_class_icons={
-
+"clientjvm_scenes_RootScene": "",
+"clientjvm_scenes_game_GameScene": "",
+"clientjvm_scenes_login_LoginScene": ""
 }
 
 [application]

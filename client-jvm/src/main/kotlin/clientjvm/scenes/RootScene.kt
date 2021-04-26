@@ -1,6 +1,8 @@
 package clientjvm.scenes
 
+import clientjvm.global.ClientDataReceiver
 import clientjvm.global.ClientDataSender
+import clientjvm.global.socket
 import godot.Node
 import godot.PackedScene
 import godot.ResourceLoader
@@ -21,8 +23,16 @@ class RootScene : Spatial() {
         ClientDataSender.send(ConnectionHello())
     }
 
+    @RegisterFunction
+    override fun _process(delta: Double) {
+        while (ClientDataReceiver.hasNext()) {
+            ClientDataReceiver.popNext()
+        }
+    }
+
     override fun _onDestroy() {
         ClientDataSender.send(Disconnect())
+        socket.close()
     }
 }
 

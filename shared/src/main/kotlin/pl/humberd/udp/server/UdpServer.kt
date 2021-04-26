@@ -1,6 +1,7 @@
 package pl.humberd.udp.server
 
 import mu.KotlinLogging
+import java.net.SocketException
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -20,7 +21,12 @@ abstract class UdpServer(name: String) : Thread(name) {
         running.set(true)
 
         while (running.get()) {
-            onTick(buffer)
+            try {
+                onTick(buffer)
+            } catch (e: SocketException) {
+                logger.info { e.message }
+                kill()
+            }
             buffer.clear()
         }
 
