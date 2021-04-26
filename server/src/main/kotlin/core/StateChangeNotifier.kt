@@ -8,14 +8,12 @@ import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
 import core.types.WorldPosition
 import infrastructure.udp.ServerUdpSendQueue
-import infrastructure.udp.egress.UdpEgressPacketHandler
 import infrastructure.udp.models.convert
 import pl.humberd.models.ApiVector2
 import pl.humberd.models.PID
 import pl.humberd.udp.packets.serverclient.*
 
 class StateChangeNotifier(
-    private val egressPacketHandler: UdpEgressPacketHandler,
     private val queue: ServerUdpSendQueue
 ) {
     fun notifyCreatureUpdate(to: Player, creature: Creature) {

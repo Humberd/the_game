@@ -8,7 +8,6 @@ import infrastructure.udp.ServerUdpReceiveQueue
 import infrastructure.udp.ServerUdpSendQueue
 import infrastructure.udp.UdpClientStore
 import infrastructure.udp.UdpConnectionPersistor
-import infrastructure.udp.egress.UdpEgressPacketHandler
 import mu.KotlinLogging
 import pl.humberd.udp.server.receiver.UdpReceiverService
 import pl.humberd.udp.server.sender.UdpSenderService
@@ -27,10 +26,8 @@ fun main() {
     val serverUdpReceiveQueue = ServerUdpReceiveQueue()
     val serverUdpSendQueue = ServerUdpSendQueue(udpClientStore)
 
-    // to remove
-    val egressPacketHandler = UdpEgressPacketHandler(udpClientStore)
 
-    val stateChangeNotifier = StateChangeNotifier(egressPacketHandler, serverUdpSendQueue)
+    val stateChangeNotifier = StateChangeNotifier(serverUdpSendQueue)
     val gameState = GamesManager(stateChangeNotifier)
     val gameActionHandler = GameActionHandler(gameState, database)
 
