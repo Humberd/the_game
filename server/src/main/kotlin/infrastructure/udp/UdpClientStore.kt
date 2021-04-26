@@ -1,37 +1,41 @@
 package infrastructure.udp
 
-import core.types.PID
-
-typealias ClientId = String
+import errors.UnknownPID
+import infrastructure.udp.models.ConnectionId
+import pl.humberd.models.PID
 
 class UdpClientStore {
-    private val clientObjects = HashMap<ClientId, UdpClient>()
-    private val clients = HashMap<ClientId, PID>()
-    private val pids = HashMap<PID, ClientId>()
+    private val connectionToPid = HashMap<ConnectionId, PID>()
+    private val pidToConnection = HashMap<PID, ConnectionId>()
 
-    fun setPID(client: UdpClient, pid: PID) {
-        val clientId = client.getIdentifier()
-        clientObjects[clientId] = client
-        clients[clientId] = pid
-        pids[pid] = clientId
+    fun setPID(connectionId: ConnectionId, pid: PID) {
+        connectionToPid[connectionId] = pid
+        pidToConnection[pid] = connectionId
     }
 
-    fun remove(clientId: ClientId) {
-        val pid = clients[clientId]
+    fun remove(connectionId: ConnectionId) {
+        val pid = connectionToPid[connectionId]
         if (pid == null) {
-            println("No client to remove")
+            println("No PID to remove for ${connectionId}")
             return
         }
-        clientObjects.remove(clientId)
-        clients.remove(clientId)
-        pids.remove(pid)
+        connectionToPid.remove(connectionId)
+        pidToConnection.remove(pid)
     }
 
-    fun getPID(clientId: ClientId): PID? {
-        return clients[clientId]
+    fun getPidOrNull(connectionId: ConnectionId): PID? {
+        return connectionToPid[connectionId]
     }
 
-    fun getClient(pid: PID): UdpClient? {
-        return clientObjects[pids[pid]]
+    fun getPid(connectionId: ConnectionId): PID {
+        return connectionToPid[connectionId] ?: throw UnknownPID(connectionId)
+    }
+
+    fun getConnectionIdOrNull(pid: PID): ConnectionId? {
+        return pidToConnection[pid]
+    }
+
+    fun getPidOrNull(clientId: Any): PID? {
+        TODO()
     }
 }

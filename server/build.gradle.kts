@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.31"
+    kotlin("jvm")
 }
 
 group = "org.example"
@@ -37,6 +37,8 @@ dependencies {
     // ktx
     implementation("io.github.libktx:ktx-box2d:1.9.14-b1")
     implementation("io.github.libktx:ktx-math:1.9.14-b1")
+
+    implementation(project(":shared"))
 }
 
 kotlin {
@@ -46,8 +48,6 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
-    )
+    kotlinOptions.freeCompilerArgs += listOf()
     kotlinOptions.useIR = true
 }

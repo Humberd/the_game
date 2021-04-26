@@ -3,11 +3,11 @@ package core.maps.entities.creatures
 import core.AsyncGameTask
 import core.GameLoop
 import core.maps.entities.creatures.player.Player
-import core.types.SpriteId
-import infrastructure.udp.egress.EgressDataPacket
-import utils.Milliseconds
+import infrastructure.udp.models.convert
+import pl.humberd.models.Milliseconds
+import pl.humberd.models.sec
+import pl.humberd.udp.packets.serverclient.ProjectileSend
 import utils.getDistance
-import utils.sec
 
 class CreatureCombat(private val creature: Creature) {
     var attackedTarget: Creature? = null
@@ -60,10 +60,10 @@ class CreatureCombat(private val creature: Creature) {
             // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
             if (creature is Player) {
                 creature.notifier.sendProjectile(
-                    creature.pid, EgressDataPacket.ProjectileSend(
-                        spriteId = SpriteId(13u),
-                        sourcePosition = creature.position,
-                        targetPosition = target.position,
+                    creature.pid, ProjectileSend(
+                        spriteId = 13u,
+                        sourcePosition = creature.position.convert(),
+                        targetPosition = target.position.convert(),
                         duration = projectileDelay
                     )
                 )
@@ -72,10 +72,10 @@ class CreatureCombat(private val creature: Creature) {
                 .forEach {
                     if (it is Player) {
                         creature.notifier.sendProjectile(
-                            it.pid, EgressDataPacket.ProjectileSend(
-                                spriteId = SpriteId(13u),
-                                sourcePosition = creature.position,
-                                targetPosition = target.position,
+                            it.pid, ProjectileSend(
+                                spriteId = 13u,
+                                sourcePosition = creature.position.convert(),
+                                targetPosition = target.position.convert(),
                                 duration = projectileDelay
                             )
                         )

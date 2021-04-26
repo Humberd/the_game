@@ -5,6 +5,7 @@ import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.maps.entities.GameMapObject
 import core.types.*
+import pl.humberd.models.CID
 import utils.getDistance
 import utils.toGridPosition
 

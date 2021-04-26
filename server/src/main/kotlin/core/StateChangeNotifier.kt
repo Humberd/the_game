@@ -6,24 +6,26 @@ import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
-import core.types.PID
 import core.types.WorldPosition
-import infrastructure.udp.egress.EgressDataPacket
-import infrastructure.udp.egress.UdpEgressPacketHandler
+import infrastructure.udp.ServerUdpSendQueue
+import infrastructure.udp.models.convert
+import pl.humberd.models.ApiVector2
+import pl.humberd.models.PID
+import pl.humberd.udp.packets.serverclient.*
 
 class StateChangeNotifier(
-    private val egressPacketHandler: UdpEgressPacketHandler
+    private val queue: ServerUdpSendQueue
 ) {
     fun notifyCreatureUpdate(to: Player, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to.pid,
-            EgressDataPacket.CreatureUpdate(
+            CreatureUpdate(
                 cid = creature.cid,
-                name = creature.name,
+                name = creature.name.value,
                 baseHealth = creature.stats.healthPool.current,
                 currentHealth = creature.stats.healthCurrent,
-                position = creature.position,
-                spriteId = creature.spriteId,
+                position = creature.position.convert(),
+                spriteId = creature.spriteId.value,
                 bodyRadius = creature.bodyRadius,
                 attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
                 isBeingAttackedByMe = to.combat.attackedTarget === creature
@@ -32,26 +34,26 @@ class StateChangeNotifier(
     }
 
     fun notifyCreatureDisappear(to: PID, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.CreatureDisappear(creature.cid)
+            CreatureDisappear(creature.cid)
         )
     }
 
     fun notifyCreaturePositionUpdate(to: PID, creature: Creature) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.CreaturePositionUpdate(
-                creature.cid,
-                position = creature.position
+            CreaturePositionUpdate(
+                cid = creature.cid,
+                position = creature.position.convert()
             )
         )
     }
 
     fun notifyPlayerDetails(to: PID, player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.PlayerDetails(
+            PlayerDetails(
                 pid = player.pid,
                 cid = player.cid
             )
@@ -61,9 +63,9 @@ class StateChangeNotifier(
     fun notifyTerrainUpdate(player: Player) {
         val tiles = player.lastUpdate.tileSlice
 
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.TerrainUpdate(
+            TerrainUpdate(
                 windowWidth = tiles.size.toUByte(),
                 windowHeight = if (tiles.size > 0) tiles[0].size.toUByte() else 0u,
                 windowGridStartPositionX = tiles.let {
@@ -84,30 +86,16 @@ class StateChangeNotifier(
                     }
                     it[0][0].gridPosition.y.value.toShort()
                 },
-                spriteIds = tiles.flatten().map { it.spriteId }.toTypedArray()
+                spriteIds = tiles.flatten().map { it.spriteId.value }.toTypedArray()
             )
         )
     }
 
-    fun notifyTerrainItemsUpdate(player: Player) {
-//        egressPacketHandler.notify(
-//            player.pid,
-//            EgressDataPacket.TerrainItemsUpdate(
-//                items = player.getVisibleItems().map {
-//                    EgressDataPacket.TerrainItemsUpdate.ItemData(
-//                        itemInstanceId = it.itemInstanceId,
-//                        type = it.itemDef.type,
-//                        position = it.position
-//                    )
-//                }
-//            )
-//        )
-    }
 
     fun notifyEquippedSpellsChange(player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.EquippedSpellsUpdate(
+            EquippedSpellsUpdate(
                 spells = listOf(
                     player.spellsContainer.spell1,
                     player.spellsContainer.spell2,
@@ -117,10 +105,10 @@ class StateChangeNotifier(
                     return@map if (it == null) {
                         null
                     } else {
-                        EgressDataPacket.EquippedSpellsUpdate.SpellUpdate(
+                        EquippedSpellsUpdate.SpellUpdate(
                             sid = it.sid,
                             name = it.name,
-                            spriteId = it.spriteId,
+                            spriteId = it.spriteId.value,
                             cooldown = it.cooldown
                         )
                     }
@@ -129,22 +117,22 @@ class StateChangeNotifier(
         )
     }
 
-    fun notifySpellUse(to: PID, spellUse: EgressDataPacket.SpellUse) {
-        egressPacketHandler.notify(
+    fun notifySpellUse(to: PID, spellUse: SpellUse) {
+        queue.put(
             to,
             spellUse
         )
     }
 
-    fun notifyDamageTaken(to: PID, damages: Array<EgressDataPacket.DamageTaken.Damage>) {
-        egressPacketHandler.notify(
+    fun notifyDamageTaken(to: PID, damages: Array<DamageTaken.Damage>) {
+        queue.put(
             to,
-            EgressDataPacket.DamageTaken(damages)
+            DamageTaken(damages)
         )
     }
 
-    fun sendProjectile(to: PID, data: EgressDataPacket.ProjectileSend) {
-        egressPacketHandler.notify(to, data)
+    fun sendProjectile(to: PID, data: ProjectileSend) {
+        queue.put(to, data)
     }
 
     fun notifyEquipmentUpdate(player: Player) {
@@ -157,28 +145,43 @@ class StateChangeNotifier(
     }
 
     fun notifyPlayerStats(player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.CreatureStatsUpdate(
-                defense = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.defense),
-                attack = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.attack),
-                attackSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.attackSpeed),
-                movementSpeed = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.movementSpeed),
-                healthPool = EgressDataPacket.CreatureStatsUpdate.CreatureStatPacket.from(player.stats.healthPool),
+            CreatureStatsUpdate(
+                defense = CreatureStatsUpdate.CreatureIntStatPacket(
+                    player.stats.defense.base,
+                    player.stats.defense.current
+                ),
+                attack = CreatureStatsUpdate.CreatureIntStatPacket(
+                    player.stats.attack.base,
+                    player.stats.attack.current
+                ),
+                attackSpeed = CreatureStatsUpdate.CreatureFloatStatPacket(
+                    player.stats.attackSpeed.base,
+                    player.stats.attackSpeed.current
+                ),
+                movementSpeed = CreatureStatsUpdate.CreatureFloatStatPacket(
+                    player.stats.movementSpeed.base,
+                    player.stats.movementSpeed.current
+                ),
+                healthPool = CreatureStatsUpdate.CreatureIntStatPacket(
+                    player.stats.healthPool.base,
+                    player.stats.healthPool.current
+                ),
             )
         )
     }
 
     fun notifyBackpackUpdate(player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.BackpackUpdate(
+            BackpackUpdate(
                 items = player.backpack.getAll().map {
                     if (it == null) {
                         return@map null
                     }
-                    return@map EgressDataPacket.BackpackUpdate.BackpackSlotDTO(
-                        itemSchemaId = it.itemSchema.id,
+                    return@map BackpackUpdate.BackpackSlot(
+                        itemSchemaId = it.itemSchema.id.value,
                         stackCount = it.stackCount
                     )
                 }.toTypedArray()
@@ -187,9 +190,9 @@ class StateChangeNotifier(
     }
 
     fun notifyPingResponse(pid: PID) {
-        egressPacketHandler.notify(
+        queue.put(
             pid,
-            EgressDataPacket.PingResponse()
+            PingResponse()
         )
     }
 
@@ -200,15 +203,15 @@ class StateChangeNotifier(
             }
             return@map getVerticesForShape(wall.fixtureList[0].shape)
         }
-        egressPacketHandler.notify(
+        queue.put(
             pid,
-            EgressDataPacket.TerrainWallsUpdate(
+            TerrainWallsUpdate(
                 chains = chains.toTypedArray()
             )
         )
     }
 
-    private fun getVerticesForShape(shape: Shape): Array<WorldPosition> {
+    private fun getVerticesForShape(shape: Shape): Array<ApiVector2> {
         return when (shape) {
             is ChainShape -> {
                 val list = Array(shape.vertexCount) { WorldPosition() }
@@ -217,7 +220,7 @@ class StateChangeNotifier(
                     shape.getVertex(i, list[i])
                 }
 
-                list
+                list.map { it.convert() }.toTypedArray()
             }
             else -> throw Error("Shape ${shape.type} not supported as a wall")
         }

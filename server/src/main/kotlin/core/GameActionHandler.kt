@@ -1,25 +1,30 @@
 package core
 
 import infrastructure.database.Database
-import infrastructure.udp.ingress.IngressPacket
-import mu.KotlinLogging
-
-private val logger = KotlinLogging.logger {}
+import infrastructure.udp.models.convert
+import pl.humberd.models.PID
+import pl.humberd.udp.packets.clientserver.*
 
 class GameActionHandler(
     private val gamesManager: GamesManager,
     private val database: Database
 ) {
-    fun handle(action: IngressPacket.Disconnect) {
-        if (action.pid == null) {
+    fun handle(packet: ConnectionHello) {
+        // nothing
+    }
+
+    fun handle(packet: Disconnect, pid: PID?) {
+        if (pid == null) {
             return
         }
 
-        gamesManager.removePlayer(action.pid)
+        gamesManager.removePlayer(pid)
     }
 
-    fun handle(action: IngressPacket.AuthLogin) {
-        val dbPlayer = database.getPlayer(action.pid)
+    fun handle(packet: AuthLogin, savePid: (PID) -> Unit) {
+        val pid = PID(packet.pid)
+        savePid.invoke(pid)
+        val dbPlayer = database.getPlayer(pid)
 
         val creatureSeed = dbPlayer.toCreatureSeed()
         val playerSeed = dbPlayer.toPlayerSeed()
@@ -27,35 +32,31 @@ class GameActionHandler(
         gamesManager.addPlayer(creatureSeed, playerSeed)
     }
 
-    fun handle(action: IngressPacket.PingRequest) {
-        gamesManager.ping(action.pid)
+    fun handle(packet: PositionChange, pid: PID) {
+        gamesManager.movePlayerTo(pid, packet.targetPosition.convert())
     }
 
-    fun handle(action: IngressPacket.PositionChange) {
-        gamesManager.movePlayerTo(action.pid, action.targetPosition)
+    fun handle(packet: BasicAttackStart, pid: PID) {
+        gamesManager.startBasicAttacking(pid, packet.targetCid)
     }
 
-    fun handle(action: IngressPacket.TerrainItemDrag) {
-        gamesManager.dragItemOnTerrain(action.pid, action.itemInstanceId, action.targetPosition)
+    fun handle(packet: BasicAttackEnd, pid: PID) {
+        gamesManager.stopBasicAttacking(pid)
     }
 
-    fun handle(action: IngressPacket.SpellUsage) {
-        gamesManager.useSpell(action.pid, action.sid)
+    fun handle(packet: PlayerStatsUpdateRequest, pid: PID) {
+        gamesManager.requestPlayerStatsUpdate(pid)
+    }
+
+    fun handle(packet: SpellUsage, pid: PID) {
+        gamesManager.useSpell(pid, packet.sid)
+    }
+
+    fun handle(packet: PingRequest, pid: PID) {
+        gamesManager.ping(pid)
     }
 
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
-    }
-
-    fun handle(action: IngressPacket.BasicAttackStart) {
-        gamesManager.startBasicAttacking(action.pid, action.targetCid)
-    }
-
-    fun handle(action: IngressPacket.BasicAttackStop) {
-        gamesManager.stopBasicAttacking(action.pid)
-    }
-
-    fun handle(action: IngressPacket.PlayerStatsUpdateRequest) {
-        gamesManager.requestPlayerStatsUpdate(action.pid)
     }
 }

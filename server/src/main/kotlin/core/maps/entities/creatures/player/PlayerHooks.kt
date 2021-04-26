@@ -6,8 +6,9 @@ import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
 import core.maps.entities.items.Item
 import core.maps.shapes.Wall
-import infrastructure.udp.egress.EgressDataPacket
+import infrastructure.udp.models.convert
 import mu.KotlinLogging
+import pl.humberd.udp.packets.serverclient.DamageTaken
 
 private val logger = KotlinLogging.logger {}
 
@@ -83,7 +84,7 @@ class PlayerHooks(
     override fun onSelfDamageTaken(damage: UInt) {
         notifier.notifyDamageTaken(
             player.pid, arrayOf(
-                EgressDataPacket.DamageTaken.Damage(player.position, damage)
+                DamageTaken.Damage(player.position.convert(), damage)
             )
         )
         notifier.notifyCreatureUpdate(player, player)
@@ -92,7 +93,7 @@ class PlayerHooks(
     override fun onOtherCreatureDamageTaken(otherCreature: Creature, damage: UInt) {
         notifier.notifyDamageTaken(
             player.pid, arrayOf(
-                EgressDataPacket.DamageTaken.Damage(otherCreature.position, damage)
+                DamageTaken.Damage(otherCreature.position.convert(), damage)
             )
         )
         notifier.notifyCreatureUpdate(player, otherCreature)
