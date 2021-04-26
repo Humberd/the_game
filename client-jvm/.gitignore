@@ -12,3 +12,4 @@ jre
 /.import/
 *.import
 /src/main/resources/META-INF/services/godot.runtime.Entry
+/assets/
