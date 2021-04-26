@@ -5,7 +5,7 @@ import core.maps.entities.creatures.Creature
 import core.types.GridPosition
 import core.types.ItemInstanceId
 import core.types.SpriteId
-import pl.humberd.udp.models.CID
+import pl.humberd.models.CID
 
 data class Tile(
     val spriteId: SpriteId,

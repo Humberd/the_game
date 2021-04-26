@@ -1,11 +1,9 @@
 package pl.humberd.udp.packets
 
-import pl.humberd.udp.models.ApiVector2
-import pl.humberd.udp.models.CID
-import pl.humberd.udp.models.SID
+import pl.humberd.models.*
 import java.nio.ByteBuffer
 
-class WriteBuffer(var buffer: ByteBuffer) {
+class WriteBuffer(private val buffer: ByteBuffer) {
     // signed
     fun putByte(v: Byte) = buffer.put(v)
     fun putShort(v: Short) = buffer.putShort(v)
@@ -31,7 +29,7 @@ class WriteBuffer(var buffer: ByteBuffer) {
         v.forEach { mapper.invoke(it) }
     }
 
-    fun <T> putNullableArray(v: Array<T?>, mapper: (T?) -> Unit) {
+    fun <T> putNullableArray(v: Array<T?>, mapper: (T) -> Unit) {
         putUShort(v.size.toUShort())
         v.forEach {
             if (it == null) {
@@ -50,6 +48,9 @@ class WriteBuffer(var buffer: ByteBuffer) {
     }
 
     // ids
+    fun putPID(v: PID) = putUInt(v.value)
     fun putCID(v: CID) = putUInt(v.value)
     fun putSID(v: SID) = putUInt(v.value)
+
+    fun putMilliseconds(v: Milliseconds) = putUInt(v.value)
 }

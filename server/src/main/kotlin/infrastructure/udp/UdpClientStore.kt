@@ -2,7 +2,7 @@ package infrastructure.udp
 
 import errors.UnknownPID
 import infrastructure.udp.models.ConnectionId
-import pl.humberd.udp.models.PID
+import pl.humberd.models.PID
 
 class UdpClientStore {
     private val connectionToPid = HashMap<ConnectionId, PID>()

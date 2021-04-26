@@ -5,9 +5,9 @@ import core.GameLoop
 import core.maps.entities.creatures.player.Player
 import core.types.SpriteId
 import infrastructure.udp.egress.EgressDataPacket
-import utils.Milliseconds
+import pl.humberd.models.Milliseconds
+import pl.humberd.models.sec
 import utils.getDistance
-import utils.sec
 
 class CreatureCombat(private val creature: Creature) {
     var attackedTarget: Creature? = null

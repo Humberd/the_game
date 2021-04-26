@@ -1,7 +1,7 @@
 package pl.humberd.udp.packets.serverclient
 
-import pl.humberd.udp.models.ApiVector2
-import pl.humberd.udp.models.CID
+import pl.humberd.models.ApiVector2
+import pl.humberd.models.CID
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.WriteBuffer
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket.Type.CREATURE_UPDATE

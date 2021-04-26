@@ -6,9 +6,9 @@ import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureSeed
 import core.types.SpriteId
-import pl.humberd.udp.models.PID
-import pl.humberd.udp.models.SID
-import utils.Milliseconds
+import pl.humberd.models.Milliseconds
+import pl.humberd.models.PID
+import pl.humberd.models.SID
 
 data class Spell(
     val sid: SID,

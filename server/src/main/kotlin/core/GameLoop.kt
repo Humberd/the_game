@@ -5,10 +5,10 @@ import infrastructure.udp.ServerUdpReceiveQueuePacket
 import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
 import pl.humberd.misc.exhaustive
+import pl.humberd.models.Milliseconds
+import pl.humberd.models.ms
+import pl.humberd.models.sec
 import pl.humberd.udp.packets.clientserver.*
-import utils.Milliseconds
-import utils.ms
-import utils.sec
 import java.util.concurrent.ConcurrentLinkedQueue
 
 private val logger = KotlinLogging.logger {}
@@ -111,9 +111,6 @@ class GameLoop(
 
         // fixme: should use 1/60 deltaTime
         gameActionHandler.onPhysicsStep(deltaTimeInSec)
-    }
-
-    fun requestAction(action: Any) {
     }
 
     fun requestAsyncTask(task: AsyncGameTask): AsyncGameTask {

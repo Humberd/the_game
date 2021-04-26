@@ -1,6 +1,6 @@
 package pl.humberd.udp.packets.clientserver
 
-import pl.humberd.udp.models.CID
+import pl.humberd.models.CID
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.WriteBuffer
 import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket.Type.BASIC_ATTACK_START

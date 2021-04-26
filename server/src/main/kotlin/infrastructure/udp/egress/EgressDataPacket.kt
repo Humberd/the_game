@@ -3,9 +3,10 @@ package infrastructure.udp.egress
 import core.maps.entities.creatures.StatValue
 import core.types.*
 import infrastructure.udp.egress.EgressPacketType.*
-import pl.humberd.udp.models.CID
-import pl.humberd.udp.models.PID
-import pl.humberd.udp.models.SID
+import pl.humberd.models.CID
+import pl.humberd.models.Milliseconds
+import pl.humberd.models.PID
+import pl.humberd.models.SID
 import utils.*
 import java.nio.ByteBuffer
 

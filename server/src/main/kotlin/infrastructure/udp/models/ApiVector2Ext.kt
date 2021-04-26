@@ -2,7 +2,7 @@ package infrastructure.udp.models
 
 import com.badlogic.gdx.math.Vector2
 import core.types.WorldPosition
-import pl.humberd.udp.models.ApiVector2
+import pl.humberd.models.ApiVector2
 
 fun ApiVector2.convert(): WorldPosition {
     return WorldPosition(x, y)

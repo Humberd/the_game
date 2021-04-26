@@ -1,7 +1,7 @@
 package infrastructure.udp
 
 import mu.KotlinLogging
-import pl.humberd.udp.models.PID
+import pl.humberd.models.PID
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket
 import pl.humberd.udp.server.sender.UdpSendQueue
 import java.util.concurrent.ConcurrentLinkedQueue

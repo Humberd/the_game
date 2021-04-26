@@ -2,7 +2,7 @@ package core
 
 import infrastructure.database.Database
 import infrastructure.udp.models.convert
-import pl.humberd.udp.models.PID
+import pl.humberd.models.PID
 import pl.humberd.udp.packets.clientserver.*
 
 class GameActionHandler(

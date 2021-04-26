@@ -2,7 +2,7 @@ package infrastructure.udp.egress
 
 import infrastructure.udp.UdpClientStore
 import mu.KotlinLogging
-import pl.humberd.udp.models.PID
+import pl.humberd.models.PID
 import utils.Spammable
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.full.hasAnnotation

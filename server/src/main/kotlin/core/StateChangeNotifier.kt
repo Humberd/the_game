@@ -11,10 +11,8 @@ import infrastructure.udp.ServerUdpSendQueue
 import infrastructure.udp.egress.EgressDataPacket
 import infrastructure.udp.egress.UdpEgressPacketHandler
 import infrastructure.udp.models.convert
-import pl.humberd.udp.models.PID
-import pl.humberd.udp.packets.serverclient.CreatureDisappear
-import pl.humberd.udp.packets.serverclient.CreaturePositionUpdate
-import pl.humberd.udp.packets.serverclient.CreatureUpdate
+import pl.humberd.models.PID
+import pl.humberd.udp.packets.serverclient.*
 
 class StateChangeNotifier(
     private val egressPacketHandler: UdpEgressPacketHandler,
@@ -55,9 +53,9 @@ class StateChangeNotifier(
     }
 
     fun notifyPlayerDetails(to: PID, player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             to,
-            EgressDataPacket.PlayerDetails(
+            PlayerDetails(
                 pid = player.pid,
                 cid = player.cid
             )
@@ -67,9 +65,9 @@ class StateChangeNotifier(
     fun notifyTerrainUpdate(player: Player) {
         val tiles = player.lastUpdate.tileSlice
 
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.TerrainUpdate(
+            TerrainUpdate(
                 windowWidth = tiles.size.toUByte(),
                 windowHeight = if (tiles.size > 0) tiles[0].size.toUByte() else 0u,
                 windowGridStartPositionX = tiles.let {
@@ -90,30 +88,16 @@ class StateChangeNotifier(
                     }
                     it[0][0].gridPosition.y.value.toShort()
                 },
-                spriteIds = tiles.flatten().map { it.spriteId }.toTypedArray()
+                spriteIds = tiles.flatten().map { it.spriteId.value }.toTypedArray()
             )
         )
     }
 
-    fun notifyTerrainItemsUpdate(player: Player) {
-//        egressPacketHandler.notify(
-//            player.pid,
-//            EgressDataPacket.TerrainItemsUpdate(
-//                items = player.getVisibleItems().map {
-//                    EgressDataPacket.TerrainItemsUpdate.ItemData(
-//                        itemInstanceId = it.itemInstanceId,
-//                        type = it.itemDef.type,
-//                        position = it.position
-//                    )
-//                }
-//            )
-//        )
-    }
 
     fun notifyEquippedSpellsChange(player: Player) {
-        egressPacketHandler.notify(
+        queue.put(
             player.pid,
-            EgressDataPacket.EquippedSpellsUpdate(
+            EquippedSpellsUpdate(
                 spells = listOf(
                     player.spellsContainer.spell1,
                     player.spellsContainer.spell2,
@@ -123,10 +107,10 @@ class StateChangeNotifier(
                     return@map if (it == null) {
                         null
                     } else {
-                        EgressDataPacket.EquippedSpellsUpdate.SpellUpdate(
+                        EquippedSpellsUpdate.SpellUpdate(
                             sid = it.sid,
                             name = it.name,
-                            spriteId = it.spriteId,
+                            spriteId = it.spriteId.value,
                             cooldown = it.cooldown
                         )
                     }
@@ -135,8 +119,8 @@ class StateChangeNotifier(
         )
     }
 
-    fun notifySpellUse(to: PID, spellUse: EgressDataPacket.SpellUse) {
-        egressPacketHandler.notify(
+    fun notifySpellUse(to: PID, spellUse: SpellUse) {
+        queue.put(
             to,
             spellUse
         )

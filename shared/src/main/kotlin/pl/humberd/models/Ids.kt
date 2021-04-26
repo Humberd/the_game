@@ -1,4 +1,4 @@
-package pl.humberd.udp.models
+package pl.humberd.models
 
 
 /**

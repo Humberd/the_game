@@ -1,6 +1,7 @@
-package utils
+package pl.humberd.models
 
-inline class Milliseconds(val value: UInt)
+@JvmInline
+value class Milliseconds(val value: UInt)
 
 val Int.ms: Milliseconds
     get() {

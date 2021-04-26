@@ -12,8 +12,8 @@ import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.box2d.loop
 import mu.KotlinLogging
-import pl.humberd.udp.models.CID
-import pl.humberd.udp.models.PID
+import pl.humberd.models.CID
+import pl.humberd.models.PID
 import utils.toGridPosition
 
 private val logger = KotlinLogging.logger {}
