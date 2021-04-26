@@ -21,9 +21,10 @@ data class ServerUdpSendQueuePacket(
         buffer.putInt(0x42424242)
         packet.pack(WriteBuffer(buffer))
 
-        logger.info { "[TO-1] $packet" }
+        logger.info { "-------" }
+        logger.info { "$packet" }
         logger.info {
-            "[TO-2] $connectionId (${buffer.position()}B) ${buffer.array().sliceArray(0..buffer.position() - 1).toHex()}"
+            "$connectionId (${buffer.position()}B) ${buffer.array().sliceArray(0..buffer.position() - 1).toHex()}"
         }
 
         return DatagramPacket(buffer.array(), buffer.position(), connectionId.socketAddress)
