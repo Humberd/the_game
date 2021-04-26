@@ -87,7 +87,6 @@ class GameLoop(
 
     private fun handleAction(queuePacket: ServerUdpReceiveQueuePacket) {
         val (packet, connectionId) = queuePacket
-        logger.info { packet }
 
         when (packet) {
             is ConnectionHello -> gameActionHandler.handle(packet)
@@ -98,6 +97,7 @@ class GameLoop(
             is BasicAttackEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is PlayerStatsUpdateRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is SpellUsage -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is PingRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
         }.exhaustive
     }
 

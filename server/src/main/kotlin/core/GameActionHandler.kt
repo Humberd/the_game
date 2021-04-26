@@ -52,6 +52,10 @@ class GameActionHandler(
         gamesManager.useSpell(pid, packet.sid)
     }
 
+    fun handle(packet: PingRequest, pid: PID) {
+        gamesManager.ping(pid)
+    }
+
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
     }

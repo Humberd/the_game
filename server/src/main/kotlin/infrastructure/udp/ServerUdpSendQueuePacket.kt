@@ -2,6 +2,7 @@ package infrastructure.udp
 
 import infrastructure.udp.models.ConnectionId
 import mu.KotlinLogging
+import pl.humberd.misc.isHot
 import pl.humberd.misc.toHex
 import pl.humberd.udp.packets.WriteBuffer
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket
@@ -21,12 +22,13 @@ data class ServerUdpSendQueuePacket(
         buffer.putInt(0x42424242)
         packet.pack(WriteBuffer(buffer))
 
-        logger.info { "-------" }
-        logger.info { "$packet" }
-        logger.info {
-            "$connectionId (${buffer.position()}B) ${buffer.array().sliceArray(0..buffer.position() - 1).toHex()}"
+        if (!packet.isHot()) {
+            logger.info { "---SEND---" }
+            logger.info { "$packet" }
+            logger.info {
+                "$connectionId (${buffer.position()}B) ${buffer.array().sliceArray(0..buffer.position() - 1).toHex()}"
+            }
         }
-
         return DatagramPacket(buffer.array(), buffer.position(), connectionId.socketAddress)
     }
 }

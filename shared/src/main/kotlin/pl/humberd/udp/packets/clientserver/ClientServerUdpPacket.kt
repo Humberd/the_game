@@ -8,11 +8,11 @@ import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket.Type
 sealed class ClientServerUdpPacket(type: Type) : UdpPacket<Type>(type) {
     enum class Type(
         override val value: Int,
-        val serialize: (buffer: ReadBuffer) -> ClientServerUdpPacket = { TODO() }
+        val serialize: (buffer: ReadBuffer) -> ClientServerUdpPacket
     ) : UdpPacketType {
         CONNECTION_HELLO(0x00, { ConnectionHello(it) }),
         DISCONNECT(0x01, { Disconnect(it) }),
-        PING_REQUEST(0x02),
+        PING_REQUEST(0x02, { PingRequest(it) }),
         AUTH_LOGIN(0x05, { AuthLogin(it) }),
         POSITION_CHANGE(0x10, { PositionChange(it) }),
         SPELL_USAGE(0x12, { SpellUsage(it) }),

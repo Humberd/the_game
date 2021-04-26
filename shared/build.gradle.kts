@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
 
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.2")
 }
