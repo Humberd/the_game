@@ -6,7 +6,7 @@ import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class ClientUdpSendQueue : UdpSendQueue {
-    private val queue = ConcurrentLinkedQueue<ClientUdpSendQueuedPacket>()
+    private val queue = ConcurrentLinkedQueue<ClientUdpSendQueuePacket>()
     private val socketAddress = InetSocketAddress("127.0.0.1", 4445)
 
     override fun hasNext() = !queue.isEmpty()
@@ -14,7 +14,7 @@ class ClientUdpSendQueue : UdpSendQueue {
     override fun popNext() = queue.remove()
 
     fun send(packet: ClientServerUdpPacket) {
-        queue.add(ClientUdpSendQueuedPacket(packet, socketAddress))
+        queue.add(ClientUdpSendQueuePacket(packet, socketAddress))
     }
 
 }

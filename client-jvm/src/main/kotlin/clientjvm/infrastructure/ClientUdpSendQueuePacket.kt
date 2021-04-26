@@ -7,7 +7,7 @@ import java.net.DatagramPacket
 import java.net.SocketAddress
 import java.nio.ByteBuffer
 
-data class ClientUdpSendQueuedPacket(
+data class ClientUdpSendQueuePacket(
     private val packet: ClientServerUdpPacket,
     private val socketAddress: SocketAddress
 ) : UdpSendQueuedPacket {
