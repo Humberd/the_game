@@ -10,6 +10,7 @@ import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
+import godot.global.GD
 import pl.humberd.udp.packets.clientserver.ConnectionHello
 import pl.humberd.udp.packets.clientserver.Disconnect
 
@@ -84,7 +85,10 @@ object RootSceneManager : GodotStatic {
     }
 
     private fun clearCurrentScene() {
-        currentScene?.instance?.queueFree()
+        val node = currentScene?.instance
+        if (node != null && GD.isInstanceValid(node)) {
+            node.queueFree()
+        }
         currentScene = null
     }
 
