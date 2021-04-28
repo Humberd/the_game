@@ -42,7 +42,7 @@ class ClientUdpReceiveQueue : UdpReceiveQueue {
             val packet = packetType.serialize.invoke(readBuffer)
 
 //            if (!packet.isHot()) {
-            if (true) {
+            if (false) {
                 logger.info { "---RECEIVE---" }
                 logger.info { "$packet" }
                 logger.info {
