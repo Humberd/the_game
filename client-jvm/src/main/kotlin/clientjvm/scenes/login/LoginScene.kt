@@ -1,5 +1,6 @@
 package clientjvm.scenes.login
 
+import clientjvm.exts.packedScene
 import clientjvm.global.ClientDataSender
 import clientjvm.scenes.RootSceneManager
 import godot.PanelContainer
@@ -9,10 +10,16 @@ import pl.humberd.udp.packets.clientserver.AuthLogin
 
 @RegisterClass
 class LoginScene : PanelContainer() {
+
+    companion object {
+        val packedScene by packedScene()
+    }
+
     @RegisterFunction
     fun player1Pressed() {
         login(1u)
     }
+
     @RegisterFunction
     fun player2Pressed() {
         login(2u)

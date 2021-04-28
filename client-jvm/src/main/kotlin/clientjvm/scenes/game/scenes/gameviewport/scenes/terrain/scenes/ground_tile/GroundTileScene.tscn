@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/tiles/1.png" type="Texture" id=1]
+[ext_resource path="res://assets/sprites/17.png" type="Texture" id=1]
 [ext_resource path="res://assets/sprites/box-border.png" type="Texture" id=2]
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/scenes/ground_tile/GroundTileScene.kt" type="Script" id=3]
 

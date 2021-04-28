@@ -17,7 +17,8 @@ class GameMapCreaturesContainer(private val map: GameMap) {
 
         if (creature is Player) {
             if (players.containsKey(creature.pid)) {
-                throw Error("Player already exists")
+                // fixme: do nothing
+//                throw Error("Player already exists")
             }
             players[creature.pid] = creature
         }

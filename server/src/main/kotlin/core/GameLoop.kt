@@ -97,7 +97,13 @@ class GameLoop(
             is BasicAttackEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is PlayerStatsUpdateRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
             is SpellUsage -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
-            is PingRequest -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is PingRequest -> {
+                val pid = udpClientStore.getPidOrNull(connectionId)
+                if (pid == null) {
+                    return
+                }
+                gameActionHandler.handle(packet, pid)
+            }
         }.exhaustive
     }
 
