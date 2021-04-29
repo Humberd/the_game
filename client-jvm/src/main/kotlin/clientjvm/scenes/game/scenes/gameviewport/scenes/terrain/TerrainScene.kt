@@ -40,11 +40,11 @@ class TerrainScene : Area() {
             }
         }
 
-        ClientDataReceiver.watch<TerrainUpdate>()
+        ClientDataReceiver.watchFor<TerrainUpdate>()
             .takeUntil(unsub)
             .subscribe { drawTerrain(it) }
 
-        ClientDataReceiver.watch<TerrainWallsUpdate>()
+        ClientDataReceiver.watchFor<TerrainWallsUpdate>()
             .takeUntil(unsub)
             .subscribe { drawWalls(it) }
     }
@@ -100,18 +100,4 @@ class TerrainScene : Area() {
         unsub.onNext(true)
     }
 
-}
-
-fun <T> VariantArray<T>.print(): String? {
-    val iMax = size - 1
-    if (iMax == -1) return "[]"
-    val b = StringBuilder()
-    b.append('[')
-    var i = 0
-    while (true) {
-        b.append(this[i].toString())
-        if (i == iMax) return b.append(']').toString()
-        b.append(", ")
-        i++
-    }
 }

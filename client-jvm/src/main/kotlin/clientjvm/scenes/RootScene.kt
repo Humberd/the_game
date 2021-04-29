@@ -1,7 +1,6 @@
 package clientjvm.scenes
 
-import clientjvm.global.ClientDataSender
-import clientjvm.global.socket
+import clientjvm.global.*
 import clientjvm.scenes.game.GameScene
 import clientjvm.scenes.login.LoginScene
 import godot.Node
@@ -18,6 +17,10 @@ class RootScene : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
+        AccountState.init()
+        ClientDataReceiver.init()
+        ClientDataSender.init()
+
         RootSceneManager.initializeFromRoot(this)
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
 
@@ -27,6 +30,17 @@ class RootScene : Spatial() {
     override fun _onDestroy() {
         ClientDataSender.send(Disconnect())
         socket.close()
+        ClientDataSender.kill()
+        ClientDataReceiver.kill()
+        AccountState.kill()
+    }
+
+    @RegisterFunction
+    override fun _physicsProcess(delta: Double) {
+        while (!GodotWorker.queue.isEmpty()) {
+            GodotWorker.queue.remove().run()
+        }
+
     }
 }
 
