@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.5.0-RC"
+    kotlin("jvm") version "1.5.0"
     id("com.utopia-rise.godot-kotlin-jvm") version "0.1.4-3.2.3" apply false
 }
 
