@@ -8,15 +8,13 @@ import java.util.concurrent.TimeUnit
 object GodotWorker : Scheduler() {
     val queue = ConcurrentLinkedQueue<Runnable>()
 
-    internal class Worker : Scheduler.Worker() {
-        var disposed = false;
-
+    internal object Worker : Scheduler.Worker() {
         override fun dispose() {
-            disposed = true
+            // nothing
         }
 
         override fun isDisposed(): Boolean {
-            return disposed
+            return false
         }
 
         override fun schedule(run: Runnable?, delay: Long, unit: TimeUnit?): Disposable {
@@ -28,6 +26,6 @@ object GodotWorker : Scheduler() {
     }
 
     override fun createWorker(): Scheduler.Worker {
-        return Worker()
+        return Worker
     }
 }

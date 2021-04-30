@@ -55,8 +55,6 @@ class TerrainScene : Area() {
         val endX = startX + packet.windowWidth.toShort()
         val endY = startY + packet.windowHeight.toShort()
 
-        logger.info { "$startX, $startY -> $endX, $endY" }
-
         // clear all tiles
         tiles.forEach { it.forEach { it.unsetTile() } }
 

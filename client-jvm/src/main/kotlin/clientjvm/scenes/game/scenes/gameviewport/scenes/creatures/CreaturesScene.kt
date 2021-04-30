@@ -23,7 +23,6 @@ class CreaturesScene : Spatial() {
 
     private fun updateCreature(packet: CreatureUpdate) {
         if (allCreatures.containsKey(packet.cid)) {
-            // fixme
             return
         }
 
