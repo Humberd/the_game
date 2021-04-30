@@ -7,6 +7,7 @@ import core.maps.entities.creatures.player.Player
 import core.maps.entities.creatures.player.PlayerSeed
 import core.types.GameMapId
 import core.types.WorldPosition
+import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.PID
 import pl.humberd.models.SID
@@ -14,6 +15,8 @@ import pl.humberd.models.SID
 class GamesManager(
     private val notifier: StateChangeNotifier,
 ) {
+    companion object : KLogging()
+
     private val maps = HashMap<GameMapId, GameMap>()
     private val playerLUT = HashMap<PID, GameMapId>()
 
@@ -27,9 +30,15 @@ class GamesManager(
         //fixme: hardcoded gameMapId
         val gameMapId = GameMapId(1u)
         val map = getMap(gameMapId)
+
+        if (playerLUT[playerSeed.pid] != null) {
+            removePlayer(playerSeed.pid)
+        }
+
         playerLUT[playerSeed.pid] = gameMapId
 
         val player = Player(creatureSeed, map, notifier, playerSeed)
+        logger.info { "Created new player with ${player.cid}" }
         map.creatures.add(player)
     }
 
