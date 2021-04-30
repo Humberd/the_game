@@ -18,7 +18,7 @@ class RootScene : Spatial() {
     @RegisterFunction
     override fun _ready() {
         AccountState.init()
-        ClientDataReceiver.init()
+        ClientDataReceiver._init()
         ClientDataSender.init()
 
         RootSceneManager.initializeFromRoot(this)
@@ -31,7 +31,7 @@ class RootScene : Spatial() {
         ClientDataSender.send(Disconnect())
         socket.close()
         ClientDataSender.kill()
-        ClientDataReceiver.kill()
+        ClientDataReceiver._kill()
         AccountState.kill()
     }
 

@@ -1,17 +1,24 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
-import clientjvm.exts.convert
-import clientjvm.exts.packedScene
-import clientjvm.exts.to2D
-import clientjvm.exts.to3D
+import clientjvm.exts.*
 import clientjvm.global.AccountState
+import clientjvm.global.ClientDataReceiver
+import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body.CreatureBodyScene
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.NodePath
+import godot.core.Vector3
+import godot.getNode
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import mu.KLogging
 import pl.humberd.models.ApiVector2
+import pl.humberd.models.CID
+import pl.humberd.udp.packets.serverclient.CreatureDisappear
+import pl.humberd.udp.packets.serverclient.CreaturePositionUpdate
 import pl.humberd.udp.packets.serverclient.CreatureUpdate
+import java.util.concurrent.TimeUnit
 
 
 @RegisterClass
@@ -20,13 +27,41 @@ class CreatureScene : Spatial() {
         val packedScene by packedScene()
     }
 
+    private var cid: CID = CID.empty()
+        set(value) {
+            name = "Creature-${value}"
+            field = value
+        }
+
+    private var creatureName: String = ""
+
+    private lateinit var body: CreatureBodyScene
+    private val movingStream = PublishSubject.create<Boolean>()
+    private val unsub by unsub()
+    val onDestroyed = unsub as Observable<Boolean>
 
     @RegisterFunction
     override fun _ready() {
+        body = getNode("Creature Body")
+
+        ClientDataReceiver.watchFor<CreaturePositionUpdate>()
+            .filter { it.cid == cid.notEmpty() }
+            .takeUntil(unsub)
+            .subscribe { update(it.position) }
+
+        ClientDataReceiver.watchFor<CreatureDisappear>()
+            .filter { it.cid == cid.notEmpty() }
+            .takeUntil(unsub)
+            .subscribe { queueFree() }
+
+        movingStream
+            .debounce(100, TimeUnit.MILLISECONDS)
+            .takeUntil(unsub)
+            .subscribe { body.stopWalking() }
     }
 
-    fun isMe(isMe: Boolean) {
-
+    override fun _onDestroy() {
+        unsub.onNext(true)
     }
 
     fun initData(packet: CreatureUpdate) {
@@ -41,7 +76,9 @@ class CreatureScene : Spatial() {
     }
 
     private fun update(packet: CreatureUpdate) {
-        name = "Creature-${packet.cid}"
+        cid = packet.cid
+        creatureName = packet.name
+
         update(packet.position)
     }
 
@@ -49,10 +86,10 @@ class CreatureScene : Spatial() {
         val radsAngle = transform.origin.to2D().angleToPoint(position.convert())
         translation = position.convert().to3D()
         if (radsAngle != 0.0) {
-            //rotate the body
+            body.rotation = Vector3(0, -radsAngle - Math.toRadians(90.0), 0)
         }
 
-        //start walking
-        //isMoveing on next
+        movingStream.onNext(true)
+        body.startWalking()
     }
 }

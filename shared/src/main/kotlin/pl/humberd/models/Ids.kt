@@ -24,6 +24,15 @@ value class CID(val value: UInt) {
     companion object {
         private var counter = 0u
         fun unique() = CID(++counter)
+        fun empty() = CID(0u)
+    }
+
+    fun notEmpty(): CID {
+        if (value == 0u) {
+            throw Error("CID is empty")
+        }
+
+        return this
     }
 }
 

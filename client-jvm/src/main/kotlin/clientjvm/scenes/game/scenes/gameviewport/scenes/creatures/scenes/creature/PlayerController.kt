@@ -9,14 +9,11 @@ import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Vector3
 import io.reactivex.rxjava3.subjects.PublishSubject
-import mu.KotlinLogging
 import pl.humberd.udp.packets.clientserver.PositionChange
 import java.util.concurrent.TimeUnit
 
 @RegisterClass
 class PlayerController : Spatial() {
-    private val logger = KotlinLogging.logger {}
-
     private lateinit var camera: Camera
 
     private var mousePressed = false

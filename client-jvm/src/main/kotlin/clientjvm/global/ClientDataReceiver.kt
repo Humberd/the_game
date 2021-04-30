@@ -9,18 +9,18 @@ object ClientDataReceiver {
     private val receiveQueue = ClientUdpReceiveQueue()
     private lateinit var udpReceiverService: UdpReceiverService
 
-    fun init() {
+    fun _init() {
         udpReceiverService = UdpReceiverService(socket, receiveQueue)
         udpReceiverService.start()
     }
 
-    fun kill() {
+    fun _kill() {
         udpReceiverService.kill()
     }
 
     inline fun <reified T : ServerClientUdpPacket> watchFor(): Observable<T> {
         return _dataStream()
-            .subscribeOn(GodotWorker)
+            .observeOn(GodotWorker)
             .filter { it.packet is T }
             .map { it.packet as T }
     }

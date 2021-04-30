@@ -70,6 +70,7 @@ class TerrainScene : Area() {
     }
 
     fun drawWalls(packet: TerrainWallsUpdate) {
+        logger.info { packet }
         for (chain in packet.chains) {
             val variantChain = variantArrayOf(*Array(chain.size) { chain[it].convert() })
 

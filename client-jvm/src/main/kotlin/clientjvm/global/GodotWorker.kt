@@ -18,7 +18,6 @@ object GodotWorker : Scheduler() {
         }
 
         override fun schedule(run: Runnable?, delay: Long, unit: TimeUnit?): Disposable {
-            println("Scheduled action ${run}")
             queue.add(run)
 
             return this

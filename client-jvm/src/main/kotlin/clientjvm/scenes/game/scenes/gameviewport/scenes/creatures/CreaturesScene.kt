@@ -29,6 +29,12 @@ class CreaturesScene : Spatial() {
         val creatureScene = CreatureScene.packedScene.instance() as CreatureScene
         addChild(creatureScene)
         creatureScene.initData(packet)
+        creatureScene.onDestroyed
+            .take(1)
+            .subscribe {
+                allCreatures.remove(packet.cid)
+            }
+
         allCreatures[packet.cid] = creatureScene
     }
 
