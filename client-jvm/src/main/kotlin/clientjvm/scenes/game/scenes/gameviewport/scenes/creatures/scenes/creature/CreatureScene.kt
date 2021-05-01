@@ -5,6 +5,8 @@ import clientjvm.global.AccountState
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body.CreatureBodyScene
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.CreatureInfoScene
+import godot.CylinderMesh
+import godot.MeshInstance
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -35,6 +37,7 @@ class CreatureScene : Spatial() {
 
     private lateinit var body: CreatureBodyScene
     private lateinit var infoScene: CreatureInfoScene
+    private lateinit var collider: MeshInstance
 
     private val movingStream by emitter()
     private val unsub by emitter()
@@ -44,11 +47,12 @@ class CreatureScene : Spatial() {
     override fun _ready() {
         body = getNode("Creature Body")
         infoScene = getNode("Viewport/CreatureInfoScene")
+        collider = getNode("Collider")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
             .takeUntil(unsub)
-            .subscribe { update(it.position) }
+            .subscribe { updatePosition(it.position) }
 
         ClientDataReceiver.watchFor<CreatureDisappear>()
             .filter { it.cid == cid.notEmpty() }
@@ -84,11 +88,12 @@ class CreatureScene : Spatial() {
     private fun update(packet: CreatureUpdate) {
         cid = packet.cid
 
-        update(packet.position)
+        updatePosition(packet.position)
         infoScene.update(packet)
+        updateBodyRadius(packet.bodyRadius)
     }
 
-    private fun update(position: ApiVector2) {
+    private fun updatePosition(position: ApiVector2) {
         val radsAngle = transform.origin.to2D().angleToPoint(position.convert())
         translation = position.convert().to3D()
         if (radsAngle != 0.0) {
@@ -97,5 +102,15 @@ class CreatureScene : Spatial() {
 
         movingStream.onNext(true)
         body.startWalking()
+    }
+
+    private fun updateBodyRadius(bodyRadius: Float) {
+        val mesh = collider.mesh
+        if (mesh !is CylinderMesh) {
+            throw Error("Body radius must be a Cylinder Mesh")
+        }
+
+        mesh.topRadius = bodyRadius.toDouble()
+        mesh.bottomRadius = bodyRadius.toDouble()
     }
 }
