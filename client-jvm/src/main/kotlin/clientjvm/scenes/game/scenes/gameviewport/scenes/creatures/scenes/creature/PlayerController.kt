@@ -1,10 +1,14 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
 import clientjvm.exts.convert
+import clientjvm.exts.currentCamera
 import clientjvm.exts.emitter
 import clientjvm.exts.to2D
 import clientjvm.global.ClientDataSender
-import godot.*
+import godot.GlobalConstants
+import godot.InputEvent
+import godot.InputEventMouseButton
+import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Vector3
@@ -14,8 +18,6 @@ import java.util.concurrent.TimeUnit
 
 @RegisterClass
 class PlayerController : Spatial() {
-    private lateinit var camera: Camera
-
     private var mousePressed = false
     private val positionChangeStream = PublishSubject.create<Boolean>()
 
@@ -23,8 +25,6 @@ class PlayerController : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
-        camera = getNode("Camera")
-
         positionChangeStream
             .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
             .takeUntil(unsub)
@@ -55,8 +55,8 @@ class PlayerController : Spatial() {
     private fun sendPositionChange() {
         val rayLength = 1000
         val mousePosition = getViewport()?.getMousePosition()!!
-        val from = camera.projectRayOrigin(mousePosition)
-        val to = from + camera.projectRayNormal(mousePosition) * rayLength
+        val from = currentCamera.projectRayOrigin(mousePosition)
+        val to = from + currentCamera.projectRayNormal(mousePosition) * rayLength
         val spaceState = getWorld()?.directSpaceState!!
         val result = spaceState.intersectRay(from, to, collideWithAreas = true, collideWithBodies = false)
 

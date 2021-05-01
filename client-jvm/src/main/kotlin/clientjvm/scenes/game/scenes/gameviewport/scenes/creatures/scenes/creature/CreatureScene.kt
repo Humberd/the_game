@@ -5,14 +5,11 @@ import clientjvm.global.AccountState
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body.CreatureBodyScene
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.CreatureInfoScene
-import godot.CylinderMesh
-import godot.MeshInstance
-import godot.Spatial
+import godot.*
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.NodePath
 import godot.core.Vector3
-import godot.getNode
 import io.reactivex.rxjava3.core.Observable
 import mu.KLogging
 import pl.humberd.models.ApiVector2
@@ -37,7 +34,8 @@ class CreatureScene : Spatial() {
 
     private lateinit var body: CreatureBodyScene
     private lateinit var infoScene: CreatureInfoScene
-    private lateinit var collider: MeshInstance
+    private lateinit var collisionMesh: MeshInstance
+    private lateinit var collisionShape: CollisionShape
 
     private val movingStream by emitter()
     private val unsub by emitter()
@@ -47,7 +45,8 @@ class CreatureScene : Spatial() {
     override fun _ready() {
         body = getNode("Creature Body")
         infoScene = getNode("Viewport/CreatureInfoScene")
-        collider = getNode("Collider")
+        collisionMesh = getNode("Collider/CollisionMesh")
+        collisionShape = getNode("Collider/CollisionShape")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
@@ -68,6 +67,25 @@ class CreatureScene : Spatial() {
             .debounce(100, TimeUnit.MILLISECONDS)
             .takeUntil(unsub)
             .subscribe { body.stopWalking() }
+    }
+
+    @RegisterFunction
+    override fun _input(event: InputEvent) {
+        if (event is InputEventMouseMotion) {
+//            logger.info { event }
+            val rayLength = 1000
+            val mousePosition = getViewport()?.getMousePosition()!!
+            val from = currentCamera.projectRayOrigin(mousePosition)
+            val to = from + currentCamera.projectRayNormal(mousePosition) * rayLength
+            val spaceState = getWorld()?.directSpaceState!!
+            val result = spaceState.intersectRay(from, to, collideWithAreas = false, collideWithBodies = true)
+
+            logger.info { result.keys().print() }
+//            val position = result["position"]
+//            if (position is Vector3) {
+//                logger.info { "there is a position" }
+//            }
+        }
     }
 
     override fun _onDestroy() {
@@ -105,12 +123,9 @@ class CreatureScene : Spatial() {
     }
 
     private fun updateBodyRadius(bodyRadius: Float) {
-        val mesh = collider.mesh
-        if (mesh !is CylinderMesh) {
-            throw Error("Body radius must be a Cylinder Mesh")
-        }
+        val scale = Vector3(bodyRadius, 1, bodyRadius)
+        collisionMesh.scale = scale
+        collisionShape.scale = Vector3(scale)
 
-        mesh.topRadius = bodyRadius.toDouble()
-        mesh.bottomRadius = bodyRadius.toDouble()
     }
 }
