@@ -1,24 +1,30 @@
 package clientjvm.global
 
 import clientjvm.infrastructure.ClientUdpReceiveQueue
-import godot.core.memory.GodotStatic
+import io.reactivex.rxjava3.core.Observable
+import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket
 import pl.humberd.udp.server.receiver.UdpReceiverService
 
-object ClientDataReceiver : GodotStatic {
+object ClientDataReceiver {
     private val receiveQueue = ClientUdpReceiveQueue()
-    private val udpReceiverService: UdpReceiverService
+    private lateinit var udpReceiverService: UdpReceiverService
 
-    init {
-        registerAsSingleton()
-
+    fun _init() {
         udpReceiverService = UdpReceiverService(socket, receiveQueue)
         udpReceiverService.start()
     }
 
-    override fun collect() {
+    fun _kill() {
         udpReceiverService.kill()
     }
 
-    fun hasNext() = receiveQueue.hasNext()
-    fun popNext() = receiveQueue.popNext()
+    inline fun <reified T : ServerClientUdpPacket> watchFor(): Observable<T> {
+        return _dataStream()
+            .observeOn(GodotWorker)
+            .filter { it.packet is T }
+            .map { it.packet as T }
+    }
+
+    fun _dataStream() = receiveQueue.data
+
 }

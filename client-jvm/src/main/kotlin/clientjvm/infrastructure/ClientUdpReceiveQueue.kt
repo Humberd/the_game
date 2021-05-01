@@ -1,6 +1,8 @@
 package clientjvm.infrastructure
 
-import mu.KotlinLogging
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
+import mu.KLogging
 import pl.humberd.misc.toHex
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket
@@ -8,14 +10,12 @@ import pl.humberd.udp.server.receiver.UdpReceiveQueue
 import java.net.SocketAddress
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
-import java.util.concurrent.ConcurrentLinkedQueue
 
 class ClientUdpReceiveQueue : UdpReceiveQueue {
-    private val queue = ConcurrentLinkedQueue<ClientUdpReceiveQueuePacket>()
+    companion object : KLogging()
 
-    companion object {
-        private val logger = KotlinLogging.logger {}
-    }
+    private val queue = PublishSubject.create<ClientUdpReceiveQueuePacket>()
+    val data: Observable<ClientUdpReceiveQueuePacket> = queue
 
     override fun put(buffer: ByteBuffer, socketAddress: SocketAddress) {
         if (buffer.limit() < 5) {
@@ -42,7 +42,7 @@ class ClientUdpReceiveQueue : UdpReceiveQueue {
             val packet = packetType.serialize.invoke(readBuffer)
 
 //            if (!packet.isHot()) {
-            if (true) {
+            if (false) {
                 logger.info { "---RECEIVE---" }
                 logger.info { "$packet" }
                 logger.info {
@@ -51,7 +51,7 @@ class ClientUdpReceiveQueue : UdpReceiveQueue {
                     }"
                 }
             }
-            queue.add(ClientUdpReceiveQueuePacket(packet))
+            queue.onNext(ClientUdpReceiveQueuePacket(packet))
         } catch (e: BufferUnderflowException) {
             logger.error { "Invalid frame size" }
         } catch (e: Exception) {
@@ -60,7 +60,4 @@ class ClientUdpReceiveQueue : UdpReceiveQueue {
             logger.error(e) {}
         }
     }
-
-    fun hasNext() = !queue.isEmpty()
-    fun popNext() = queue.remove()
 }

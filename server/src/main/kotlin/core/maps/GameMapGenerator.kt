@@ -8,8 +8,8 @@ import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.monster.MonsterSeed
 import core.types.*
 
-private const val GRAVEL_SPRITE: UShort = 0u
-private const val GRASS_SPRITE: UShort = 1u
+private const val GRAVEL_SPRITE: UShort = 16u
+private const val GRASS_SPRITE: UShort = 17u
 
 object GameMapGenerator {
     fun generateMap1(width: Int, height: Int, notifier: StateChangeNotifier): GameMap {

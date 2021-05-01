@@ -1,5 +1,6 @@
 package clientjvm.scenes.game
 
+import clientjvm.exts.packedScene
 import godot.*
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -11,6 +12,10 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 @RegisterClass
 class GameScene : PanelContainer() {
     private val unsubscribe = PublishSubject.create<Boolean>()
+
+    companion object {
+        val packedScene by packedScene()
+    }
 
     @RegisterFunction
     override fun _ready() {

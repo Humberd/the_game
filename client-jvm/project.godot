@@ -19,6 +19,36 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/GameScene.kt"
 }, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_GameViewportScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/GameViewportScene.kt"
+}, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_CreaturesScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/CreaturesScene.kt"
+}, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_body_CreatureBodyScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/body/CreatureBodyScene.kt"
+}, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/CreatureScene.kt"
+}, {
+"base": "Area",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.kt"
+}, {
+"base": "Sprite3D",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_scenes_ground_tile_GroundTileScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/scenes/ground_tile/GroundTileScene.kt"
+}, {
 "base": "PanelContainer",
 "class": "clientjvm_scenes_login_LoginScene",
 "language": "Kotlin",
@@ -27,6 +57,12 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "clientjvm_scenes_RootScene": "",
 "clientjvm_scenes_game_GameScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_GameViewportScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_CreaturesScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_body_CreatureBodyScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_scenes_ground_tile_GroundTileScene": "",
 "clientjvm_scenes_login_LoginScene": ""
 }
 

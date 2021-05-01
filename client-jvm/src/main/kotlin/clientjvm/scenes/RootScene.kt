@@ -1,45 +1,50 @@
 package clientjvm.scenes
 
-import clientjvm.global.ClientDataReceiver
-import clientjvm.global.ClientDataSender
-import clientjvm.global.socket
+import clientjvm.global.*
+import clientjvm.scenes.game.GameScene
+import clientjvm.scenes.login.LoginScene
 import godot.Node
-import godot.PackedScene
-import godot.ResourceLoader
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.memory.GodotStatic
+import godot.global.GD
 import pl.humberd.udp.packets.clientserver.ConnectionHello
 import pl.humberd.udp.packets.clientserver.Disconnect
 
 @RegisterClass
 class RootScene : Spatial() {
+
     @RegisterFunction
     override fun _ready() {
+        AccountState.init()
+        ClientDataReceiver._init()
+        ClientDataSender.init()
+
         RootSceneManager.initializeFromRoot(this)
         RootSceneManager.loadScene(RootSceneManager.SCENE.LOGIN)
 
         ClientDataSender.send(ConnectionHello())
     }
 
-    @RegisterFunction
-    override fun _process(delta: Double) {
-        while (ClientDataReceiver.hasNext()) {
-            ClientDataReceiver.popNext()
-        }
-    }
-
     override fun _onDestroy() {
         ClientDataSender.send(Disconnect())
         socket.close()
+        ClientDataSender.kill()
+        ClientDataReceiver._kill()
+        AccountState.kill()
+    }
+
+    @RegisterFunction
+    override fun _physicsProcess(delta: Double) {
+        while (!GodotWorker.queue.isEmpty()) {
+            GodotWorker.queue.remove().run()
+        }
+
     }
 }
 
 object RootSceneManager : GodotStatic {
-    private var loginScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/login/LoginScene.tscn") as PackedScene?
-    private var gameScene = ResourceLoader.load("res://src/main/kotlin/clientjvm/scenes/game/GameScene.tscn") as PackedScene?
-
     enum class SCENE {
         LOGIN,
         GAME
@@ -63,8 +68,6 @@ object RootSceneManager : GodotStatic {
 
     override fun collect() {
         clearCurrentScene()
-        loginScene = null
-        gameScene = null
     }
 
     fun loadScene(scene: SCENE) {
@@ -74,8 +77,8 @@ object RootSceneManager : GodotStatic {
 
         clearCurrentScene()
         val instance: Node = when (scene) {
-            SCENE.LOGIN -> loginScene?.instance()!!
-            SCENE.GAME -> gameScene?.instance()!!
+            SCENE.LOGIN -> LoginScene.packedScene.instance()!!
+            SCENE.GAME -> GameScene.packedScene.instance()!!
         }
 
         currentScene = CurrentScene(scene, instance).also {
@@ -84,7 +87,10 @@ object RootSceneManager : GodotStatic {
     }
 
     private fun clearCurrentScene() {
-        currentScene?.instance?.queueFree()
+        val node = currentScene?.instance
+        if (node != null && GD.isInstanceValid(node)) {
+            node.queueFree()
+        }
         currentScene = null
     }
 

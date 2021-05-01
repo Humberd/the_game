@@ -1,22 +1,19 @@
 package clientjvm.global
 
 import clientjvm.infrastructure.ClientUdpSendQueue
-import godot.core.memory.GodotStatic
 import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket
 import pl.humberd.udp.server.sender.UdpSenderService
 
-object ClientDataSender : GodotStatic {
+object ClientDataSender {
     private val sendQueue = ClientUdpSendQueue()
-    private val udpSenderService: UdpSenderService
+    private lateinit var udpSenderService: UdpSenderService
 
-    init {
-        registerAsSingleton()
-
+    fun init() {
         udpSenderService = UdpSenderService(socket, sendQueue)
         udpSenderService.start()
     }
 
-    override fun collect() {
+    fun kill() {
         udpSenderService.kill()
     }
 

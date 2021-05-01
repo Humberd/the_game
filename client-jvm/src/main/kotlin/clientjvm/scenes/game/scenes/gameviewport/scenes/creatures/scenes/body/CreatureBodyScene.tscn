@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/models-3d/Standard Walk.dae" type="PackedScene" id=1]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/body/CreatureBodyScene.kt" type="Script" id=2]
+
+[node name="Creature Body" instance=ExtResource( 1 )]
+script = ExtResource( 2 )

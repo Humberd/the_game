@@ -34,8 +34,4 @@ class UdpClientStore {
     fun getConnectionIdOrNull(pid: PID): ConnectionId? {
         return pidToConnection[pid]
     }
-
-    fun getPidOrNull(clientId: Any): PID? {
-        TODO()
-    }
 }

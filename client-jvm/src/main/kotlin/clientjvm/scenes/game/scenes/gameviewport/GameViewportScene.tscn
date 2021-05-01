@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
-[sub_resource type="StyleBoxFlat" id=1]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/GameViewportScene.kt" type="Script" id=1]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.kt" type="Script" id=3]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/CreaturesScene.tscn" type="PackedScene" id=4]
 
 [node name="GameViewportScene" type="ViewportContainer"]
 margin_right = 600.0
@@ -14,11 +17,16 @@ size = Vector2( 600, 600 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="Viewport"]
+[node name="PanelContainer" type="Control" parent="Viewport"]
 margin_right = 14.0
 margin_bottom = 14.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-custom_styles/panel = SubResource( 1 )
 
 [node name="Spatial" type="Spatial" parent="Viewport/PanelContainer"]
+script = ExtResource( 1 )
+
+[node name="TerrainScene" parent="Viewport/PanelContainer/Spatial" instance=ExtResource( 2 )]
+script = ExtResource( 3 )
+
+[node name="CreaturesScene" parent="Viewport/PanelContainer/Spatial" instance=ExtResource( 4 )]
