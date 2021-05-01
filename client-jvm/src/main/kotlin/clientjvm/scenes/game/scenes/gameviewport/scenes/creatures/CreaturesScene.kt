@@ -1,6 +1,6 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures
 
-import clientjvm.exts.unsub
+import clientjvm.exts.emitter
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature.CreatureScene
 import godot.Spatial
@@ -11,7 +11,7 @@ import pl.humberd.udp.packets.serverclient.CreatureUpdate
 
 @RegisterClass
 class CreaturesScene : Spatial() {
-    private val unsub by unsub()
+    private val unsub by emitter()
     private val allCreatures = HashMap<CID, CreatureScene>()
 
     @RegisterFunction

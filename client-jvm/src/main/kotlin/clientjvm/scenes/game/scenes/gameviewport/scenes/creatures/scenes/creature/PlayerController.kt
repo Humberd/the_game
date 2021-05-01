@@ -1,8 +1,8 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
 import clientjvm.exts.convert
+import clientjvm.exts.emitter
 import clientjvm.exts.to2D
-import clientjvm.exts.unsub
 import clientjvm.global.ClientDataSender
 import godot.*
 import godot.annotation.RegisterClass
@@ -19,7 +19,7 @@ class PlayerController : Spatial() {
     private var mousePressed = false
     private val positionChangeStream = PublishSubject.create<Boolean>()
 
-    private val unsub by unsub()
+    private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {

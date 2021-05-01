@@ -1,13 +1,13 @@
 package clientjvm.global
 
-import clientjvm.exts.unsub
+import clientjvm.exts.emitter
 import pl.humberd.udp.packets.serverclient.PlayerDetails
 
 object AccountState {
     var playerDetails: PlayerDetails? = null
         private set
 
-    private val unsub by unsub()
+    private val unsub by emitter()
 
     fun init() {
         ClientDataReceiver.watchFor<PlayerDetails>()

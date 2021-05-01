@@ -1,7 +1,7 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 
 import clientjvm.exts.convert
-import clientjvm.exts.unsub
+import clientjvm.exts.emitter
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
 import godot.Area
@@ -27,7 +27,7 @@ class TerrainScene : Area() {
 
     private lateinit var tiles: Array<Array<GroundTileScene>>
 
-    private val unsub by unsub()
+    private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {

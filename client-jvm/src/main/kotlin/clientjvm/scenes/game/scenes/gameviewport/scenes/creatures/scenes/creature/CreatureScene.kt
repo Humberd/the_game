@@ -4,6 +4,7 @@ import clientjvm.exts.*
 import clientjvm.global.AccountState
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body.CreatureBodyScene
+import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.CreatureInfoScene
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -11,7 +12,6 @@ import godot.core.NodePath
 import godot.core.Vector3
 import godot.getNode
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
 import mu.KLogging
 import pl.humberd.models.ApiVector2
 import pl.humberd.models.CID
@@ -33,16 +33,17 @@ class CreatureScene : Spatial() {
             field = value
         }
 
-    private var creatureName: String = ""
-
     private lateinit var body: CreatureBodyScene
-    private val movingStream = PublishSubject.create<Boolean>()
-    private val unsub by unsub()
+    private lateinit var infoScene: CreatureInfoScene
+
+    private val movingStream by emitter()
+    private val unsub by emitter()
     val onDestroyed = unsub as Observable<Boolean>
 
     @RegisterFunction
     override fun _ready() {
         body = getNode("Creature Body")
+        infoScene = getNode("Viewport/CreatureInfoScene")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
@@ -53,6 +54,11 @@ class CreatureScene : Spatial() {
             .filter { it.cid == cid.notEmpty() }
             .takeUntil(unsub)
             .subscribe { queueFree() }
+
+        ClientDataReceiver.watchFor<CreatureUpdate>()
+            .filter { it.cid == cid.notEmpty() }
+            .takeUntil(unsub)
+            .subscribe { update(it) }
 
         movingStream
             .debounce(100, TimeUnit.MILLISECONDS)
@@ -77,9 +83,9 @@ class CreatureScene : Spatial() {
 
     private fun update(packet: CreatureUpdate) {
         cid = packet.cid
-        creatureName = packet.name
 
         update(packet.position)
+        infoScene.update(packet)
     }
 
     private fun update(position: ApiVector2) {
