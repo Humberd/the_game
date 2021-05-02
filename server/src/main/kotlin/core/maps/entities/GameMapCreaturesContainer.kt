@@ -45,6 +45,7 @@ class GameMapCreaturesContainer(private val map: GameMap) {
         }
         val removedCreature = creatures.remove(cid)
         removedCreature!!.hooks.onRemovedFromMap(map)
+        removedCreature.physics.onDestroy()
     }
 
     fun get(pid: PID): Player {
