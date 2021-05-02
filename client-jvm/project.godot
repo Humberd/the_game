@@ -59,7 +59,7 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/stats/GameStatsScene.kt"
 }, {
-"base": "Area",
+"base": "Spatial",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene",
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.kt"
