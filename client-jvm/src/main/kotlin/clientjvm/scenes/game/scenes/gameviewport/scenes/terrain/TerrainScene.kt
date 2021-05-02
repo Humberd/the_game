@@ -115,7 +115,7 @@ class TerrainScene : Spatial() {
 
             val meshInstance = MeshInstance().also {
                 it.mesh = arrayMesh
-                it.name = "__wall"
+                it.name = "aawall"
                 it.setSurfaceMaterial(1, SpatialMaterial().also {
                     it.albedoColor = Color.black
                 })
@@ -123,9 +123,26 @@ class TerrainScene : Spatial() {
                     it.albedoColor = Color.black
                 })
             }
+
+            StaticBody().also { staticBody ->
+                meshInstance.addChild(staticBody)
+
+                CollisionShape().also { collisionShape ->
+                    collisionShape.shape = ConvexPolygonShape().also {
+                        val arr = PoolVector3Array()
+                        topChain.forEach { arr.append(it) }
+                        it.points = arr
+                    }
+
+                    staticBody.addChild(collisionShape)
+                }
+                content.addChild(staticBody)
+            }
+
             content.addChild(meshInstance)
-            meshInstance.createDebugTangents()
         }
+
+        detourNavigationMesh.bakeNavmesh()
     }
 
     override fun _onDestroy() {
