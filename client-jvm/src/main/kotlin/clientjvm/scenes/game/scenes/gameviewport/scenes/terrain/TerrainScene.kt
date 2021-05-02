@@ -135,6 +135,7 @@ class TerrainScene : Spatial() {
                 CollisionShape().also { collisionShape ->
                     collisionShape.shape = ConvexPolygonShape().also {
                         val arr = PoolVector3Array()
+                        baseChain.forEach { arr.append(it) }
                         topChain.forEach { arr.append(it) }
                         it.points = arr
                     }
