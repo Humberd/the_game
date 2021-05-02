@@ -33,8 +33,17 @@ class GameMap(
     init {
         physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
         initMapBounds()
-//        GameMapDebugRenderer(this)
+        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
+    }
+
+    private fun initMapBounds() {
+        createWallsPolygon(
+            Vector2(0f, 0f),
+            Vector2(gridWidth.toFloat(), 0f),
+            Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
+            Vector2(0f, gridHeight.toFloat())
+        )
     }
 
     fun createWallsPolygon(
@@ -53,15 +62,6 @@ class GameMap(
             }
         }
         walls.add(body)
-    }
-
-    private fun initMapBounds() {
-        createWallsPolygon(
-            Vector2(0f, 0f),
-            Vector2(gridWidth.toFloat(), 0f),
-            Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
-            Vector2(0f, gridHeight.toFloat())
-        )
     }
 
     //endregion

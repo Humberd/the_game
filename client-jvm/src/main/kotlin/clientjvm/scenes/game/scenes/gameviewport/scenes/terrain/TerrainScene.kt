@@ -15,15 +15,23 @@ import pl.humberd.udp.packets.serverclient.TerrainWallsUpdate
 class TerrainScene : Area() {
     companion object : KLogging() {
         private const val GRID_SIZE = 20
-        private const val TILE_SIZE = 64
     }
 
+    private lateinit var collider: CollisionShape
     private lateinit var tiles: Array<Array<GroundTileScene>>
 
     private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {
+        collider = getNode("Collider")
+        collider.also {
+            val boxShape = it.shape as BoxShape
+            val offset = GRID_SIZE / 2
+            boxShape.extents = Vector3(offset, 0.001, offset)
+            it.translation = Vector3(offset, 0, offset)
+        }
+
         tiles = Array(GRID_SIZE) { x ->
             Array(GRID_SIZE) { y ->
                 (GroundTileScene.packedScene.instance() as GroundTileScene).also {
@@ -93,6 +101,10 @@ class TerrainScene : Area() {
                 it.addSurfaceFromArrays(
                     primitive = Mesh.PrimitiveType.PRIMITIVE_LINE_STRIP.id,
                     arrays = surfaceArray(ARRAY_VERTEX = sidesChain)
+                )
+                it.addSurfaceFromArrays(
+                    primitive = Mesh.PrimitiveType.PRIMITIVE_TRIANGLE_FAN.id,
+                    arrays = surfaceArray(ARRAY_VERTEX = baseChain)
                 )
             }
 
