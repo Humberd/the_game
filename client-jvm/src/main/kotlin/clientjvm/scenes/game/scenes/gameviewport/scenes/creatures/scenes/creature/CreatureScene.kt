@@ -38,6 +38,7 @@ class CreatureScene : Spatial() {
     private lateinit var rigidBody: RigidBody
     private lateinit var collisionMesh: MeshInstance
     private lateinit var collisionShape: CollisionShape
+    private lateinit var tween: Tween
 
     private val colliderColorHover = Color.html("b2cbe4de")
     private val colliderColorNormal = Color.html("33cbe4de")
@@ -53,6 +54,7 @@ class CreatureScene : Spatial() {
         rigidBody = getNode("Collider")
         collisionMesh = getNode("Collider/CollisionMesh")
         collisionShape = getNode("Collider/CollisionShape")
+        tween = getNode("Tween")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
@@ -118,7 +120,19 @@ class CreatureScene : Spatial() {
         val radsAngle = transform.origin.to2D().angleToPoint(position.convert())
         translation = position.convert().to3D()
         if (radsAngle != 0.0) {
-            body.rotation = Vector3(0, -radsAngle - Math.toRadians(90.0), 0)
+            val newRotation = Vector3(0, -radsAngle - Math.toRadians(90.0), 0)
+            body.rotation = newRotation
+            //fixme: https://github.com/utopia-rise/godot-kotlin-jvm/pull/219
+//            tween.interpolateProperty(
+//                this,
+//                NodePath("rotation"),
+//                body.rotation,
+//                newRotation,
+//                0.1,
+//                Tween.TRANS_LINEAR,
+//                Tween.EASE_IN_OUT
+//            )
+//            tween.start()
         }
 
         movingStream.onNext(true)
