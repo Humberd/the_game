@@ -5,9 +5,7 @@ import clientjvm.exts.convert
 import clientjvm.exts.emitter
 import clientjvm.exts.to2D
 import clientjvm.global.ClientDataSender
-import godot.GlobalConstants
 import godot.InputEvent
-import godot.InputEventMouseButton
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -39,11 +37,12 @@ class PlayerController : Spatial() {
 
     @RegisterFunction
     override fun _input(event: InputEvent) {
-        if (event is InputEventMouseButton) {
-            if (event.buttonIndex == GlobalConstants.BUTTON_RIGHT) {
-                // fixme: should be event.pressed
-                mousePressed = event.doubleclick
-            }
+        if (mousePressed && event.isActionReleased("move")) {
+            mousePressed = false
+        }
+
+        if (!mousePressed && event.isActionPressed("move")) {
+            mousePressed = true
         }
     }
 
