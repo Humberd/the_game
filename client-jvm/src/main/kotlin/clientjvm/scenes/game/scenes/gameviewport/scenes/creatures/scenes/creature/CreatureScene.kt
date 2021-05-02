@@ -82,11 +82,7 @@ class CreatureScene : Spatial() {
 
             val cylinder = collisionMesh.mesh as CylinderMesh
             val material = cylinder.material as SpatialMaterial
-            if (result != null) {
-                logger.info { (result.collider as RigidBody).__id }
-                logger.info { material.__id }
-            }
-            if (result == null || result.collider.__id != rigidBody.__id) {
+            if (result == null || result.collider !== rigidBody) {
                 material.albedoColor = colliderColorNormal
             } else {
                 material.albedoColor = colliderColorHover
