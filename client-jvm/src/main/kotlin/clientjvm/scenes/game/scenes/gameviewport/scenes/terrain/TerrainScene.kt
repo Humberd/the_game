@@ -136,7 +136,6 @@ class TerrainScene : Spatial() {
 
                     staticBody.addChild(collisionShape)
                 }
-                content.addChild(staticBody)
             }
 
             content.addChild(meshInstance)
