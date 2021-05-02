@@ -48,3 +48,23 @@ value class SID(val value: UInt) {
         fun unique() = SID(++counter)
     }
 }
+
+@JvmInline
+value class Experience(val value: Long) {
+    init {
+        require(value >= 0)
+    }
+
+    fun toLevel() = Level((value / 100f).toInt() + 1)
+    operator fun minus(exp: Experience) = Experience(value - exp.value)
+}
+
+@JvmInline
+value class Level(val value: Int) {
+    init {
+        require(value > 0)
+    }
+
+    fun next() = Level(value + 1)
+    fun expRequired() = Experience((value - 1) * 100L)
+}

@@ -24,6 +24,7 @@ class StateChangeNotifier(
                 name = creature.name.value,
                 baseHealth = creature.stats.healthPool.current,
                 currentHealth = creature.stats.healthCurrent,
+                experience = creature.experience,
                 position = creature.position.convert(),
                 spriteId = creature.spriteId.value,
                 bodyRadius = creature.bodyRadius,

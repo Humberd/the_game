@@ -1,7 +1,7 @@
 package core.maps.entities.creatures
 
-import core.types.Experience
-import core.types.Level
+import pl.humberd.models.Experience
+import pl.humberd.models.Level
 
 enum class StatType {
     DEFENSE {

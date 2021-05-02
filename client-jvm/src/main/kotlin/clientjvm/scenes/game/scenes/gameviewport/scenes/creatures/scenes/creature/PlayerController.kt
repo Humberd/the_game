@@ -1,32 +1,29 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
+import clientjvm.exts.castCameraRays
 import clientjvm.exts.convert
+import clientjvm.exts.emitter
 import clientjvm.exts.to2D
-import clientjvm.exts.unsub
 import clientjvm.global.ClientDataSender
-import godot.*
+import godot.InputEvent
+import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.core.Vector3
 import io.reactivex.rxjava3.subjects.PublishSubject
 import pl.humberd.udp.packets.clientserver.PositionChange
 import java.util.concurrent.TimeUnit
 
 @RegisterClass
 class PlayerController : Spatial() {
-    private lateinit var camera: Camera
-
     private var mousePressed = false
     private val positionChangeStream = PublishSubject.create<Boolean>()
 
-    private val unsub by unsub()
+    private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {
-        camera = getNode("Camera")
-
         positionChangeStream
-            .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
+            .throttleLast(200, TimeUnit.MILLISECONDS)
             .takeUntil(unsub)
             .subscribe { sendPositionChange() }
     }
@@ -40,11 +37,12 @@ class PlayerController : Spatial() {
 
     @RegisterFunction
     override fun _input(event: InputEvent) {
-        if (event is InputEventMouseButton) {
-            if (event.buttonIndex == GlobalConstants.BUTTON_RIGHT) {
-                // fixme: should be event.pressed
-                mousePressed = event.doubleclick
-            }
+        if (mousePressed && event.isActionReleased("move")) {
+            mousePressed = false
+        }
+
+        if (!mousePressed && event.isActionPressed("move")) {
+            mousePressed = true
         }
     }
 
@@ -53,16 +51,10 @@ class PlayerController : Spatial() {
     }
 
     private fun sendPositionChange() {
-        val rayLength = 1000
-        val mousePosition = getViewport()?.getMousePosition()!!
-        val from = camera.projectRayOrigin(mousePosition)
-        val to = from + camera.projectRayNormal(mousePosition) * rayLength
-        val spaceState = getWorld()?.directSpaceState!!
-        val result = spaceState.intersectRay(from, to, collideWithAreas = true, collideWithBodies = false)
+        val result = castCameraRays(collideWithAreas = true, collideWithBodies = false)
 
-        val position = result["position"]
-        if (position is Vector3) {
-            ClientDataSender.send(PositionChange(position.to2D().convert()))
+        if (result != null) {
+            ClientDataSender.send(PositionChange(result.position.to2D().convert()))
         }
     }
 }

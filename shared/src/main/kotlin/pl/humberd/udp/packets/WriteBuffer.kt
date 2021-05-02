@@ -53,4 +53,5 @@ class WriteBuffer(private val buffer: ByteBuffer) {
     fun putSID(v: SID) = putUInt(v.value)
 
     fun putMilliseconds(v: Milliseconds) = putUInt(v.value)
+    fun putExperience(v: Experience) = putLong(v.value)
 }

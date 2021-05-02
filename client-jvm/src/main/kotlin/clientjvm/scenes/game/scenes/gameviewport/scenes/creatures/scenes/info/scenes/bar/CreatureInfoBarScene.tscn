@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/info/scenes/bar/CreatureInfoBarScene.kt" type="Script" id=1]
+
+[node name="CreatureInfoBarScene" type="Control"]
+margin_right = 64.0
+margin_bottom = 8.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Value" type="ColorRect" parent="."]
+anchor_right = 0.75
+anchor_bottom = 1.0
+margin_left = 1.0
+margin_bottom = -1.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}

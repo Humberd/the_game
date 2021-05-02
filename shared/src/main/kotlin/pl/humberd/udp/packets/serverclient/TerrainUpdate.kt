@@ -1,9 +1,11 @@
 package pl.humberd.udp.packets.serverclient
 
+import pl.humberd.misc.HotPacket
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.WriteBuffer
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket.Type.TERRAIN_UPDATE
 
+@HotPacket
 data class TerrainUpdate(
     val windowWidth: UByte,
     val windowHeight: UByte,

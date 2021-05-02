@@ -39,6 +39,21 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/CreatureScene.kt"
 }, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/PlayerController.kt"
+}, {
+"base": "Control",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/info/CreatureInfoScene.kt"
+}, {
+"base": "Control",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_scenes_bar_CreatureInfoBarScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/info/scenes/bar/CreatureInfoBarScene.kt"
+}, {
 "base": "Area",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene",
 "language": "Kotlin",
@@ -61,6 +76,9 @@ _global_script_class_icons={
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_CreaturesScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_body_CreatureBodyScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_scenes_bar_CreatureInfoBarScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_scenes_ground_tile_GroundTileScene": "",
 "clientjvm_scenes_login_LoginScene": ""
@@ -72,11 +90,20 @@ config/name="client-jvm"
 run/main_scene="res://src/main/kotlin/clientjvm/scenes/RootScene.tscn"
 config/icon="res://icon.png"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "ui_design_tool" )
+
 [input]
 
 inventory={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":73,"unicode":0,"echo":false,"script":null)
+ ]
+}
+move={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
 

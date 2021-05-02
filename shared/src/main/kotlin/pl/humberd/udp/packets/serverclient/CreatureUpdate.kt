@@ -2,6 +2,7 @@ package pl.humberd.udp.packets.serverclient
 
 import pl.humberd.models.ApiVector2
 import pl.humberd.models.CID
+import pl.humberd.models.Experience
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.WriteBuffer
 import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket.Type.CREATURE_UPDATE
@@ -11,6 +12,7 @@ data class CreatureUpdate(
     val name: String,
     val baseHealth: Int,
     val currentHealth: Int,
+    val experience: Experience,
     val position: ApiVector2,
     // fixme: spriteId
     val spriteId: UShort,
@@ -23,6 +25,7 @@ data class CreatureUpdate(
         name = buffer.getString(),
         baseHealth = buffer.getInt(),
         currentHealth = buffer.getInt(),
+        experience = buffer.getExperience(),
         position = buffer.getVector2(),
         spriteId = buffer.getUShort(),
         bodyRadius = buffer.getFloat(),
@@ -36,6 +39,7 @@ data class CreatureUpdate(
         buffer.putString(name)
         buffer.putInt(baseHealth)
         buffer.putInt(currentHealth)
+        buffer.putExperience(experience)
         buffer.putVector2(position)
         buffer.putUShort(spriteId)
         buffer.putFloat(bodyRadius)

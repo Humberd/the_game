@@ -1,19 +1,12 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 
-import clientjvm.exts.convert
-import clientjvm.exts.unsub
+import clientjvm.exts.*
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
-import godot.Area
-import godot.ArrayMesh
-import godot.Mesh
-import godot.MeshInstance
+import godot.*
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.core.VariantArray
-import godot.core.Vector2
-import godot.core.Vector3
-import godot.core.variantArrayOf
+import godot.core.*
 import mu.KLogging
 import pl.humberd.udp.packets.serverclient.TerrainUpdate
 import pl.humberd.udp.packets.serverclient.TerrainWallsUpdate
@@ -27,7 +20,7 @@ class TerrainScene : Area() {
 
     private lateinit var tiles: Array<Array<GroundTileScene>>
 
-    private val unsub by unsub()
+    private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {
@@ -71,27 +64,50 @@ class TerrainScene : Area() {
 
     fun drawWalls(packet: TerrainWallsUpdate) {
         logger.info { packet }
-        for (chain in packet.chains) {
-            val variantChain = variantArrayOf(*Array(chain.size) { chain[it].convert() })
 
-            val arr = VariantArray<Any?>()
-            arr.resize(8)
-            arr.pushFront(variantChain)
+        for (chain in listOf(packet.chains.last())) {
+            logger.info { chain.print() }
+            val baseChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D() })
+            val topChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D().also { it.y = 0.5 } })
+            val sidesChain = VariantArray<Vector3>().also {
+                for (i in baseChain.size - 1 downTo 0) {
+                    it.pushBack(baseChain[i])
+                    it.pushBack(topChain[i])
+                }
+            }
+
 
             val arrayMesh = ArrayMesh().also {
                 it.addSurfaceFromArrays(
+                    primitive = Mesh.PrimitiveType.PRIMITIVE_TRIANGLE_FAN.id,
+                    arrays = surfaceArray(ARRAY_VERTEX = topChain)
+                )
+                it.addSurfaceFromArrays(
                     primitive = Mesh.PrimitiveType.PRIMITIVE_LINE_STRIP.id,
-                    arrays = arr
+                    arrays = surfaceArray(ARRAY_VERTEX = topChain)
+                )
+                it.addSurfaceFromArrays(
+                    primitive = Mesh.PrimitiveType.PRIMITIVE_TRIANGLE_STRIP.id,
+                    arrays = surfaceArray(ARRAY_VERTEX = sidesChain)
+                )
+                it.addSurfaceFromArrays(
+                    primitive = Mesh.PrimitiveType.PRIMITIVE_LINE_STRIP.id,
+                    arrays = surfaceArray(ARRAY_VERTEX = sidesChain)
                 )
             }
 
             val meshInstance = MeshInstance().also {
                 it.mesh = arrayMesh
                 it.name = "__wall"
-                it.rotationDegrees = Vector3(90, 0, 0)
-                it.translation = Vector3(0, 0.5, 0)
+                it.setSurfaceMaterial(1, SpatialMaterial().also {
+                    it.albedoColor = Color.black
+                })
+                it.setSurfaceMaterial(3, SpatialMaterial().also {
+                    it.albedoColor = Color.black
+                })
             }
             addChild(meshInstance)
+            meshInstance.createDebugTangents()
         }
     }
 

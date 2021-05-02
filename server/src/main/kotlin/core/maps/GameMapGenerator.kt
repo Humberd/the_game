@@ -7,6 +7,7 @@ import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.monster.MonsterSeed
 import core.types.*
+import pl.humberd.models.Experience
 
 private const val GRAVEL_SPRITE: UShort = 16u
 private const val GRASS_SPRITE: UShort = 17u
@@ -33,7 +34,7 @@ object GameMapGenerator {
             Monster(
                 creatureSeed = CreatureSeed(
                     name = CreatureName("Ghost"),
-                    experience = Experience(1000L),
+                    experience = Experience(1074L),
                     spriteId = SpriteId(6u),
                     position = WorldPosition(6f, 2f),
                     tilesViewRadius = TileRadius(3),
