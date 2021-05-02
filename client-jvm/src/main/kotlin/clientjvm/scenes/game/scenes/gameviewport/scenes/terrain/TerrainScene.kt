@@ -3,6 +3,7 @@ package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 import clientjvm.addons.godotnavigationlite.DetourNavigationMesh
 import clientjvm.exts.*
 import clientjvm.global.ClientDataReceiver
+import clientjvm.global.CrossScenesManager
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
 import godot.*
 import godot.annotation.RegisterClass
@@ -53,6 +54,10 @@ class TerrainScene : Spatial() {
         ClientDataReceiver.watchFor<TerrainWallsUpdate>()
             .takeUntil(unsub)
             .subscribe { drawWalls(it) }
+
+        CrossScenesManager.positionChangeRequest
+            .takeUntil(unsub)
+            .subscribe { findPaths(it) }
     }
 
     fun drawTerrain(packet: TerrainUpdate) {
@@ -148,4 +153,10 @@ class TerrainScene : Spatial() {
         unsub.onNext(true)
     }
 
+    private fun findPaths(promise: Promise<Pair<Vector3, Vector3>, Array<Vector3>>) {
+        val (start, end) = promise.data
+        promise.resolve(arrayOf(end))
+        // fixme: https://github.com/utopia-rise/godot-kotlin-jvm/pull/219
+//        val response = detourNavigationMesh.findPath(start, end)
+    }
 }
