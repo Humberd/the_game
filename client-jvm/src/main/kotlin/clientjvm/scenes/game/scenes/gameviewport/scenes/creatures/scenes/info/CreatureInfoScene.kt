@@ -7,15 +7,19 @@ import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Color
 import godot.getNode
+import mu.KLogging
 import pl.humberd.udp.packets.serverclient.CreatureUpdate
 
 @RegisterClass
 class CreatureInfoScene : Control() {
+    companion object : KLogging()
+
     private lateinit var healthBar: CreatureInfoBarScene
     private lateinit var manaBar: CreatureInfoBarScene
     private lateinit var expBar: CreatureInfoBarScene
     private lateinit var levelLabel: Label
     private lateinit var nameLabel: Label
+
 
     @RegisterFunction
     override fun _ready() {
@@ -35,7 +39,15 @@ class CreatureInfoScene : Control() {
     fun update(packet: CreatureUpdate) {
         healthBar.width = packet.currentHealth / packet.baseHealth.toFloat()
         manaBar.width = 0f
-        expBar.width = 0f
+
+        val totalExpToCurrentLevel = packet.experience.toLevel().expRequired()
+        val totalExpToNextLevel = packet.experience.toLevel().next().expRequired()
+        val expFromCurrentToNextLevel = totalExpToNextLevel - totalExpToCurrentLevel
+        val currentExp = packet.experience
+        val expGainedForThisLevel = currentExp - totalExpToCurrentLevel
+
+        expBar.width = expGainedForThisLevel.value / expFromCurrentToNextLevel.value.toFloat()
+        levelLabel.text = packet.experience.toLevel().value.toString()
         nameLabel.text = packet.name
     }
 }

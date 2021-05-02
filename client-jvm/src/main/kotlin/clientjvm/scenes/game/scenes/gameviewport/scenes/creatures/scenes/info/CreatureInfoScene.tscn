@@ -55,9 +55,12 @@ margin_left = -5.0
 margin_top = -11.5
 margin_right = 5.0
 margin_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 4
 custom_fonts/font = SubResource( 2 )
 text = "5"
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }

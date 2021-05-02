@@ -48,6 +48,7 @@ class ReadBuffer(private val buffer: ByteBuffer) {
     fun getSID() = SID(getUInt())
 
     fun getMilliseconds() = Milliseconds(getUInt())
+    fun getExperience() = Experience(getLong())
 }
 
 

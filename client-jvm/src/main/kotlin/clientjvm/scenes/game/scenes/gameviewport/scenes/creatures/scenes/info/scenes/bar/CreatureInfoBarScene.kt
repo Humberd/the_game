@@ -17,7 +17,7 @@ class CreatureInfoBarScene : Control() {
 
     var width = 0f
         set(value) {
-            require(value >= 0 && value <= 1)
+            require(value >= 0 && value <= 1) { value }
 
             valueBar.setAnchor(GlobalConstants.MARGIN_RIGHT, value.toDouble(), true)
 

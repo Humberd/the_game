@@ -41,19 +41,6 @@ inline class WorldRadius(val value: Int) {
     }
 }
 inline class ResourceId(val value: UShort)
-inline class Experience(val value: Long) {
-    init {
-        require(value > 0)
-    }
-    fun toLevel(): Level {
-        return Level((value / 100f).toInt() + 1  )
-    }
-}
-inline class Level(val value: Int) {
-    init {
-        require(value > 0)
-    }
-}
 
 typealias WorldPosition = Vector2
 

@@ -1,7 +1,7 @@
 package core.maps.entities.creatures
 
 import core.maps.entities.items.ModificationItem
-import core.types.Experience
+import pl.humberd.models.Experience
 
 abstract class StatValue<T : Number>(
     protected val statType: StatType,
