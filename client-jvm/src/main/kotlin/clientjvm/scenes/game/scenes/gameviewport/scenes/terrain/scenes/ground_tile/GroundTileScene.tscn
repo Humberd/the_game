@@ -10,6 +10,7 @@ centered = false
 offset = Vector2( 0, -64 )
 pixel_size = 0.0157
 axis = 1
+transparent = false
 double_sided = false
 texture = ExtResource( 1 )
 region_enabled = true

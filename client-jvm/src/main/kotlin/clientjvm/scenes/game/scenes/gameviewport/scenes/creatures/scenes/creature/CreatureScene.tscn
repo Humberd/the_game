@@ -59,6 +59,7 @@ __meta__ = {
 }
 
 [node name="Collider" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0 )
 mode = 1
 
 [node name="CollisionMesh" type="MeshInstance" parent="Collider"]
