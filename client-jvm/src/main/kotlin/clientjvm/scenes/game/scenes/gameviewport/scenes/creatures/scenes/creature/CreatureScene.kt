@@ -8,6 +8,7 @@ import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.Cr
 import godot.*
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
+import godot.core.Color
 import godot.core.NodePath
 import godot.core.Vector3
 import io.reactivex.rxjava3.core.Observable
@@ -34,8 +35,12 @@ class CreatureScene : Spatial() {
 
     private lateinit var body: CreatureBodyScene
     private lateinit var infoScene: CreatureInfoScene
+    private lateinit var rigidBody: RigidBody
     private lateinit var collisionMesh: MeshInstance
     private lateinit var collisionShape: CollisionShape
+
+    private val colliderColorHover = Color.html("b2cbe4de")
+    private val colliderColorNormal = Color.html("33cbe4de")
 
     private val movingStream by emitter()
     private val unsub by emitter()
@@ -45,6 +50,7 @@ class CreatureScene : Spatial() {
     override fun _ready() {
         body = getNode("Creature Body")
         infoScene = getNode("Viewport/CreatureInfoScene")
+        rigidBody = getNode("Collider")
         collisionMesh = getNode("Collider/CollisionMesh")
         collisionShape = getNode("Collider/CollisionShape")
 
@@ -72,19 +78,20 @@ class CreatureScene : Spatial() {
     @RegisterFunction
     override fun _input(event: InputEvent) {
         if (event is InputEventMouseMotion) {
-//            logger.info { event }
-            val rayLength = 1000
-            val mousePosition = getViewport()?.getMousePosition()!!
-            val from = currentCamera.projectRayOrigin(mousePosition)
-            val to = from + currentCamera.projectRayNormal(mousePosition) * rayLength
-            val spaceState = getWorld()?.directSpaceState!!
-            val result = spaceState.intersectRay(from, to, collideWithAreas = false, collideWithBodies = true)
+            val result = castCameraRays(collideWithAreas = false, collideWithBodies = true)
 
-            logger.info { result.keys().print() }
-//            val position = result["position"]
-//            if (position is Vector3) {
-//                logger.info { "there is a position" }
-//            }
+            val cylinder = collisionMesh.mesh as CylinderMesh
+            val material = cylinder.material as SpatialMaterial
+            if (result != null) {
+                logger.info { (result.collider as RigidBody).__id }
+                logger.info { material.__id }
+            }
+            if (result == null || result.collider.__id != rigidBody.__id) {
+                material.albedoColor = colliderColorNormal
+            } else {
+                material.albedoColor = colliderColorHover
+
+            }
         }
     }
 

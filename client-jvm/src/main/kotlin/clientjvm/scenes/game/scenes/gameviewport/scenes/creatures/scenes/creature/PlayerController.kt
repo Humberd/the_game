@@ -1,7 +1,7 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
+import clientjvm.exts.castCameraRays
 import clientjvm.exts.convert
-import clientjvm.exts.currentCamera
 import clientjvm.exts.emitter
 import clientjvm.exts.to2D
 import clientjvm.global.ClientDataSender
@@ -11,7 +11,6 @@ import godot.InputEventMouseButton
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.core.Vector3
 import io.reactivex.rxjava3.subjects.PublishSubject
 import pl.humberd.udp.packets.clientserver.PositionChange
 import java.util.concurrent.TimeUnit
@@ -26,7 +25,7 @@ class PlayerController : Spatial() {
     @RegisterFunction
     override fun _ready() {
         positionChangeStream
-            .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
+            .throttleLast(200, TimeUnit.MILLISECONDS)
             .takeUntil(unsub)
             .subscribe { sendPositionChange() }
     }
@@ -53,16 +52,10 @@ class PlayerController : Spatial() {
     }
 
     private fun sendPositionChange() {
-        val rayLength = 1000
-        val mousePosition = getViewport()?.getMousePosition()!!
-        val from = currentCamera.projectRayOrigin(mousePosition)
-        val to = from + currentCamera.projectRayNormal(mousePosition) * rayLength
-        val spaceState = getWorld()?.directSpaceState!!
-        val result = spaceState.intersectRay(from, to, collideWithAreas = true, collideWithBodies = false)
+        val result = castCameraRays(collideWithAreas = true, collideWithBodies = false)
 
-        val position = result["position"]
-        if (position is Vector3) {
-            ClientDataSender.send(PositionChange(position.to2D().convert()))
+        if (result != null) {
+            ClientDataSender.send(PositionChange(result.position.to2D().convert()))
         }
     }
 }

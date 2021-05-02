@@ -7,6 +7,7 @@ import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_ti
 import godot.Area
 import godot.ArrayMesh
 import godot.Mesh
+import godot.Mesh.Companion.PRIMITIVE_LINE_STRIP
 import godot.MeshInstance
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
@@ -84,6 +85,7 @@ class TerrainScene : Area() {
                     arrays = arr
                 )
             }
+            PRIMITIVE_LINE_STRIP
 
             val meshInstance = MeshInstance().also {
                 it.mesh = arrayMesh

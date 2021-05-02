@@ -1,5 +1,6 @@
 package clientjvm.exts
 
+import godot.core.Dictionary
 import godot.core.VariantArray
 
 fun <T> VariantArray<T>.print(): String {
@@ -14,4 +15,18 @@ fun <T> VariantArray<T>.print(): String {
         b.append(", ")
         i++
     }
+}
+
+fun <T, K> Dictionary<T, K>.print(): String {
+    if (size == 0) {
+        return "{}"
+    }
+    val b = StringBuilder()
+    b.append("\n{\n")
+    for (entry in entries) {
+        b.append("\t${entry.key}: ${entry.value},\n")
+    }
+    b.append("}")
+
+    return b.toString();
 }
