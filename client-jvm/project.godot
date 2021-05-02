@@ -90,6 +90,10 @@ config/name="client-jvm"
 run/main_scene="res://src/main/kotlin/clientjvm/scenes/RootScene.tscn"
 config/icon="res://icon.png"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "ui_design_tool" )
+
 [input]
 
 inventory={
