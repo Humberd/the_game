@@ -1,5 +1,6 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 
+import clientjvm.addons.godotnavigationlite.DetourNavigationMesh
 import clientjvm.exts.*
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
@@ -12,31 +13,35 @@ import pl.humberd.udp.packets.serverclient.TerrainUpdate
 import pl.humberd.udp.packets.serverclient.TerrainWallsUpdate
 
 @RegisterClass
-class TerrainScene : Area() {
+class TerrainScene : Spatial() {
     companion object : KLogging() {
         private const val GRID_SIZE = 20
     }
 
-    private lateinit var collider: CollisionShape
+    private lateinit var detourNavigationMesh: DetourNavigationMesh
+    private lateinit var content: Spatial
     private lateinit var tiles: Array<Array<GroundTileScene>>
 
     private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {
-        collider = getNode("Collider")
-        collider.also {
+        detourNavigationMesh = DetourNavigationMesh(getNode("Navigation/DetourNavigationMesh"))
+        content = getNode("Navigation/Content")
+
+        getNode<CollisionShape>("Navigation/Content/Platform/Collider").also {
             val boxShape = it.shape as BoxShape
             val offset = GRID_SIZE / 2
             boxShape.extents = Vector3(offset, 0.001, offset)
             it.translation = Vector3(offset, 0, offset)
+            detourNavigationMesh.bakeNavmesh()
         }
 
         tiles = Array(GRID_SIZE) { x ->
             Array(GRID_SIZE) { y ->
                 (GroundTileScene.packedScene.instance() as GroundTileScene).also {
                     it.load(Vector2(x, y))
-                    addChild(it)
+                    content.addChild(it)
                 }
             }
         }
@@ -118,7 +123,7 @@ class TerrainScene : Area() {
                     it.albedoColor = Color.black
                 })
             }
-            addChild(meshInstance)
+            content.addChild(meshInstance)
             meshInstance.createDebugTangents()
         }
     }
