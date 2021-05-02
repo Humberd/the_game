@@ -20,9 +20,9 @@ object ClientDataReceiver {
 
     inline fun <reified T : ServerClientUdpPacket> watchFor(): Observable<T> {
         return _dataStream()
-            .observeOn(GodotWorker)
             .filter { it.packet is T }
             .map { it.packet as T }
+            .observeOn(GodotWorker)
     }
 
     fun _dataStream() = receiveQueue.data

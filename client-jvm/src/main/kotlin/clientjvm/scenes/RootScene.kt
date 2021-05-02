@@ -40,7 +40,6 @@ class RootScene : Spatial() {
         while (!GodotWorker.queue.isEmpty()) {
             GodotWorker.queue.remove().run()
         }
-
     }
 }
 

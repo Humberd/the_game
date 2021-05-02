@@ -2,7 +2,14 @@
 <project version="4">
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
+      <name>ch.qos</name>
       <name>java.awt</name>
+      <name>javax</name>
+      <name>javax.swing</name>
+      <name>jdk</name>
+      <name>org.graalvm</name>
+      <name>org.w3c</name>
+      <name>sun</name>
     </excluded-names>
   </component>
 </project>
