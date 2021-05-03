@@ -37,15 +37,33 @@ fun main() {
     val navMesh = NavMesh(meshData, 6, 0)
     val query = NavMeshQuery(navMesh)
 
-    val startPos = floatArrayOf(15.407542f, 0.16500568f, -13.461771f)
-    val endPos = floatArrayOf(4.7850227f, 0.16500473f, -5.119936f)
+    val startPos = floatArrayOf(15.407542f, 0.16500568f, 13.461771f)
+    val endPos = floatArrayOf(4.7850227f, 0.16500473f, 5.119936f)
 
     val finder = Finder(query, navMesh)
+
     val result = finder.findPos(startPos, endPos)
     val joinToString = result.map { Arrays.toString(it) }.joinToString(",\n")
     println("spos = " + Arrays.toString(startPos))
     println("epos = " + Arrays.toString(endPos))
     println(joinToString)
+
+//    val count = 2
+//    val arr = ArrayList<Long>(count)
+//    (0 until count).forEach {
+//        val measureTimeMillis = measureNanoTime {
+//            val result = finder.findPos(startPos, endPos)
+//            val joinToString = result.map { Arrays.toString(it) }.joinToString(",\n")
+//            println("spos = " + Arrays.toString(startPos))
+//            println("epos = " + Arrays.toString(endPos))
+//            println(joinToString)
+//        }
+//        arr.add(measureTimeMillis)
+//    }
+//
+//    println(arr.joinToString("\n"))
+//    println("average: ${arr.sum() / arr.size}")
+
 
 //    result.stream().map(vec -> Arrays.toString(vec)).collect(Collectors.joining(",\n"))
 
