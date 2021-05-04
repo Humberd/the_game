@@ -1,9 +1,8 @@
 package main
 
-import ConvexHull
 import Finder
-import HullPoint
 import SampleAreaModifications
+import com.badlogic.gdx.math.ConvexHull
 import io.map.ObjImporter
 import org.recast4j.detour.*
 import org.recast4j.detour.io.MeshSetWriter
@@ -37,11 +36,12 @@ private const val m_detailSampleMaxError = 1.0f
 fun main() {
     val objData = ObjImporter.load(ObjImporter::class.java.getResourceAsStream("/assets/blender/example-plane.obj")!!)
 
-    val planeVertices = objData.plane.map { HullPoint(it.x.toDouble(), it.z.toDouble()) }
-    ConvexHull.makeHull(planeVertices).also { println(it) }
 
-    objData.obstacles.forEach {
-        ConvexHull.makeHull(it.map { HullPoint(it.x.toDouble(), it.z.toDouble()) }).also { println(it) }
+    (objData.obstacles + listOf(objData.plane)).forEach {
+        val verts = it.map { listOf(it.x, it.z) }.flatMap { it }.toTypedArray()
+
+        val result = ConvexHull().computePolygon(verts.toFloatArray(), false)
+        println(Arrays.toString(result.items))
     }
 
 
@@ -120,24 +120,24 @@ fun buildNavMesh(provider: InputGeomProvider): MeshData {
         params.ch = m_cellHeight
         params.buildBvTree = true
 
-        params.offMeshConVerts = FloatArray(6)
-        params.offMeshConVerts[0] = 0.1f
-        params.offMeshConVerts[1] = 0.2f
-        params.offMeshConVerts[2] = 0.3f
-        params.offMeshConVerts[3] = 0.4f
-        params.offMeshConVerts[4] = 0.5f
-        params.offMeshConVerts[5] = 0.6f
-        params.offMeshConRad = FloatArray(1)
-        params.offMeshConRad[0] = 0.1f
-        params.offMeshConDir = IntArray(1)
-        params.offMeshConDir[0] = 1
-        params.offMeshConAreas = IntArray(1)
-        params.offMeshConAreas[0] = 2
-        params.offMeshConFlags = IntArray(1)
-        params.offMeshConFlags[0] = 12
-        params.offMeshConUserID = IntArray(1)
-        params.offMeshConUserID[0] = 0x4567
-        params.offMeshConCount = 1
+//        params.offMeshConVerts = FloatArray(6)
+//        params.offMeshConVerts[0] = 0.1f
+//        params.offMeshConVerts[1] = 0.2f
+//        params.offMeshConVerts[2] = 0.3f
+//        params.offMeshConVerts[3] = 0.4f
+//        params.offMeshConVerts[4] = 0.5f
+//        params.offMeshConVerts[5] = 0.6f
+//        params.offMeshConRad = FloatArray(1)
+//        params.offMeshConRad[0] = 0.1f
+//        params.offMeshConDir = IntArray(1)
+//        params.offMeshConDir[0] = 1
+//        params.offMeshConAreas = IntArray(1)
+//        params.offMeshConAreas[0] = 2
+//        params.offMeshConFlags = IntArray(1)
+//        params.offMeshConFlags[0] = 12
+//        params.offMeshConUserID = IntArray(1)
+//        params.offMeshConUserID[0] = 0x4567
+//        params.offMeshConCount = 1
     }
 
     return NavMeshBuilder.createNavMeshData(params)
