@@ -1,14 +1,17 @@
 package main
 
+import ConvexHull
 import Finder
-import ObjImporter
+import HullPoint
 import SampleAreaModifications
+import io.map.ObjImporter
 import org.recast4j.detour.*
 import org.recast4j.detour.io.MeshSetWriter
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
 import org.recast4j.recast.RecastConfig
 import org.recast4j.recast.RecastConstants
+import org.recast4j.recast.geom.InputGeomProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.ByteOrder
@@ -32,7 +35,17 @@ private const val m_detailSampleMaxError = 1.0f
 
 
 fun main() {
-    val meshData = buildNavMesh()
+    val objData = ObjImporter.load(ObjImporter::class.java.getResourceAsStream("/assets/blender/example-plane.obj")!!)
+
+    val planeVertices = objData.plane.map { HullPoint(it.x.toDouble(), it.z.toDouble()) }
+    ConvexHull.makeHull(planeVertices).also { println(it) }
+
+    objData.obstacles.forEach {
+        ConvexHull.makeHull(it.map { HullPoint(it.x.toDouble(), it.z.toDouble()) }).also { println(it) }
+    }
+
+
+    val meshData = buildNavMesh(objData.provider)
 
     val navMesh = NavMesh(meshData, 6, 0)
     val query = NavMeshQuery(navMesh)
@@ -78,8 +91,8 @@ fun writeToFile(navMesh: NavMesh) {
     file.writeBytes(os.toByteArray())
 }
 
-fun buildNavMesh(): MeshData {
-    val rcResult = build()
+fun buildNavMesh(provider: InputGeomProvider): MeshData {
+    val rcResult = build(provider)
     val m_pmesh = rcResult.mesh
     for (i in 0 until m_pmesh.npolys) {
         m_pmesh.flags[i] = 1
@@ -130,14 +143,12 @@ fun buildNavMesh(): MeshData {
     return NavMeshBuilder.createNavMeshData(params)
 }
 
-fun build(): RecastBuilder.RecastBuilderResult {
-    val geometryProvider =
-        ObjImporter().load(ObjImporter::class.java.getResourceAsStream("assets/blender/example-plane.obj"))
+fun build(provider: InputGeomProvider): RecastBuilder.RecastBuilderResult {
     val cfg = RecastConfig(
         m_partitionType, m_cellSize, m_cellHeight, m_agentHeight, m_agentRadius,
         m_agentMaxClimb, m_agentMaxSlope, m_regionMinSize, m_regionMergeSize, m_edgeMaxLen, m_edgeMaxError,
         m_vertsPerPoly, m_detailSampleDist, m_detailSampleMaxError, SampleAreaModifications.SAMPLE_AREAMOD_GROUND
     )
-    val builderConfig = RecastBuilderConfig(cfg, geometryProvider.meshBoundsMin, geometryProvider.meshBoundsMax)
-    return RecastBuilder().build(geometryProvider, builderConfig)
+    val builderConfig = RecastBuilderConfig(cfg, provider.meshBoundsMin, provider.meshBoundsMax)
+    return RecastBuilder().build(provider, builderConfig)
 }
