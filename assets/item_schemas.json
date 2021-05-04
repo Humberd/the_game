@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Rotter Helmet",
+    "description": "The basic thing a young warrior needs",
+    "resourceId": 15,
+    "equippable": [
+      "HEAD"
+    ],
+    "stackable": false
+  },
+  {
+    "id": 2,
+    "name": "Health Modifier",
+    "description": "Modifies Health",
+    "resourceId": 9,
+    "equippable": [],
+    "stackable": false
+  },
+  {
+    "id": 3,
+    "name": "Gold Bar",
+    "description": "A currency one can buy stuff",
+    "resourceId": 3,
+    "equippable": [],
+    "stackable": true
+  },
+  {
+    "id": 4,
+    "name": "Naive Sword",
+    "description": "Might not be sharp, but does it's job",
+    "resourceId": 1,
+    "equippable": [
+      "LEFT_HAND",
+      "RIGHT_HAND"
+    ],
+    "stackable": false
+  },
+  {
+    "id": 5,
+    "name": "Attack Modifier",
+    "description": "Modifies Attack",
+    "resourceId": 10,
+    "equippable": [],
+    "stackable": false
+  }
+]

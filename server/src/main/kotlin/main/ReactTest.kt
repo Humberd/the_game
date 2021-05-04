@@ -131,7 +131,8 @@ fun buildNavMesh(): MeshData {
 }
 
 fun build(): RecastBuilder.RecastBuilderResult {
-    val geometryProvider = ObjImporter().load(ObjImporter::class.java.getResourceAsStream("example-plane.obj"))
+    val geometryProvider =
+        ObjImporter().load(ObjImporter::class.java.getResourceAsStream("assets/blender/example-plane.obj"))
     val cfg = RecastConfig(
         m_partitionType, m_cellSize, m_cellHeight, m_agentHeight, m_agentRadius,
         m_agentMaxClimb, m_agentMaxSlope, m_regionMinSize, m_regionMergeSize, m_edgeMaxLen, m_edgeMaxError,
