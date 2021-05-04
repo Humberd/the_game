@@ -48,11 +48,9 @@ public class Finder {
                 if (!steerTarget.isPresent()) {
                     break;
                 }
-                boolean endOfPath = (steerTarget.get().steerPosFlag & NavMeshQuery.DT_STRAIGHTPATH_END) != 0
-                        ? true
-                        : false;
+                boolean endOfPath = (steerTarget.get().steerPosFlag & NavMeshQuery.DT_STRAIGHTPATH_END) != 0;
                 boolean offMeshConnection = (steerTarget.get().steerPosFlag
-                        & NavMeshQuery.DT_STRAIGHTPATH_OFFMESH_CONNECTION) != 0 ? true : false;
+                        & NavMeshQuery.DT_STRAIGHTPATH_OFFMESH_CONNECTION) != 0;
 
                 // Find movement delta.
                 float[] delta = vSub(steerTarget.get().steerPos, iterPos);
