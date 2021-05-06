@@ -1,7 +1,10 @@
 package main
 
 import de.lighti.clipper.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
+@OptIn(ExperimentalTime::class)
 fun main() {
     val gridCell = Path().also {
         it.addAll(
@@ -29,6 +32,11 @@ fun main() {
     val clp = DefaultClipper(Clipper.STRICTLY_SIMPLE)
     clp.addPath(gridCell, Clipper.PolyType.CLIP, true)
     clp.addPath(obstacle, Clipper.PolyType.SUBJECT, true)
-    clp.execute(Clipper.ClipType.INTERSECTION, solution)
+
+    val mark = TimeSource.Monotonic.markNow();
+    repeat(100) {
+        clp.execute(Clipper.ClipType.INTERSECTION, solution)
+        println(mark.elapsedNow())
+    }
     println(solution)
 }
