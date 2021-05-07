@@ -24,6 +24,7 @@ class GamesManager(
         GameMapGenerator.generateMap1(20, 20, notifier).also { map ->
             maps[map.id] = map
         }
+        GameMapGenerator.generateObjMap()
     }
 
     fun addPlayer(creatureSeed: CreatureSeed, playerSeed: PlayerSeed) {
