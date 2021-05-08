@@ -3,7 +3,6 @@ package core.maps.entities
 import Finder
 import SampleAreaModifications
 import com.badlogic.gdx.math.Vector2
-import io.map.PolygonUtils
 import org.recast4j.detour.*
 import org.recast4j.recast.RecastBuilder
 import org.recast4j.recast.RecastBuilderConfig
@@ -35,12 +34,12 @@ class GameMapNavigation(private val gameMap: GameMap) {
         query = NavMeshQuery(navMesh)
     }
 
-    fun findPath(start: Vector2, end: Vector2): List<Array<Vector2>> {
+    fun findPath(start: Vector2, end: Vector2): List<Vector2> {
         val finder = Finder(query, navMesh)
         val result: List<FloatArray> =
             finder.findPos(floatArrayOf(start.x, 0.16f, start.y), floatArrayOf(end.x, 0.16f, end.y))
 
-        return result.map { PolygonUtils.convertFloatArrayToVectorArray(it) }
+        return result.map { Vector2(it[0], it[2]) }
     }
 
     private fun buildNavMesh(provider: InputGeomProvider): MeshData {

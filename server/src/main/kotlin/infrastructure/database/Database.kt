@@ -28,7 +28,7 @@ class Database {
                  spriteId = SpriteId(5u),
                  position = WorldPosition(5f, 4.5f),
                  tilesViewRadius = TileRadius(2),
-                 bodyRadius = 0.75f
+                 bodyRadius = 0.5f
              )
          )
     }
