@@ -2,7 +2,6 @@ package core
 
 import com.badlogic.gdx.physics.box2d.ChainShape
 import com.badlogic.gdx.physics.box2d.Shape
-import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.player.Player
@@ -87,7 +86,9 @@ class StateChangeNotifier(
                     }
                     it[0][0].gridPosition.y.value.toShort()
                 },
-                spriteIds = tiles.flatten().map { it.spriteId.value }.toTypedArray()
+                spriteIds = tiles.flatten().map { it.spriteId.value }.toTypedArray(),
+                obstacles = tiles.flatten()
+                    .map { it.obstacles.map { it.map { it.convert() }.toTypedArray() }.toTypedArray() }.toTypedArray()
             )
         )
     }
@@ -194,21 +195,6 @@ class StateChangeNotifier(
         queue.put(
             pid,
             PingResponse()
-        )
-    }
-
-    fun notifyWallsUpdate(pid: PID, gameMap: GameMap) {
-        val chains = gameMap.walls.map { wall ->
-            if (wall.fixtureList.size > 1) {
-                throw Error("More than 1 fixture not supported for a wall")
-            }
-            return@map getVerticesForShape(wall.fixtureList[0].shape)
-        }
-        queue.put(
-            pid,
-            TerrainWallsUpdate(
-                chains = chains.toTypedArray()
-            )
         )
     }
 

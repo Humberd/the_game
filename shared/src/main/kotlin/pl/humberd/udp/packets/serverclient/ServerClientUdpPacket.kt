@@ -22,8 +22,7 @@ sealed class ServerClientUdpPacket(type: Type) : UdpPacket<Type>(type) {
         EQUIPMENT_UPDATE(0x2A, { EquipmentUpdate(it) }),
         CREATURE_STATS_UPDATE(0x2B, { CreatureStatsUpdate(it) }),
         BACKPACK_UPDATE(0x2C, { BackpackUpdate(it) }),
-        PING_RESPONSE(0x2D, { PingResponse(it) }),
-        TERRAIN_WALLS_UPDATE(0x2E, { TerrainWallsUpdate(it) });
+        PING_RESPONSE(0x2D, { PingResponse(it) });
 
         companion object {
             private val map = HashMap<Int, Type>()

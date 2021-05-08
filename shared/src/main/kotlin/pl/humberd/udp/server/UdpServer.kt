@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class UdpServer(name: String) : Thread(name) {
     private val running = AtomicBoolean(false)
-    private val buffer = ByteBuffer.allocate(256)
+    private val buffer = ByteBuffer.allocate(2048)
 
     protected val logger = KotlinLogging.logger {}
 
