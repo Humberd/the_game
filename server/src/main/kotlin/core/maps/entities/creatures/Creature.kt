@@ -85,10 +85,8 @@ abstract class Creature(
             physics.body.setTransform(nextCheckpoint, 0f)
         } else {
             physics.body.setTransform(nextPosition, 0f)
-
         }
 
-        logger.info { "Moving from ${position} to ${nextPosition}" }
 
 
         // update tiles in grid

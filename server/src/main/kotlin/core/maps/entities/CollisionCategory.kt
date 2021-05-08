@@ -4,13 +4,13 @@ import kotlin.experimental.or
 
 enum class CollisionCategory(val value: Short) {
     PLAYER(0x0001) {
-        override fun collidesWith() = TERRAIN.value
+        override fun collidesWith() = 0.toShort()
     },
     MONSTER(0x0002) {
         override fun collidesWith() = TERRAIN.value
     },
     TERRAIN(0x0004) {
-        override fun collidesWith() = MONSTER or PLAYER
+        override fun collidesWith() = MONSTER.value
     };
 
     abstract fun collidesWith(): Short

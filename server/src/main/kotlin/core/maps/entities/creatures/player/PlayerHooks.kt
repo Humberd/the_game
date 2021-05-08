@@ -67,8 +67,8 @@ class PlayerHooks(
     }
 
     override fun onCollideWith(wall: Obstacle) {
-        logger.debug { "Colliding with Obstacle" }
-        player.movement.stopMoving()
+//        logger.debug { "Colliding with Obstacle" }
+//        player.movement.stopMoving()
     }
 
     override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {

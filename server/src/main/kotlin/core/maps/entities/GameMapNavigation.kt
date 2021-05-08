@@ -11,7 +11,7 @@ import org.recast4j.recast.RecastConstants
 import org.recast4j.recast.geom.InputGeomProvider
 
 private val m_partitionType = RecastConstants.PartitionType.WATERSHED
-private const val m_cellSize = 0.3f
+private const val m_cellSize = 0.1f
 private const val m_cellHeight = 0.2f
 private const val m_agentHeight = 2.0f
 private const val m_agentRadius = 0.5f
