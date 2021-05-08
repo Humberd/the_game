@@ -30,8 +30,8 @@ class GameMap(
         physics.setContactListener(GameMapContactListener())
         grid.forEach { it.forEach { it.onInit(physics) } }
         initMapBounds()
-        GameMapDebugRenderer(this)
         navigation.onInit(navigationProvider)
+        GameMapDebugRenderer(this)
     }
 
     private fun initMapBounds() {
