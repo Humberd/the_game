@@ -15,15 +15,6 @@ class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
         val NAVMESH_POINT = Color.valueOf("#5EA7F7")
     }
 
-    init {
-        for (i in 0 until navMesh.maxTiles) {
-            val tile = navMesh.getTile(i)
-            if (tile != null && tile.data != null) {
-                drawTile(tile)
-            }
-        }
-    }
-
     override fun render(world: World?, projMatrix: Matrix4?) {
         super.render(world, projMatrix)
 
