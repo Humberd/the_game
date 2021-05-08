@@ -1,8 +1,8 @@
 package core.maps.entities
 
+import box2d.Box2DDebugRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import org.recast4j.detour.MeshTile
 import org.recast4j.detour.NavMesh
