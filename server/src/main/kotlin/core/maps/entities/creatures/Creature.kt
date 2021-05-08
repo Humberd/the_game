@@ -3,7 +3,6 @@ package core.maps.entities.creatures
 import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
-import core.maps.entities.GameMapObject
 import core.types.CreatureName
 import core.types.SpriteId
 import core.types.TileRadius
@@ -123,18 +122,6 @@ abstract class Creature(
         cache.creaturesThatSeeMe.forEach {
             it.hooks.onOtherCreaturePositionChange(this)
         }
-    }
-
-    fun getVisibleItems(): List<GameMapObject> {
-        val buffer = arrayListOf<GameMapObject>()
-
-        lastUpdate.tileSlice.forEach {
-            it.forEach {
-                it.items.writeTo(buffer)
-            }
-        }
-
-        return buffer
     }
 
     fun getGreedyVisibleCreatures(): List<Creature> {

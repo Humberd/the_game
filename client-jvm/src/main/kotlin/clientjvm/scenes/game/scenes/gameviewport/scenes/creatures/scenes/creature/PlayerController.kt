@@ -5,16 +5,21 @@ import clientjvm.exts.convert
 import clientjvm.exts.emitter
 import clientjvm.exts.to2D
 import clientjvm.global.ClientDataSender
+import clientjvm.global.CollisionLayer
+import clientjvm.global.GodotWorker
 import godot.InputEvent
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import io.reactivex.rxjava3.subjects.PublishSubject
+import mu.KLogging
 import pl.humberd.udp.packets.clientserver.PositionChange
 import java.util.concurrent.TimeUnit
 
 @RegisterClass
 class PlayerController : Spatial() {
+    companion object : KLogging()
+
     private var mousePressed = false
     private val positionChangeStream = PublishSubject.create<Boolean>()
 
@@ -24,8 +29,11 @@ class PlayerController : Spatial() {
     override fun _ready() {
         positionChangeStream
             .throttleLast(200, TimeUnit.MILLISECONDS)
+            .observeOn(GodotWorker)
             .takeUntil(unsub)
-            .subscribe { sendPositionChange() }
+            .subscribe {
+                sendPositionChange()
+            }
     }
 
     @RegisterFunction
@@ -51,10 +59,17 @@ class PlayerController : Spatial() {
     }
 
     private fun sendPositionChange() {
-        val result = castCameraRays(collideWithAreas = true, collideWithBodies = false)
+        val result = castCameraRays(
+            collideWithAreas = false,
+            collideWithBodies = true,
+            layer = CollisionLayer.TERRAIN_PLATFORM.value.toLong()
+        )
 
-        if (result != null) {
-            ClientDataSender.send(PositionChange(result.position.to2D().convert()))
+        if (result == null) {
+            return
         }
+
+        ClientDataSender.send(PositionChange(result.position.to2D().convert()))
     }
 }
+

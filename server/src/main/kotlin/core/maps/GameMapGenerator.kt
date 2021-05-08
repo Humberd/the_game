@@ -7,6 +7,10 @@ import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.monster.MonsterSeed
 import core.types.*
+import de.lighti.clipper.Path
+import de.lighti.clipper.Paths
+import io.map.ObjImporter
+import io.map.PolygonUtils
 import pl.humberd.models.Experience
 
 private const val GRAVEL_SPRITE: UShort = 16u
@@ -54,14 +58,32 @@ object GameMapGenerator {
             gameMap.creatures.add(it)
         }
 
-        gameMap.createWallsPolygon(
-            WorldPosition(2f, 4f),
-            WorldPosition(3f, 4.5f),
-            WorldPosition(3f, 5.2f),
-            WorldPosition(2f, 5f),
-            WorldPosition(1.5f, 4.5f),
-        )
-
         return gameMap
+    }
+
+    fun generateObjMap(): GameMap {
+        val objData =
+            ObjImporter.load(ObjImporter::class.java.getResourceAsStream("/assets/blender/example-plane.obj")!!)
+        val obstacles = objData.obstacles.map { PolygonUtils.convert3dPolygonTo2d(it) }
+        val extrapolatedObstacles =
+            obstacles.map { obstacle -> Path().also { it.addAll(PolygonUtils.convertFloatPolygonToLong(obstacle)) } }
+        val obstaclesPaths = Paths().also { it.addAll(extrapolatedObstacles) }
+
+        val grid = Array(20) { x ->
+            Array(20) { y ->
+                Tile(
+                    spriteId = SpriteId(if (x % 4 == 0) GRAVEL_SPRITE else GRASS_SPRITE),
+                    gridPosition = GridPosition(Coordinate(x), Coordinate(y)),
+                    obstacles = PolygonUtils.findPathsFor(x, y, obstaclesPaths)
+                )
+            }
+        }
+
+        return GameMap(
+            GameMapId(1u),
+            20,
+            20,
+            grid
+        )
     }
 }

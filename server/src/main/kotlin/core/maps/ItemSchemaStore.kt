@@ -4,11 +4,8 @@ import com.beust.klaxon.Klaxon
 import core.maps.entities.creatures.EquipmentSlotType
 import core.maps.entities.items.ItemSchema
 import core.types.ItemSchemaId
-import core.types.ResourceId
-import core.types.WorldRadius
 import errors.UnknownItemId
 import infrastructure.database.types.Equippable
-
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -32,7 +29,7 @@ object ItemSchemaStore {
 
     fun readItemsFromJson() {
         logger.debug { "Reading items_schemas.json" }
-        val json = javaClass.getResource("/resources/item_schemas.json").readText()
+        val json = javaClass.getResource("/assets/item_schemas.json").readText()
         Klaxon().parseArray<JsonItemSchema>(json)?.forEach {
             val itemSchema = it.toRegularSchema()
             map[itemSchema.id] = itemSchema

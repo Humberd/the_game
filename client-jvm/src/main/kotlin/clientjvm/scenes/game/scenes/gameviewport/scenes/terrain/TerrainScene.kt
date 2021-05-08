@@ -1,34 +1,47 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 
-import clientjvm.exts.*
+import clientjvm.exts.emitter
 import clientjvm.global.ClientDataReceiver
+import clientjvm.global.CollisionLayer
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
 import godot.*
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.core.*
+import godot.core.Vector2
+import godot.core.Vector3
 import mu.KLogging
 import pl.humberd.udp.packets.serverclient.TerrainUpdate
-import pl.humberd.udp.packets.serverclient.TerrainWallsUpdate
 
 @RegisterClass
-class TerrainScene : Area() {
+class TerrainScene : Spatial() {
     companion object : KLogging() {
         private const val GRID_SIZE = 20
-        private const val TILE_SIZE = 64
     }
 
+    private lateinit var content: Spatial
     private lateinit var tiles: Array<Array<GroundTileScene>>
 
     private val unsub by emitter()
 
     @RegisterFunction
     override fun _ready() {
+        content = getNode("Content")
+
+        getNode<CollisionShape>("Content/Platform/Collider").also {
+            val boxShape = it.shape as BoxShape
+            val offset = GRID_SIZE / 2
+            boxShape.extents = Vector3(offset, 0.001, offset)
+            it.translation = Vector3(offset, 0, offset)
+            val platform = it.getParent()
+            require(platform is StaticBody)
+            platform.collisionLayer = CollisionLayer.TERRAIN_PLATFORM.value.toLong()
+        }
+
         tiles = Array(GRID_SIZE) { x ->
             Array(GRID_SIZE) { y ->
                 (GroundTileScene.packedScene.instance() as GroundTileScene).also {
                     it.load(Vector2(x, y))
-                    addChild(it)
+                    content.addChild(it)
                 }
             }
         }
@@ -36,10 +49,6 @@ class TerrainScene : Area() {
         ClientDataReceiver.watchFor<TerrainUpdate>()
             .takeUntil(unsub)
             .subscribe { drawTerrain(it) }
-
-        ClientDataReceiver.watchFor<TerrainWallsUpdate>()
-            .takeUntil(unsub)
-            .subscribe { drawWalls(it) }
     }
 
     fun drawTerrain(packet: TerrainUpdate) {
@@ -49,7 +58,12 @@ class TerrainScene : Area() {
         val endY = startY + packet.windowHeight.toShort()
 
         // clear all tiles
-        tiles.forEach { it.forEach { it.unsetTile() } }
+        tiles.forEach {
+            it.forEach {
+                it.unsetTile()
+                it.destroyObstacles()
+            }
+        }
 
         for (x in startX until endX) {
             for (y in startY until endY) {
@@ -58,61 +72,14 @@ class TerrainScene : Area() {
                 val index = offsetX * packet.windowHeight.toShort() + offsetY
                 val spriteId = packet.spriteIds.get(index)
                 tiles[x][y].setTile(spriteId)
+
+                val obstacles = packet.obstacles.get(index)
+                tiles[x][y].drawObstacles(obstacles)
             }
-        }
-    }
-
-    fun drawWalls(packet: TerrainWallsUpdate) {
-        logger.info { packet }
-
-        for (chain in listOf(packet.chains.last())) {
-            logger.info { chain.print() }
-            val baseChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D() })
-            val topChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D().also { it.y = 0.5 } })
-            val sidesChain = VariantArray<Vector3>().also {
-                for (i in baseChain.size - 1 downTo 0) {
-                    it.pushBack(baseChain[i])
-                    it.pushBack(topChain[i])
-                }
-            }
-
-
-            val arrayMesh = ArrayMesh().also {
-                it.addSurfaceFromArrays(
-                    primitive = Mesh.PrimitiveType.PRIMITIVE_TRIANGLE_FAN.id,
-                    arrays = surfaceArray(ARRAY_VERTEX = topChain)
-                )
-                it.addSurfaceFromArrays(
-                    primitive = Mesh.PrimitiveType.PRIMITIVE_LINE_STRIP.id,
-                    arrays = surfaceArray(ARRAY_VERTEX = topChain)
-                )
-                it.addSurfaceFromArrays(
-                    primitive = Mesh.PrimitiveType.PRIMITIVE_TRIANGLE_STRIP.id,
-                    arrays = surfaceArray(ARRAY_VERTEX = sidesChain)
-                )
-                it.addSurfaceFromArrays(
-                    primitive = Mesh.PrimitiveType.PRIMITIVE_LINE_STRIP.id,
-                    arrays = surfaceArray(ARRAY_VERTEX = sidesChain)
-                )
-            }
-
-            val meshInstance = MeshInstance().also {
-                it.mesh = arrayMesh
-                it.name = "__wall"
-                it.setSurfaceMaterial(1, SpatialMaterial().also {
-                    it.albedoColor = Color.black
-                })
-                it.setSurfaceMaterial(3, SpatialMaterial().also {
-                    it.albedoColor = Color.black
-                })
-            }
-            addChild(meshInstance)
-            meshInstance.createDebugTangents()
         }
     }
 
     override fun _onDestroy() {
         unsub.onNext(true)
     }
-
 }

@@ -3,6 +3,7 @@
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
       <name>ch.qos</name>
+      <name>com.sun</name>
       <name>java.awt</name>
       <name>javax</name>
       <name>javax.swing</name>

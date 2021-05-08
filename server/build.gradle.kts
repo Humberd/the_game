@@ -38,6 +38,14 @@ dependencies {
     implementation("io.github.libktx:ktx-box2d:1.9.14-b1")
     implementation("io.github.libktx:ktx-math:1.9.14-b1")
 
+    // recast
+    implementation("org.recast4j:recast:1.4.4")
+    implementation("org.recast4j:detour:1.4.4")
+    implementation("org.recast4j:detour-crowd:1.4.4")
+    implementation("org.recast4j:detour-tile-cache:1.4.4")
+    implementation("org.recast4j:detour-extras:1.4.4")
+    implementation("org.recast4j:detour-dynamic:1.4.4")
+
     implementation(project(":shared"))
 }
 

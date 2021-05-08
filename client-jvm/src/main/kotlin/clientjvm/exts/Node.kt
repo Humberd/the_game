@@ -22,7 +22,11 @@ data class RayCastResult(
     }
 }
 
-fun Spatial.castCameraRays(collideWithAreas: Boolean = false, collideWithBodies: Boolean = false): RayCastResult? {
+fun Spatial.castCameraRays(
+    collideWithAreas: Boolean = false,
+    collideWithBodies: Boolean = false,
+    layer: Long = 2147483647
+): RayCastResult? {
     val rayLength = 1000
     val mousePosition = getViewport()?.getMousePosition()!!
     val from = currentCamera.projectRayOrigin(mousePosition)
@@ -30,7 +34,13 @@ fun Spatial.castCameraRays(collideWithAreas: Boolean = false, collideWithBodies:
     val spaceState = getWorld()?.directSpaceState!!
 
     val result =
-        spaceState.intersectRay(from, to, collideWithAreas = collideWithAreas, collideWithBodies = collideWithBodies)
+        spaceState.intersectRay(
+            from,
+            to,
+            collideWithAreas = collideWithAreas,
+            collideWithBodies = collideWithBodies,
+            collisionMask = layer
+        )
     if (result.size == 0) {
         return null
     }
