@@ -96,5 +96,3 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.16038, 0 )
 billboard = 1
 double_sided = false
 texture = SubResource( 6 )
-
-[node name="Tween" type="Tween" parent="."]
