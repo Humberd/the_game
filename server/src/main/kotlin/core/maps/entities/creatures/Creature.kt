@@ -7,6 +7,10 @@ import core.types.CreatureName
 import core.types.SpriteId
 import core.types.TileRadius
 import core.types.WorldPosition
+import ktx.math.minus
+import ktx.math.plus
+import ktx.math.times
+import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.Experience
 import utils.getDistance
@@ -17,6 +21,9 @@ abstract class Creature(
     val gameMap: GameMap,
     val notifier: StateChangeNotifier
 ) {
+
+    companion object : KLogging()
+
     //region Properties
     val cid = CID.unique()
 
@@ -39,7 +46,7 @@ abstract class Creature(
         get() = physics.fixture.shape.radius
     //endregion
 
-    val lastUpdate =  CreatureLastUpdate(this)
+    val lastUpdate = CreatureLastUpdate(this)
     val physics = CreaturePhysics(this)
     val cache = CreatureCache(this)
     val stats = CreatureStats(this)
@@ -67,11 +74,20 @@ abstract class Creature(
             return
         }
 
-        val distanceToStopMoving = deltaTime * stats.movementSpeed.current
-        val currentDistance = getDistance(position, movement.targetPosition!!)
-        if (distanceToStopMoving > currentDistance) {
-            movement.stopMoving()
+        val nextCheckpoint = movement.currentCheckpoint()
+        val positionToCheckpointDistance = getDistance(position, nextCheckpoint)
+
+        val velocity = (nextCheckpoint - position).nor() * deltaTime * stats.movementSpeed.current
+        val nextPosition = position + velocity
+        val positionToNextPositionDistance = getDistance(position, nextPosition)
+        if (positionToCheckpointDistance <= positionToNextPositionDistance) {
+            movement.removeCurrentCheckpoint()
+            physics.body.setTransform(nextCheckpoint, 0f)
+        } else {
+            physics.body.setTransform(nextPosition, 0f)
         }
+
+
 
         // update tiles in grid
         val oldGridCoords = lastUpdate.gridPosition

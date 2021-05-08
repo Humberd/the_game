@@ -88,7 +88,8 @@ class StateChangeNotifier(
                 },
                 spriteIds = tiles.flatten().map { it.spriteId.value }.toTypedArray(),
                 obstacles = tiles.flatten()
-                    .map { it.obstacles.map { it.map { it.convert() }.toTypedArray() }.toTypedArray() }.toTypedArray()
+                    .map { it.obstacles.map { it.path.map { it.convert() }.toTypedArray() }.toTypedArray() }
+                    .toTypedArray()
             )
         )
     }

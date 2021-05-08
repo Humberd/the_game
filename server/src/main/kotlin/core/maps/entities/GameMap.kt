@@ -1,55 +1,48 @@
 package core.maps.entities
 
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
 import core.types.GameMapId
 import core.types.GridPosition
-import core.types.WorldPosition
 import ktx.box2d.body
 import ktx.box2d.createWorld
 import ktx.box2d.loop
-import mu.KotlinLogging
+import org.recast4j.recast.geom.InputGeomProvider
 import pl.humberd.models.CID
 import pl.humberd.models.PID
 import utils.toGridPosition
-
-private val logger = KotlinLogging.logger {}
 
 class GameMap(
     val id: GameMapId,
     val gridWidth: Int,
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
+    navigationProvider: InputGeomProvider
 ) {
     val creatures = GameMapCreaturesContainer(this)
-    var walls = ArrayList<Body>()
+    val navigation = GameMapNavigation(this)
 
     //region Physics Initialization
-    val physics: World
+    val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
 
     init {
-        physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
-        initMapBounds()
-//        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
+        grid.forEach { it.forEach { it.onInit(physics) } }
+        initMapBounds()
+        navigation.onInit(navigationProvider)
+        GameMapDebugRenderer(this)
     }
 
     private fun initMapBounds() {
-        createWallsPolygon(
+        val vertices = arrayOf(
             Vector2(0f, 0f),
             Vector2(gridWidth.toFloat(), 0f),
             Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
             Vector2(0f, gridHeight.toFloat())
         )
-    }
 
-    fun createWallsPolygon(
-        vararg vertices: WorldPosition
-    ) {
-        val body = physics.body {
+        physics.body {
             val wall = Wall()
             userData = wall
             loop(*vertices) {
@@ -61,7 +54,6 @@ class GameMap(
                 filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
         }
-        walls.add(body)
     }
 
     //endregion

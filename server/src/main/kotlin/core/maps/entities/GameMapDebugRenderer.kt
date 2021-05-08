@@ -7,11 +7,10 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Matrix4
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 
 class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
     val camera: OrthographicCamera
-    lateinit var debugRenderer: Box2DDebugRenderer
+    lateinit var debugRenderer: Renderer
 
     init {
         LwjglApplication(this, LwjglApplicationConfiguration().also {
@@ -28,7 +27,7 @@ class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
     }
 
     override fun create() {
-        debugRenderer = Box2DDebugRenderer()
+        debugRenderer = Renderer(gameMap.navigation.navMesh)
     }
 
     override fun render() {

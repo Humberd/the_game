@@ -1,5 +1,6 @@
 package utils
 
+import com.badlogic.gdx.math.Vector2
 import core.types.Coordinate
 import core.types.GridPosition
 import core.types.WorldPosition
@@ -17,4 +18,14 @@ fun toGridPosition(position: WorldPosition): GridPosition {
         x = Coordinate(floor(position.x).toInt()),
         y = Coordinate(floor(position.y).toInt())
     )
+}
+
+
+/**
+ * @see https://stackoverflow.com/a/34831275/4256929
+ */
+fun Vector2.isOnLineBetween(start: Vector2, end: Vector2): Boolean {
+    val diff = Math.abs(((y - start.y) / (x - start.x)) - ((y - end.y) / (x - end.x)))
+    println(diff)
+    return diff < 0.00001f
 }
