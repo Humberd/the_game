@@ -7,13 +7,12 @@ import com.badlogic.gdx.physics.box2d.Manifold
 import core.maps.entities.creatures.Creature
 import core.maps.obstacles.Obstacle
 import core.maps.shapes.Wall
-
-import mu.KotlinLogging
-
-private val logger = KotlinLogging.logger {}
+import mu.KLogging
 
 
 class GameMapContactListener : ContactListener {
+    companion object : KLogging()
+
     override fun beginContact(contact: Contact) {
         logger.debug { "Collision ${contact.fixtureA.userData} with ${contact.fixtureB.userData}" }
         handleContacts(contact.fixtureA.userData, contact.fixtureB.userData)

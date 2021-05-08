@@ -18,8 +18,12 @@ object PolygonUtils {
         }
 
         val result = ConvexHull().computePolygon(vertices, false)
-        return Array(result.size / 2) {
-            Vector2(result[it * 2], result[it * 2 + 1])
+        return convertFloatArrayToVectorArray(result.toArray())
+    }
+
+    fun convertFloatArrayToVectorArray(arr: FloatArray): Array<Vector2> {
+        return Array(arr.size / 2) {
+            Vector2(arr[it * 2], arr[it * 2 + 1])
         }
     }
 
