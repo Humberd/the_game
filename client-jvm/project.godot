@@ -39,6 +39,11 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/CreatureScene.kt"
 }, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/PlayerController.kt"
+}, {
 "base": "Control",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene",
 "language": "Kotlin",
@@ -59,7 +64,7 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.kt"
 }, {
-"base": "Sprite3D",
+"base": "Spatial",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_scenes_ground_tile_GroundTileScene",
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/scenes/ground_tile/GroundTileScene.kt"
@@ -81,6 +86,7 @@ _global_script_class_icons={
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_CreaturesScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_body_CreatureBodyScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_scenes_bar_CreatureInfoBarScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_stats_GameStatsScene": "",
@@ -98,7 +104,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "godot-navigation-lite", "ui_design_tool" )
+enabled=PoolStringArray( "ui_design_tool" )
 
 [input]
 
