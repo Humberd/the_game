@@ -1,12 +1,12 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.stats
 
 import clientjvm.exts.emitter
+import clientjvm.exts.getNodeAs
 import clientjvm.global.GameStats
 import godot.Control
 import godot.Label
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.getNode
 import mu.KLogging
 import pl.humberd.misc.formatBytes
 
@@ -23,10 +23,10 @@ class GameStatsScene : Control() {
 
     @RegisterFunction
     override fun _ready() {
-        fps = getNode("Fps")
-        ping = getNode("Ping")
-        bytesSent = getNode("BytesSent")
-        bytesReceived = getNode("BytesReceived")
+        fps = getNodeAs("Fps")
+        ping = getNodeAs("Ping")
+        bytesSent = getNodeAs("BytesSent")
+        bytesReceived = getNodeAs("BytesReceived")
 
         GameStats.pingStream
             .startWithItem(0)

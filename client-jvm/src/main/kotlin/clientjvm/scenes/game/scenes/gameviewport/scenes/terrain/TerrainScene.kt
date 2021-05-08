@@ -1,10 +1,14 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain
 
 import clientjvm.exts.emitter
+import clientjvm.exts.getNodeAs
 import clientjvm.global.ClientDataReceiver
 import clientjvm.global.CollisionLayer
 import clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile.GroundTileScene
-import godot.*
+import godot.BoxShape
+import godot.CollisionShape
+import godot.Spatial
+import godot.StaticBody
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Vector2
@@ -25,9 +29,9 @@ class TerrainScene : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
-        content = getNode("Content")
+        content = getNodeAs("Content")
 
-        getNode<CollisionShape>("Content/Platform/Collider").also {
+        getNodeAs<CollisionShape>("Content/Platform/Collider").also {
             val boxShape = it.shape as BoxShape
             val offset = GRID_SIZE / 2
             boxShape.extents = Vector3(offset, 0.001, offset)

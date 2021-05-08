@@ -1,12 +1,12 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info
 
+import clientjvm.exts.getNodeAs
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.scenes.bar.CreatureInfoBarScene
 import godot.Control
 import godot.Label
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Color
-import godot.getNode
 import mu.KLogging
 import pl.humberd.udp.packets.serverclient.CreatureUpdate
 
@@ -23,17 +23,17 @@ class CreatureInfoScene : Control() {
 
     @RegisterFunction
     override fun _ready() {
-        healthBar = getNode<CreatureInfoBarScene>("Bars/HealthBar").also {
+        healthBar = getNodeAs<CreatureInfoBarScene>("Bars/HealthBar").also {
             it.setColor(Color.darkred)
         }
-        manaBar = getNode<CreatureInfoBarScene>("Bars/ManaBar").also {
+        manaBar = getNodeAs<CreatureInfoBarScene>("Bars/ManaBar").also {
             it.setColor(Color.darkblue)
         }
-        expBar = getNode<CreatureInfoBarScene>("Bars/ExpBar").also {
+        expBar = getNodeAs<CreatureInfoBarScene>("Bars/ExpBar").also {
             it.setColor(Color.darkgray)
         }
-        levelLabel = getNode("Panel/Level")
-        nameLabel = getNode("Name")
+        levelLabel = getNodeAs("Panel/Level")
+        nameLabel = getNodeAs("Name")
     }
 
     fun update(packet: CreatureUpdate) {

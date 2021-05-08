@@ -1,9 +1,6 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.terrain.scenes.ground_tile
 
-import clientjvm.exts.convert
-import clientjvm.exts.packedScene
-import clientjvm.exts.surfaceArray
-import clientjvm.exts.to3D
+import clientjvm.exts.*
 import clientjvm.global.AssetLoader
 import godot.*
 import godot.annotation.RegisterClass
@@ -22,8 +19,8 @@ class GroundTileScene : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
-        tile = getNode("Tile")
-        obstacles = getNode("Obstacles")
+        tile = getNodeAs("Tile")
+        obstacles = getNodeAs("Obstacles")
         unsetTile()
     }
 

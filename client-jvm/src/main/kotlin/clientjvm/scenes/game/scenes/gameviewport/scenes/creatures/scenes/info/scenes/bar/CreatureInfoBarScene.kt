@@ -1,12 +1,12 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.scenes.bar
 
+import clientjvm.exts.getNodeAs
 import godot.ColorRect
 import godot.Control
 import godot.GlobalConstants
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.core.Color
-import godot.getNode
 import mu.KLogging
 
 @RegisterClass
@@ -26,7 +26,7 @@ class CreatureInfoBarScene : Control() {
 
     @RegisterFunction
     override fun _ready() {
-        valueBar = getNode("Value")
+        valueBar = getNodeAs("Value")
 
         width = 0.5f
     }
