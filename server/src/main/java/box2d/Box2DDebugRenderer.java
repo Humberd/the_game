@@ -224,7 +224,7 @@ public class Box2DDebugRenderer implements Disposable {
     private final Vector2 v = new Vector2();
     private final Vector2 lv = new Vector2();
 
-    private void drawSolidCircle(Vector2 center, float radius, Vector2 axis, Color color) {
+    protected void drawSolidCircle(Vector2 center, float radius, Vector2 axis, Color color) {
         float angle = 0;
         float angleInc = 2 * (float) Math.PI / 20;
         renderer.setColor(color.r, color.g, color.b, color.a);
@@ -283,7 +283,7 @@ public class Box2DDebugRenderer implements Disposable {
         }
     }
 
-    private void drawSegment(Vector2 x1, Vector2 x2, Color color) {
+    protected void drawSegment(Vector2 x1, Vector2 x2, Color color) {
         renderer.setColor(color);
         renderer.line(x1.x, x1.y, x2.x, x2.y);
     }

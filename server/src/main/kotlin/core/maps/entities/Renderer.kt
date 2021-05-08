@@ -1,13 +1,20 @@
 package core.maps.entities
 
 import box2d.Box2DDebugRenderer
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
 import org.recast4j.detour.MeshTile
 import org.recast4j.detour.NavMesh
 
 class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
+    companion object {
+        val NAVMESH_LINE = Color.valueOf("#76BAF7")
+        val NAVMESH_POINT = Color.valueOf("#5EA7F7")
+    }
+
     init {
         for (i in 0 until navMesh.maxTiles) {
             val tile = navMesh.getTile(i)
@@ -26,12 +33,23 @@ class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
     private fun drawTile(tile: MeshTile) {
         val vertsPool = tile.data.verts
         renderer.begin(ShapeRenderer.ShapeType.Point)
-//        renderer.color = Color.NAVY
+        renderer.color = NAVMESH_POINT
         repeat(tile.data.header.vertCount) {
             val x = vertsPool.getX(it)
             val z = vertsPool.getZ(it)
             renderer.point(x, z, 0f)
         }
+        renderer.end()
+
+        renderer.begin(ShapeRenderer.ShapeType.Line)
+        tile.data.polys.forEach { poly ->
+            repeat(poly.vertCount - 1) {
+                val vec1 = Vector2(vertsPool.getX(poly.verts[it]), vertsPool.getZ(poly.verts[it]))
+                val vec2 = Vector2(vertsPool.getX(poly.verts[it + 1]), vertsPool.getZ(poly.verts[it + 1]))
+                drawSegment(vec1, vec2, NAVMESH_LINE)
+            }
+        }
+
         renderer.end()
     }
 }
