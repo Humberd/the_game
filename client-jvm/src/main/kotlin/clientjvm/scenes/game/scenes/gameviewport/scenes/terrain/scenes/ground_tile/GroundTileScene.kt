@@ -7,35 +7,44 @@ import clientjvm.exts.to3D
 import clientjvm.global.AssetLoader
 import godot.*
 import godot.annotation.RegisterClass
+import godot.annotation.RegisterFunction
 import godot.core.*
 import pl.humberd.models.ApiVector2
 
 @RegisterClass
-class GroundTileScene : Sprite3D() {
-    private val walls = ArrayList<MeshInstance>()
+class GroundTileScene : Spatial() {
+    private lateinit var tile: Sprite3D
+    private lateinit var obstacles: Spatial
 
     companion object {
         val packedScene by packedScene()
     }
 
-    fun load(gridCoordinates: Vector2) {
-        translate(gridCoordinates.to3D())
-        name = "Tile(${gridCoordinates.x}, ${gridCoordinates.y})"
+    @RegisterFunction
+    override fun _ready() {
+        tile = getNode("Tile")
+        obstacles = getNode("Obstacles")
         unsetTile()
     }
 
+    fun load(gridCoordinates: Vector2) {
+        translate(gridCoordinates.to3D())
+        name = "Tile(${gridCoordinates.x}, ${gridCoordinates.y})"
+    }
+
     fun setTile(spriteId: UShort) {
-        texture = AssetLoader.loadSprite(spriteId)
+        tile.texture = AssetLoader.loadSprite(spriteId)
     }
 
     fun unsetTile() {
-        texture = null
+        tile.texture = null
     }
 
-    fun drawWalls(chains: Array<Array<ApiVector2>>, terrainScene: Node) {
+    fun drawObstacles(chains: Array<Array<ApiVector2>>) {
         for (chain in chains) {
-            val baseChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D() })
-            val topChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D().also { it.y = 0.5 } })
+            val baseChain = variantArrayOf(*Array(chain.size) { chain[it].convert().to3D() - translation })
+            val topChain =
+                variantArrayOf(*Array(chain.size) { chain[it].convert().to3D().also { it.y = 0.5 } - translation })
             val sidesChain = VariantArray<Vector3>().also {
                 for (i in baseChain.size - 1 downTo 0) {
                     it.pushBack(baseChain[i])
@@ -69,7 +78,7 @@ class GroundTileScene : Sprite3D() {
 
             val meshInstance = MeshInstance().also {
                 it.mesh = arrayMesh
-                it.name = "aawall"
+                it.name = "obstacle"
                 it.setSurfaceMaterial(1, SpatialMaterial().also {
                     it.albedoColor = Color.black
                 })
@@ -93,14 +102,15 @@ class GroundTileScene : Sprite3D() {
                 }
             }
 
-            walls.add(meshInstance)
-            terrainScene.addChild(meshInstance)
+            obstacles.addChild(meshInstance)
         }
     }
 
-    fun destroyWalls() {
-        walls.forEach { it.queueFree() }
-        walls.clear()
+    fun destroyObstacles() {
+        obstacles.getChildren().forEach {
+            require(it is Node)
+            it.queueFree()
+        }
     }
 }
 

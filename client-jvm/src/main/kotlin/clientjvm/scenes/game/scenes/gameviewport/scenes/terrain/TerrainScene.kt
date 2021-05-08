@@ -74,7 +74,7 @@ class TerrainScene : Spatial() {
         tiles.forEach {
             it.forEach {
                 it.unsetTile()
-                it.destroyWalls()
+                it.destroyObstacles()
             }
         }
 
@@ -87,7 +87,7 @@ class TerrainScene : Spatial() {
                 tiles[x][y].setTile(spriteId)
 
                 val obstacles = packet.obstacles.get(index)
-                tiles[x][y].drawWalls(obstacles, this)
+                tiles[x][y].drawObstacles(obstacles)
             }
         }
     }
