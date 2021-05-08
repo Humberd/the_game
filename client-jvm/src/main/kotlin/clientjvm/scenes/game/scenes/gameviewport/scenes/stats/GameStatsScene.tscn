@@ -39,3 +39,25 @@ align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="BytesSent" type="Label" parent="."]
+margin_left = 130.99
+margin_right = 194.99
+margin_bottom = 21.0
+custom_fonts/font = SubResource( 2 )
+text = "Up 155B"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BytesReceived" type="Label" parent="."]
+margin_left = 218.688
+margin_right = 264.688
+margin_bottom = 21.0
+custom_fonts/font = SubResource( 2 )
+text = "Down 322B"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

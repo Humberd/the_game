@@ -1,15 +1,17 @@
 package pl.humberd.udp.server
 
-import mu.KotlinLogging
+import mu.KLogging
 import java.net.SocketException
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class UdpServer(name: String) : Thread(name) {
+    companion object : KLogging()
+
     private val running = AtomicBoolean(false)
     private val buffer = ByteBuffer.allocate(2048)
 
-    protected val logger = KotlinLogging.logger {}
+    private var bytesCounter = 0L
 
     fun kill() {
         logger.info { "Stopping" }
@@ -27,6 +29,7 @@ abstract class UdpServer(name: String) : Thread(name) {
                 logger.info { e.message }
                 kill()
             }
+            bytesCounter += buffer.position() / 8
             buffer.clear()
         }
 
@@ -34,4 +37,6 @@ abstract class UdpServer(name: String) : Thread(name) {
     }
 
     abstract fun onTick(buffer: ByteBuffer)
+
+    fun getBytes() = bytesCounter
 }

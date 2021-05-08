@@ -27,6 +27,7 @@ class StatsCollectorScene : Spatial() {
     override fun _ready() {
         watchPing()
         watchFps()
+        watchBytes()
     }
 
     @RegisterFunction
@@ -63,6 +64,16 @@ class StatsCollectorScene : Spatial() {
             .subscribe {
                 GameStats.fpsStream.onNext(fpsCounter)
                 fpsCounter = 0
+            }
+    }
+
+    private fun watchBytes() {
+        Observable.interval(1000, 1000, TimeUnit.MILLISECONDS)
+            .observeOn(GodotWorker)
+            .takeUntil(unsub)
+            .subscribe {
+                GameStats.bytesSent.onNext(ClientDataSender.getBytes())
+                GameStats.bytesReceived.onNext(ClientDataReceiver.getBytes())
             }
     }
 }

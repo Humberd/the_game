@@ -18,6 +18,8 @@ object ClientDataReceiver {
         udpReceiverService.kill()
     }
 
+    fun getBytes() = udpReceiverService.getBytes()
+
     inline fun <reified T : ServerClientUdpPacket> watchFor(): Observable<T> {
         return _dataStream()
             .filter { it.packet is T }

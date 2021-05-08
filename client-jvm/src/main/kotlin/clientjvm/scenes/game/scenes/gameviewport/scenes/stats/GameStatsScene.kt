@@ -8,6 +8,7 @@ import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
 import godot.getNode
 import mu.KLogging
+import pl.humberd.misc.formatBytes
 
 @RegisterClass
 class GameStatsScene : Control() {
@@ -15,6 +16,8 @@ class GameStatsScene : Control() {
 
     private lateinit var fps: Label
     private lateinit var ping: Label
+    private lateinit var bytesSent: Label
+    private lateinit var bytesReceived: Label
 
     private val unsub by emitter()
 
@@ -22,6 +25,8 @@ class GameStatsScene : Control() {
     override fun _ready() {
         fps = getNode("Fps")
         ping = getNode("Ping")
+        bytesSent = getNode("BytesSent")
+        bytesReceived = getNode("BytesReceived")
 
         GameStats.pingStream
             .startWithItem(0)
@@ -35,6 +40,20 @@ class GameStatsScene : Control() {
             .takeUntil(unsub)
             .subscribe {
                 fps.text = "${it}fps"
+            }
+
+        GameStats.bytesSent
+            .startWithItem(0)
+            .takeUntil(unsub)
+            .subscribe {
+                bytesSent.text = "Up ${formatBytes(it)}"
+            }
+
+        GameStats.bytesReceived
+            .startWithItem(0)
+            .takeUntil(unsub)
+            .subscribe {
+                bytesReceived.text = "Down ${formatBytes(it)}"
             }
     }
 

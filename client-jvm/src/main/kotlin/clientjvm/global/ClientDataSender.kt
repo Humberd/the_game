@@ -20,4 +20,6 @@ object ClientDataSender {
     fun send(packet: ClientServerUdpPacket) {
         sendQueue.send(packet)
     }
+
+    fun getBytes() = udpSenderService.getBytes()
 }
