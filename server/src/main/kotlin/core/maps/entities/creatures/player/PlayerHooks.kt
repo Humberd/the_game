@@ -5,6 +5,7 @@ import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
 import core.maps.entities.items.Item
+import core.maps.obstacles.Obstacle
 import core.maps.shapes.Wall
 import infrastructure.udp.models.convert
 import mu.KotlinLogging
@@ -62,6 +63,11 @@ class PlayerHooks(
 
     override fun onCollideWith(wall: Wall) {
         logger.debug { "Colliding with Wall" }
+        player.movement.stopMoving()
+    }
+
+    override fun onCollideWith(wall: Obstacle) {
+        logger.debug { "Colliding with Obstacle" }
         player.movement.stopMoving()
     }
 

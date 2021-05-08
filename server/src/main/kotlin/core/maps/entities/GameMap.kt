@@ -1,7 +1,6 @@
 package core.maps.entities
 
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import core.maps.entities.creatures.Creature
 import core.maps.shapes.Wall
@@ -25,15 +24,15 @@ class GameMap(
     private val grid: Array<Array<Tile>>,
 ) {
     val creatures = GameMapCreaturesContainer(this)
-    var walls = ArrayList<Body>()
 
     //region Physics Initialization
     val physics: World
 
     init {
         physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
+        grid.forEach { it.forEach { it.onInit(physics) } }
         initMapBounds()
-//        GameMapDebugRenderer(this)
+        GameMapDebugRenderer(this)
         physics.setContactListener(GameMapContactListener())
     }
 
@@ -49,7 +48,7 @@ class GameMap(
     fun createWallsPolygon(
         vararg vertices: WorldPosition
     ) {
-        val body = physics.body {
+        physics.body {
             val wall = Wall()
             userData = wall
             loop(*vertices) {
@@ -61,7 +60,6 @@ class GameMap(
                 filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
         }
-        walls.add(body)
     }
 
     //endregion

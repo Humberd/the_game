@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import core.maps.entities.creatures.Creature
+import core.maps.obstacles.Obstacle
 import core.maps.shapes.Wall
 
 import mu.KotlinLogging
@@ -23,6 +24,7 @@ class GameMapContactListener : ContactListener {
         when (aaa) {
             is Creature -> when (bbb) {
                 is Wall -> aaa.hooks.onCollideWith(bbb)
+                is Obstacle -> aaa.hooks.onCollideWith(bbb)
             }
         }
     }

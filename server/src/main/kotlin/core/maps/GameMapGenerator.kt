@@ -6,6 +6,7 @@ import core.maps.entities.Tile
 import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.monster.MonsterSeed
+import core.maps.obstacles.Obstacle
 import core.types.*
 import de.lighti.clipper.Path
 import de.lighti.clipper.Paths
@@ -74,7 +75,7 @@ object GameMapGenerator {
                 Tile(
                     spriteId = SpriteId(if (x % 4 == 0) GRAVEL_SPRITE else GRASS_SPRITE),
                     gridPosition = GridPosition(Coordinate(x), Coordinate(y)),
-                    obstacles = PolygonUtils.findPathsFor(x, y, obstaclesPaths)
+                    obstacles = PolygonUtils.findPathsFor(x, y, obstaclesPaths).map { Obstacle(it) }
                 )
             }
         }
