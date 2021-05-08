@@ -3,7 +3,7 @@ package io.map
 import com.badlogic.gdx.math.ConvexHull
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import de.lighti.clipper.Point
+import de.lighti.clipper.*
 
 object PolygonUtils {
     const val precision = 1_000_000L
@@ -27,7 +27,32 @@ object PolygonUtils {
         return polygon.map { Point.LongPoint((it.x * precision).toLong(), (it.y * precision).toLong()) }
     }
 
-    fun convertLongPolygonToFloat(polygon: List<Point.LongPoint>): Array<Vector2> {
-        return polygon.map { Vector2(it.x / precision.toFloat(), it.y / precision.toFloat()) }.toTypedArray()
+    fun convertLongPolygonToFloat(polygon: List<Point.LongPoint>): List<Vector2> {
+        return polygon.map { Vector2(it.x / precision.toFloat(), it.y / precision.toFloat()) }
+    }
+
+    fun findPathsFor(x: Int, y: Int, obstacles: Paths): List<List<Vector2>> {
+        val solution = Paths()
+        val clipper = DefaultClipper(Clipper.STRICTLY_SIMPLE)
+        clipper.addPaths(obstacles, Clipper.PolyType.SUBJECT, true)
+        val bound = arrayOf(
+            Vector2(x.toFloat(), y.toFloat()),
+            Vector2(x.toFloat(), y.toFloat() + 1),
+            Vector2(x.toFloat() + 1, y.toFloat() + 1),
+            Vector2(x.toFloat() + 1, y.toFloat()),
+            Vector2(x.toFloat(), y.toFloat())
+        )
+        clipper.addPath(
+            Path().also { it.addAll(convertFloatPolygonToLong(bound)) },
+            Clipper.PolyType.CLIP,
+            true
+        )
+
+        val hasResults = clipper.execute(Clipper.ClipType.INTERSECTION, solution)
+        if (!hasResults) {
+            throw Error("something wrong went with clipping")
+        }
+
+        return solution.map { convertLongPolygonToFloat(it) }
     }
 }

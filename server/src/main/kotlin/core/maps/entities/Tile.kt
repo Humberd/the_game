@@ -1,5 +1,6 @@
 package core.maps.entities
 
+import com.badlogic.gdx.math.Vector2
 import core.maps.entities.creatures.Creature
 import core.types.GridPosition
 import core.types.SpriteId
@@ -8,6 +9,7 @@ import pl.humberd.models.CID
 data class Tile(
     val spriteId: SpriteId,
     val gridPosition: GridPosition,
+    val obstacles: List<List<Vector2>> = emptyList()
 ) {
     val creatures: TileContainer<CID, Creature> = TileContainer()
 

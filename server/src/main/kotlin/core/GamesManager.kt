@@ -21,10 +21,9 @@ class GamesManager(
     private val playerLUT = HashMap<PID, GameMapId>()
 
     init {
-        GameMapGenerator.generateMap1(20, 20, notifier).also { map ->
+        GameMapGenerator.generateObjMap().also { map ->
             maps[map.id] = map
         }
-        GameMapGenerator.generateObjMap()
     }
 
     fun addPlayer(creatureSeed: CreatureSeed, playerSeed: PlayerSeed) {
