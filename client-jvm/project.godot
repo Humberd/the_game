@@ -119,6 +119,10 @@ move={
  ]
 }
 
+[kotlin_jvm]
+
+editor/gradle_wrapper_dir="res://.."
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

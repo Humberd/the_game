@@ -3,11 +3,16 @@ package clientjvm.exts
 import godot.Camera
 import godot.Node
 import godot.Spatial
+import godot.core.NodePath
 import godot.core.RID
 import godot.core.Vector3
 
 val Node.currentCamera: Camera
     get() = getViewport()?.getCamera()!!
+
+@Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
+inline fun <T : Node> Node.getNodeAs(path: String) = getNode(NodePath(path)) as T
+
 
 data class RayCastResult(
     val collider: Node,

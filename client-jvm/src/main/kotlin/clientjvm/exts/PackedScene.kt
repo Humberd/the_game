@@ -10,5 +10,5 @@ fun Any.packedScene(): Lazy<PackedScene> = godotLazy {
 
     val resourcePath = "res://src/main/kotlin/$path.tscn"
 
-    GD.load(resourcePath)
+    GD.load(resourcePath)!!
 }

@@ -1,10 +1,10 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body
 
+import clientjvm.exts.getNodeAs
 import godot.AnimationPlayer
 import godot.Spatial
 import godot.annotation.RegisterClass
 import godot.annotation.RegisterFunction
-import godot.getNode
 
 @RegisterClass
 class CreatureBodyScene : Spatial() {
@@ -12,7 +12,7 @@ class CreatureBodyScene : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
-        animationPlayer = getNode<AnimationPlayer>("AnimationPlayer").also {
+        animationPlayer = getNodeAs<AnimationPlayer>("AnimationPlayer").also {
             it.getAnimation("default")?.loop = true
             it.currentAnimation = "default"
         }

@@ -49,12 +49,12 @@ class CreatureScene : Spatial() {
 
     @RegisterFunction
     override fun _ready() {
-        body = getNode("Creature Body")
-        infoScene = getNode("Viewport/CreatureInfoScene")
-        rigidBody = getNode("Collider")
-        collisionMesh = getNode("Collider/CollisionMesh")
-        collisionShape = getNode("Collider/CollisionShape")
-        tween = getNode("Tween")
+        body = getNodeAs("Creature Body")
+        infoScene = getNodeAs("Viewport/CreatureInfoScene")
+        rigidBody = getNodeAs("Collider")
+        collisionMesh = getNodeAs("Collider/CollisionMesh")
+        collisionShape = getNodeAs("Collider/CollisionShape")
+        tween = getNodeAs("Tween")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
