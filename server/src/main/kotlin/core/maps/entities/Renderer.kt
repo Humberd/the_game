@@ -43,11 +43,10 @@ class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
 
         renderer.begin(ShapeRenderer.ShapeType.Line)
         tile.data.polys.forEach { poly ->
-            repeat(poly.vertCount - 1) {
-                val vec1 = Vector2(vertsPool.getX(poly.verts[it]), vertsPool.getZ(poly.verts[it]))
-                val vec2 = Vector2(vertsPool.getX(poly.verts[it + 1]), vertsPool.getZ(poly.verts[it + 1]))
-                drawSegment(vec1, vec2, NAVMESH_LINE)
+            val arr = Array(poly.vertCount) {
+                Vector2(vertsPool.getX(poly.verts[it]), vertsPool.getZ(poly.verts[it]))
             }
+            drawSolidPolygon(arr, poly.vertCount, NAVMESH_LINE, true)
         }
 
         renderer.end()
