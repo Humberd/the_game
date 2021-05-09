@@ -18,7 +18,7 @@ class Database {
                  experience = Experience(3232L),
                  spriteId = SpriteId(5u),
                  position = WorldPosition(3f, 3f),
-                 tilesViewRadius = TileRadius(3),
+                 tilesViewRadius = TileRadius(5),
                  bodyRadius = 0.5f
              ),
              PID(2u) to PlayerCharacterDAO(

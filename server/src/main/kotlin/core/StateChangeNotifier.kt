@@ -23,6 +23,7 @@ class StateChangeNotifier(
                 name = creature.name.value,
                 baseHealth = creature.stats.healthPool.current,
                 currentHealth = creature.stats.healthCurrent,
+                movementSpeed = creature.stats.movementSpeed.current,
                 experience = creature.experience,
                 position = creature.position.convert(),
                 rotation = creature.rotation,

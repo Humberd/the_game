@@ -12,12 +12,13 @@ data class CreatureUpdate(
     val name: String,
     val baseHealth: Int,
     val currentHealth: Int,
+    val movementSpeed: Float,
     val experience: Experience,
     val position: ApiVector2,
     val rotation: Float,
     val bodyRadius: Float,
     val monsterData: MonsterData?
-): ServerClientUdpPacket(CREATURE_UPDATE) {
+) : ServerClientUdpPacket(CREATURE_UPDATE) {
     data class MonsterData(
         val detectionRadius: Float,
         val chaseRadius: Float
@@ -28,6 +29,7 @@ data class CreatureUpdate(
         name = buffer.getString(),
         baseHealth = buffer.getInt(),
         currentHealth = buffer.getInt(),
+        movementSpeed = buffer.getFloat(),
         experience = buffer.getExperience(),
         position = buffer.getVector2(),
         rotation = buffer.getFloat(),
@@ -46,6 +48,7 @@ data class CreatureUpdate(
         buffer.putString(name)
         buffer.putInt(baseHealth)
         buffer.putInt(currentHealth)
+        buffer.putFloat(movementSpeed)
         buffer.putExperience(experience)
         buffer.putVector2(position)
         buffer.putFloat(rotation)

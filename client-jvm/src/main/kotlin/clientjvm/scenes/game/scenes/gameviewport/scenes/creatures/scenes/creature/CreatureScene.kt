@@ -112,6 +112,7 @@ class CreatureScene : Spatial() {
 
         updatePosition(packet.position, packet.rotation)
         infoScene.update(packet)
+        body.updateMovementSpeed(packet.movementSpeed)
         updateBodyRadius(packet.bodyRadius)
         packet.monsterData?.let {
             debug.displayStat("detectionRadius", it.detectionRadius)
@@ -131,6 +132,5 @@ class CreatureScene : Spatial() {
         val scale = Vector3(bodyRadius, 1, bodyRadius)
         collisionMesh.scale = scale
         collisionShape.scale = Vector3(scale)
-
     }
 }

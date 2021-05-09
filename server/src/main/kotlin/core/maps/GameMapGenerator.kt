@@ -94,7 +94,7 @@ object GameMapGenerator {
                 creatureSeed = CreatureSeed(
                     name = CreatureName("Ghost"),
                     experience = Experience(1074L),
-                    position = WorldPosition(6f, 2f),
+                    position = WorldPosition(7f, 2f),
                     tilesViewRadius = TileRadius(3),
                     bodyRadius = 0.5f,
                     stats = StatsSeed(
