@@ -14,23 +14,28 @@ data class CreatureUpdate(
     val currentHealth: Int,
     val experience: Experience,
     val position: ApiVector2,
-    // fixme: spriteId
-    val spriteId: UShort,
     val bodyRadius: Float,
-    val attackTriggerRadius: Float,
-    val isBeingAttackedByMe: Boolean
+    val monsterData: MonsterData?
 ): ServerClientUdpPacket(CREATURE_UPDATE) {
-    constructor(buffer: ReadBuffer): this(
+    data class MonsterData(
+        val detectionRadius: Float,
+        val chaseRadius: Float
+    )
+
+    constructor(buffer: ReadBuffer) : this(
         cid = buffer.getCID(),
         name = buffer.getString(),
         baseHealth = buffer.getInt(),
         currentHealth = buffer.getInt(),
         experience = buffer.getExperience(),
         position = buffer.getVector2(),
-        spriteId = buffer.getUShort(),
         bodyRadius = buffer.getFloat(),
-        attackTriggerRadius = buffer.getFloat(),
-        isBeingAttackedByMe = buffer.getBoolean()
+        monsterData = buffer.getNullableObject {
+            MonsterData(
+                detectionRadius = buffer.getFloat(),
+                chaseRadius = buffer.getFloat()
+            )
+        }
     )
 
 
@@ -41,9 +46,10 @@ data class CreatureUpdate(
         buffer.putInt(currentHealth)
         buffer.putExperience(experience)
         buffer.putVector2(position)
-        buffer.putUShort(spriteId)
         buffer.putFloat(bodyRadius)
-        buffer.putFloat(attackTriggerRadius)
-        buffer.putBoolean(isBeingAttackedByMe)
+        buffer.putNullableObject(monsterData) {
+            buffer.putFloat(it.detectionRadius)
+            buffer.putFloat(it.chaseRadius)
+        }
     }
 }

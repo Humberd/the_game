@@ -7,7 +7,8 @@ import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureSeed
 
 data class MonsterSeed(
-    val attackTriggerRadius: Float
+    val detectionRadius: Float,
+    val chaseRadius: Float
 )
 
 class Monster(
@@ -16,7 +17,8 @@ class Monster(
     notifier: StateChangeNotifier,
     monsterSeed: MonsterSeed
 ) : Creature(creatureSeed, gameMap, notifier) {
-    val attackTriggerRadius = monsterSeed.attackTriggerRadius
+    val detectionRadius = monsterSeed.detectionRadius
+    val chaseRadius = monsterSeed.chaseRadius
 
     override val hooks = MonsterHooks()
     override val collisionCategory = CollisionCategory.MONSTER

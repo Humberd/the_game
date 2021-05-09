@@ -93,7 +93,6 @@ object GameMapGenerator {
                 creatureSeed = CreatureSeed(
                     name = CreatureName("Ghost"),
                     experience = Experience(1074L),
-                    spriteId = SpriteId(6u),
                     position = WorldPosition(6f, 2f),
                     tilesViewRadius = TileRadius(3),
                     bodyRadius = 0.5f,
@@ -103,7 +102,8 @@ object GameMapGenerator {
                 gameMap = gameMap,
                 notifier = notifier,
                 monsterSeed = MonsterSeed(
-                    attackTriggerRadius = 0.1f
+                    detectionRadius = 2f,
+                    chaseRadius = 3f
                 )
             )
         )

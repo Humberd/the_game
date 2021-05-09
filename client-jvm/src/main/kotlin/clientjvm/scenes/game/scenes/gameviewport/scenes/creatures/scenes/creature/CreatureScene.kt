@@ -38,6 +38,7 @@ class CreatureScene : Spatial() {
     private lateinit var rigidBody: RigidBody
     private lateinit var collisionMesh: MeshInstance
     private lateinit var collisionShape: CollisionShape
+    private lateinit var debug: CreatureDebugController
 
     private val colliderColorHover = Color.html("b2cbe4de")
     private val colliderColorNormal = Color.html("33cbe4de")
@@ -53,6 +54,7 @@ class CreatureScene : Spatial() {
         rigidBody = getNodeAs("Collider")
         collisionMesh = getNodeAs("Collider/CollisionMesh")
         collisionShape = getNodeAs("Collider/CollisionShape")
+        debug = getNodeAs("Debug")
 
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
@@ -111,6 +113,10 @@ class CreatureScene : Spatial() {
         updatePosition(packet.position)
         infoScene.update(packet)
         updateBodyRadius(packet.bodyRadius)
+        packet.monsterData?.let {
+            debug.displayStat("detectionRadius", it.detectionRadius)
+            debug.displayStat("chaseRadius", it.chaseRadius)
+        }
     }
 
     private fun updatePosition(position: ApiVector2) {

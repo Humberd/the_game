@@ -28,7 +28,6 @@ class WriteBuffer(private val buffer: ByteBuffer) {
         putUShort(v.size.toUShort())
         v.forEach { mapper.invoke(it) }
     }
-
     fun <T> putNullableArray(v: Array<T?>, mapper: (T) -> Unit) {
         putUShort(v.size.toUShort())
         v.forEach {
@@ -38,6 +37,15 @@ class WriteBuffer(private val buffer: ByteBuffer) {
                 putBoolean(true)
                 mapper.invoke(it)
             }
+        }
+    }
+
+    fun <T> putNullableObject(v: T?, mapper: (T) -> Unit) {
+        if (v == null) {
+            putBoolean(false)
+        } else {
+            putBoolean(true)
+            mapper.invoke(v)
         }
     }
 

@@ -25,10 +25,11 @@ class StateChangeNotifier(
                 currentHealth = creature.stats.healthCurrent,
                 experience = creature.experience,
                 position = creature.position.convert(),
-                spriteId = creature.spriteId.value,
                 bodyRadius = creature.bodyRadius,
-                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
-                isBeingAttackedByMe = to.combat.attackedTarget === creature
+                monsterData = if (creature !is Monster) null else CreatureUpdate.MonsterData(
+                    detectionRadius = creature.detectionRadius,
+                    chaseRadius = creature.chaseRadius
+                )
             )
         )
     }

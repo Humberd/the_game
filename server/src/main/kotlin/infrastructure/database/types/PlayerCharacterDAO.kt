@@ -23,7 +23,6 @@ data class PlayerCharacterDAO(
     fun toCreatureSeed() = CreatureSeed(
         name,
         experience,
-        spriteId,
         position,
         tilesViewRadius,
         bodyRadius,

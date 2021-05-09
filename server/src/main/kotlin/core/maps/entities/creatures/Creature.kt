@@ -4,7 +4,6 @@ import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.types.CreatureName
-import core.types.SpriteId
 import core.types.TileRadius
 import core.types.WorldPosition
 import ktx.math.minus
@@ -31,9 +30,6 @@ abstract class Creature(
         private set
 
     var experience: Experience = creatureSeed.experience
-        private set
-
-    var spriteId: SpriteId = creatureSeed.spriteId
         private set
 
     val position: WorldPosition
