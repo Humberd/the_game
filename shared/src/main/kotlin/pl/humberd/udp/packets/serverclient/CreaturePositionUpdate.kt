@@ -10,16 +10,19 @@ import pl.humberd.udp.packets.serverclient.ServerClientUdpPacket.Type.CREATURE_P
 @HotPacket
 data class CreaturePositionUpdate(
     val cid: CID,
-    val position: ApiVector2
+    val position: ApiVector2,
+    val rotation: Float
 ) : ServerClientUdpPacket(CREATURE_POSITION_UPDATE) {
     constructor(buffer: ReadBuffer) : this(
         cid = buffer.getCID(),
-        position = buffer.getVector2()
+        position = buffer.getVector2(),
+        rotation = buffer.getFloat()
     )
 
     override fun packData(buffer: WriteBuffer) {
         buffer.putCID(cid)
         buffer.putVector2(position)
+        buffer.putFloat(rotation)
     }
 }
 

@@ -25,6 +25,7 @@ class StateChangeNotifier(
                 currentHealth = creature.stats.healthCurrent,
                 experience = creature.experience,
                 position = creature.position.convert(),
+                rotation = creature.rotation,
                 bodyRadius = creature.bodyRadius,
                 monsterData = if (creature !is Monster) null else CreatureUpdate.MonsterData(
                     detectionRadius = creature.detectionRadius,
@@ -46,7 +47,8 @@ class StateChangeNotifier(
             to,
             CreaturePositionUpdate(
                 cid = creature.cid,
-                position = creature.position.convert()
+                position = creature.position.convert(),
+                rotation = creature.rotation
             )
         )
     }

@@ -59,7 +59,7 @@ class CreatureScene : Spatial() {
         ClientDataReceiver.watchFor<CreaturePositionUpdate>()
             .filter { it.cid == cid.notEmpty() }
             .takeUntil(unsub)
-            .subscribe { updatePosition(it.position) }
+            .subscribe { updatePosition(it.position, it.rotation) }
 
         ClientDataReceiver.watchFor<CreatureDisappear>()
             .filter { it.cid == cid.notEmpty() }
@@ -110,7 +110,7 @@ class CreatureScene : Spatial() {
     private fun update(packet: CreatureUpdate) {
         cid = packet.cid
 
-        updatePosition(packet.position)
+        updatePosition(packet.position, packet.rotation)
         infoScene.update(packet)
         updateBodyRadius(packet.bodyRadius)
         packet.monsterData?.let {
@@ -119,9 +119,8 @@ class CreatureScene : Spatial() {
         }
     }
 
-    private fun updatePosition(position: ApiVector2) {
-        val radsAngle = transform.origin.to2D().angleToPoint(position.convert())
-        body.rotation = Vector3(0f, -radsAngle - Math.toRadians(90.0), 0f)
+    private fun updatePosition(position: ApiVector2, rotation: Float) {
+        body.rotation = Vector3(0f, -rotation + Math.toRadians(90.0), 0f)
         translation = position.convert().to3D()
 
         movingStream.onNext(true)

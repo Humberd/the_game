@@ -21,11 +21,9 @@ fun toGridPosition(position: WorldPosition): GridPosition {
 }
 
 
-/**
- * @see https://stackoverflow.com/a/34831275/4256929
- */
-fun Vector2.isOnLineBetween(start: Vector2, end: Vector2): Boolean {
-    val diff = Math.abs(((y - start.y) / (x - start.x)) - ((y - end.y) / (x - end.x)))
-    println(diff)
-    return diff < 0.00001f
+fun Vector2.angleRadTo(vector: Vector2): Float {
+    return (Math.atan2(
+        (vector.y - y).toDouble(),
+        (vector.x - x).toDouble()
+    )).toFloat()
 }

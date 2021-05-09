@@ -12,6 +12,7 @@ import ktx.math.times
 import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.Experience
+import utils.angleRadTo
 import utils.getDistance
 import utils.toGridPosition
 
@@ -34,6 +35,9 @@ abstract class Creature(
 
     val position: WorldPosition
         get() = physics.fixture.body.position
+
+    val rotation: Float
+        get() = physics.fixture.body.angle
 
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
@@ -78,11 +82,10 @@ abstract class Creature(
         val positionToNextPositionDistance = getDistance(position, nextPosition)
         if (positionToCheckpointDistance <= positionToNextPositionDistance) {
             movement.removeCurrentCheckpoint()
-            physics.body.setTransform(nextCheckpoint, 0f)
+            physics.body.setTransform(nextCheckpoint, position.angleRadTo(nextCheckpoint))
         } else {
-            physics.body.setTransform(nextPosition, 0f)
+            physics.body.setTransform(nextPosition, position.angleRadTo(nextPosition))
         }
-
 
 
         // update tiles in grid

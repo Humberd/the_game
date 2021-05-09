@@ -14,6 +14,7 @@ data class CreatureUpdate(
     val currentHealth: Int,
     val experience: Experience,
     val position: ApiVector2,
+    val rotation: Float,
     val bodyRadius: Float,
     val monsterData: MonsterData?
 ): ServerClientUdpPacket(CREATURE_UPDATE) {
@@ -29,6 +30,7 @@ data class CreatureUpdate(
         currentHealth = buffer.getInt(),
         experience = buffer.getExperience(),
         position = buffer.getVector2(),
+        rotation = buffer.getFloat(),
         bodyRadius = buffer.getFloat(),
         monsterData = buffer.getNullableObject {
             MonsterData(
@@ -46,6 +48,7 @@ data class CreatureUpdate(
         buffer.putInt(currentHealth)
         buffer.putExperience(experience)
         buffer.putVector2(position)
+        buffer.putFloat(rotation)
         buffer.putFloat(bodyRadius)
         buffer.putNullableObject(monsterData) {
             buffer.putFloat(it.detectionRadius)
