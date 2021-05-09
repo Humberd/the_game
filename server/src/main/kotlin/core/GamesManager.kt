@@ -21,7 +21,7 @@ class GamesManager(
     private val playerLUT = HashMap<PID, GameMapId>()
 
     init {
-        GameMapGenerator.generateObjMap().also { map ->
+        GameMapGenerator.generateObjMap(notifier).also { map ->
             maps[map.id] = map
         }
     }

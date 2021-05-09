@@ -18,7 +18,9 @@ class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
     override fun render(world: World?, projMatrix: Matrix4?) {
         super.render(world, projMatrix)
 
-        drawTile(navMesh.getTile(0))
+        repeat(navMesh.maxTiles) {
+            drawTile(navMesh.getTile(it))
+        }
     }
 
     private fun drawTile(tile: MeshTile) {
