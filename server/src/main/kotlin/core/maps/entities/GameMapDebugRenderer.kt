@@ -16,7 +16,8 @@ class GameMapDebugRenderer(private val gameMap: GameMap) : ApplicationAdapter() 
     init {
         thread(isDaemon = true) {
             Lwjgl3Application(this, Lwjgl3ApplicationConfiguration().also {
-                it.setWindowPosition(30, 30)
+                val secondMonitor = Lwjgl3ApplicationConfiguration.getMonitors()[1]
+                it.setWindowPosition(secondMonitor.virtualX + 30, secondMonitor.virtualY + 150)
                 it.setWindowedMode(800, 800)
             })
         }
