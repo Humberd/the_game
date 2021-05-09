@@ -4,6 +4,7 @@ import core.maps.ItemSchemaStore
 import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.EquipmentSlotType
 import core.maps.entities.creatures.StatType
+import core.maps.entities.creatures.StatsSeed
 import core.maps.entities.creatures.player.PlayerSeed
 import core.maps.entities.creatures.player.SpellsContainer
 import core.maps.entities.items.*
@@ -23,16 +24,18 @@ data class PlayerCharacterDAO(
     fun toCreatureSeed() = CreatureSeed(
         name,
         experience,
-        spriteId,
         position,
         tilesViewRadius,
         bodyRadius,
+        stats = StatsSeed(
+            movementSpeed = 1f
+        ),
         equipment = mapOf(
             EquipmentSlotType.HEAD to CombatItem(
                 itemSchema = ItemSchemaStore.get(ItemSchemaId(1u)),
                 modifiers = listOf(
                     ModificationSlot(
-                        modificationItem= ModificationItem(
+                        modificationItem = ModificationItem(
                             itemSchema = ItemSchemaStore.get(ItemSchemaId(2u)),
                             statType = StatType.HEALTH_POOL,
                             value = 30,
@@ -52,7 +55,7 @@ data class PlayerCharacterDAO(
                 itemSchema = ItemSchemaStore.get(ItemSchemaId(4u)),
                 modifiers = listOf(
                     ModificationSlot(
-                        modificationItem= ModificationItem(
+                        modificationItem = ModificationItem(
                             itemSchema = ItemSchemaStore.get(ItemSchemaId(5u)),
                             statType = StatType.ATTACK,
                             value = 10,

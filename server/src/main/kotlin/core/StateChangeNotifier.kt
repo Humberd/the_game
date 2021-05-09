@@ -23,12 +23,15 @@ class StateChangeNotifier(
                 name = creature.name.value,
                 baseHealth = creature.stats.healthPool.current,
                 currentHealth = creature.stats.healthCurrent,
+                movementSpeed = creature.stats.movementSpeed.current,
                 experience = creature.experience,
                 position = creature.position.convert(),
-                spriteId = creature.spriteId.value,
+                rotation = creature.rotation,
                 bodyRadius = creature.bodyRadius,
-                attackTriggerRadius = if (creature is Monster) creature.attackTriggerRadius else 0f,
-                isBeingAttackedByMe = to.combat.attackedTarget === creature
+                monsterData = if (creature !is Monster) null else CreatureUpdate.MonsterData(
+                    detectionRadius = creature.detection.radius,
+                    chaseRadius = creature.chaseRadius
+                )
             )
         )
     }
@@ -45,7 +48,8 @@ class StateChangeNotifier(
             to,
             CreaturePositionUpdate(
                 cid = creature.cid,
-                position = creature.position.convert()
+                position = creature.position.convert(),
+                rotation = creature.rotation
             )
         )
     }

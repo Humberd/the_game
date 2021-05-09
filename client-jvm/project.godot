@@ -35,6 +35,11 @@ _global_script_classes=[ {
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/body/CreatureBodyScene.kt"
 }, {
 "base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureDebugController",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/CreatureDebugController.kt"
+}, {
+"base": "Spatial",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene",
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/creature/CreatureScene.kt"
@@ -85,6 +90,7 @@ _global_script_class_icons={
 "clientjvm_scenes_game_scenes_gameviewport_GameViewportScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_CreaturesScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_body_CreatureBodyScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureDebugController": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_CreatureScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene": "",

@@ -12,25 +12,34 @@ data class CreatureUpdate(
     val name: String,
     val baseHealth: Int,
     val currentHealth: Int,
+    val movementSpeed: Float,
     val experience: Experience,
     val position: ApiVector2,
-    // fixme: spriteId
-    val spriteId: UShort,
+    val rotation: Float,
     val bodyRadius: Float,
-    val attackTriggerRadius: Float,
-    val isBeingAttackedByMe: Boolean
-): ServerClientUdpPacket(CREATURE_UPDATE) {
-    constructor(buffer: ReadBuffer): this(
+    val monsterData: MonsterData?
+) : ServerClientUdpPacket(CREATURE_UPDATE) {
+    data class MonsterData(
+        val detectionRadius: Float,
+        val chaseRadius: Float
+    )
+
+    constructor(buffer: ReadBuffer) : this(
         cid = buffer.getCID(),
         name = buffer.getString(),
         baseHealth = buffer.getInt(),
         currentHealth = buffer.getInt(),
+        movementSpeed = buffer.getFloat(),
         experience = buffer.getExperience(),
         position = buffer.getVector2(),
-        spriteId = buffer.getUShort(),
+        rotation = buffer.getFloat(),
         bodyRadius = buffer.getFloat(),
-        attackTriggerRadius = buffer.getFloat(),
-        isBeingAttackedByMe = buffer.getBoolean()
+        monsterData = buffer.getNullableObject {
+            MonsterData(
+                detectionRadius = buffer.getFloat(),
+                chaseRadius = buffer.getFloat()
+            )
+        }
     )
 
 
@@ -39,11 +48,14 @@ data class CreatureUpdate(
         buffer.putString(name)
         buffer.putInt(baseHealth)
         buffer.putInt(currentHealth)
+        buffer.putFloat(movementSpeed)
         buffer.putExperience(experience)
         buffer.putVector2(position)
-        buffer.putUShort(spriteId)
+        buffer.putFloat(rotation)
         buffer.putFloat(bodyRadius)
-        buffer.putFloat(attackTriggerRadius)
-        buffer.putBoolean(isBeingAttackedByMe)
+        buffer.putNullableObject(monsterData) {
+            buffer.putFloat(it.detectionRadius)
+            buffer.putFloat(it.chaseRadius)
+        }
     }
 }

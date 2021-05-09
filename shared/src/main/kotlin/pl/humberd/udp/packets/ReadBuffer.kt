@@ -24,7 +24,7 @@ class ReadBuffer(private val buffer: ByteBuffer) {
     inline fun <reified T> getArray(noinline mapper: (index: Int) -> T) =
         Array(getUShort().toInt(), mapper)
 
-    inline fun <reified T> getNullableArray(mapper: (index: Int?) -> T): Array<T?> =
+    inline fun <reified T> getNullableArray(mapper: (index: Int) -> T): Array<T?> =
         Array(getUShort().toInt()) {
             val hasContent = getBoolean()
             if (!hasContent) {
@@ -32,6 +32,16 @@ class ReadBuffer(private val buffer: ByteBuffer) {
             }
             mapper.invoke(it)
         }
+
+    inline fun <reified T> getNullableObject(mapper: () -> T): T? {
+        val hasContent = getBoolean()
+        if (!hasContent) {
+            return null
+        }
+
+        return mapper.invoke()
+    }
+
     fun getString(): String {
         val length = getUShort().toInt()
         if (length == 0) {

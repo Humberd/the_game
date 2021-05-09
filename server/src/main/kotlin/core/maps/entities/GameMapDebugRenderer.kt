@@ -2,31 +2,35 @@ package core.maps.entities
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Matrix4
+import kotlin.concurrent.thread
 
-class GameMapDebugRenderer(private val gameMap: GameMap): ApplicationAdapter() {
-    val camera: OrthographicCamera
+class GameMapDebugRenderer(private val gameMap: GameMap) : ApplicationAdapter() {
+    lateinit var camera: OrthographicCamera
     lateinit var debugRenderer: Renderer
 
     init {
-        LwjglApplication(this, LwjglApplicationConfiguration().also {
-            it.height = 800
-            it.width = 800
-        })
+        thread(isDaemon = true) {
+            Lwjgl3Application(this, Lwjgl3ApplicationConfiguration().also {
+                val secondMonitor = Lwjgl3ApplicationConfiguration.getMonitors()[1]
+                it.setWindowPosition(secondMonitor.virtualX + 30, secondMonitor.virtualY + 150)
+                it.setWindowedMode(800, 800)
+            })
+        }
 
+    }
+
+    override fun create() {
         camera = OrthographicCamera(25f, 25f)
         camera.translate(10f, 10f)
         camera.update()
         camera.projection.mul(Matrix4().scale(1f, -1f, 1f))
         camera.combined.set(camera.projection)
         Matrix4.mul(camera.combined.`val`, camera.view.`val`)
-    }
-
-    override fun create() {
         debugRenderer = Renderer(gameMap.navigation.navMesh)
     }
 

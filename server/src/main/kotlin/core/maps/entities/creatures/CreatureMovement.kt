@@ -29,11 +29,15 @@ class CreatureMovement(
 
     fun stopMoving() {
         checkpoints = null
-//        creature.physics.fixture.body.setLinearVelocity(0f, 0f)
-
     }
 
     fun startMovingTo(targetPosition: WorldPosition) {
-        checkpoints = creature.gameMap.navigation.findPath(creature.position, targetPosition).reversed().dropLast(1)
+        checkpoints = creature.gameMap.navigation.findPath(creature.position, targetPosition).reversed().let {
+            if (it.size > 1) {
+                it.dropLast(1)
+            } else {
+                null
+            }
+        }
     }
 }

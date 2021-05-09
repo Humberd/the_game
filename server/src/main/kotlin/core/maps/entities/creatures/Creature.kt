@@ -4,7 +4,6 @@ import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.types.CreatureName
-import core.types.SpriteId
 import core.types.TileRadius
 import core.types.WorldPosition
 import ktx.math.minus
@@ -13,6 +12,7 @@ import ktx.math.times
 import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.Experience
+import utils.angleRadTo
 import utils.getDistance
 import utils.toGridPosition
 
@@ -33,11 +33,11 @@ abstract class Creature(
     var experience: Experience = creatureSeed.experience
         private set
 
-    var spriteId: SpriteId = creatureSeed.spriteId
-        private set
-
     val position: WorldPosition
-        get() = physics.fixture.body.position
+        get() = physics.body.position
+
+    val rotation: Float
+        get() = physics.body.angle
 
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
@@ -69,7 +69,7 @@ abstract class Creature(
     abstract val hooks: CreatureHooks
     abstract val collisionCategory: CollisionCategory
 
-    fun afterPhysicsUpdate(deltaTime: Float) {
+    open fun afterPhysicsUpdate(deltaTime: Float) {
         if (!movement.isMoving()) {
             return
         }
@@ -80,13 +80,13 @@ abstract class Creature(
         val velocity = (nextCheckpoint - position).nor() * deltaTime * stats.movementSpeed.current
         val nextPosition = position + velocity
         val positionToNextPositionDistance = getDistance(position, nextPosition)
-        if (positionToCheckpointDistance <= positionToNextPositionDistance) {
+        val targetPosition = if (positionToCheckpointDistance <= positionToNextPositionDistance) {
             movement.removeCurrentCheckpoint()
-            physics.body.setTransform(nextCheckpoint, 0f)
+            nextCheckpoint
         } else {
-            physics.body.setTransform(nextPosition, 0f)
+            nextPosition
         }
-
+        physics.body.setTransform(targetPosition, position.angleRadTo(targetPosition))
 
 
         // update tiles in grid

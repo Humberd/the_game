@@ -10,6 +10,9 @@ import godot.annotation.RegisterFunction
 class CreatureBodyScene : Spatial() {
     lateinit var animationPlayer: AnimationPlayer
 
+    // take straight from the animation preview
+    private val animationLength = 1.1667f
+
     @RegisterFunction
     override fun _ready() {
         animationPlayer = getNodeAs<AnimationPlayer>("AnimationPlayer").also {
@@ -29,5 +32,9 @@ class CreatureBodyScene : Spatial() {
     fun stopWalking() {
         animationPlayer.stop()
         animationPlayer.seek(0.0, true)
+    }
+
+    fun updateMovementSpeed(movementSpeed: Float) {
+        animationPlayer.playbackSpeed = movementSpeed.toDouble() / 2 * animationLength
     }
 }

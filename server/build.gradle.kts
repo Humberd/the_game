@@ -32,7 +32,7 @@ dependencies {
     // physics debug
     implementation("com.badlogicgames.gdx:gdx:1.9.14")
     implementation("com.badlogicgames.gdx:gdx-platform:1.9.14:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.14")
+    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.14")
 
     // ktx
     implementation("io.github.libktx:ktx-box2d:1.9.14-b1")
