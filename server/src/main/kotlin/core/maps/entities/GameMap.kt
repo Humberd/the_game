@@ -24,7 +24,7 @@ class GameMap(
     val navigation = GameMapNavigation(this)
 
     //region Physics Initialization
-    val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = true)
+    val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = false)
 
     init {
         physics.setContactListener(GameMapContactListener())

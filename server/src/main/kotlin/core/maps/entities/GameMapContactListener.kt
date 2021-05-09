@@ -14,7 +14,7 @@ class GameMapContactListener : ContactListener {
     companion object : KLogging()
 
     override fun beginContact(contact: Contact) {
-        logger.debug { "Collision ${contact.fixtureA.userData} with ${contact.fixtureB.userData}" }
+        logger.info { "Collision ${contact.fixtureA.userData} with ${contact.fixtureB.userData}" }
         handleContacts(contact.fixtureA.userData, contact.fixtureB.userData)
         handleContacts(contact.fixtureB.userData, contact.fixtureA.userData)
     }
@@ -29,7 +29,7 @@ class GameMapContactListener : ContactListener {
     }
 
     override fun endContact(contact: Contact) {
-//        logger.debug { "END_CONTACT $contact" }
+        logger.info { "END_CONTACT ${contact.fixtureA.userData} with ${contact.fixtureB.userData}\"" }
     }
 
     override fun preSolve(contact: Contact?, oldManifold: Manifold?) {

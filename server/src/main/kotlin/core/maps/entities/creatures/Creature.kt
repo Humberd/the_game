@@ -34,10 +34,10 @@ abstract class Creature(
         private set
 
     val position: WorldPosition
-        get() = physics.fixture.body.position
+        get() = physics.body.position
 
     val rotation: Float
-        get() = physics.fixture.body.angle
+        get() = physics.body.angle
 
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
@@ -80,12 +80,13 @@ abstract class Creature(
         val velocity = (nextCheckpoint - position).nor() * deltaTime * stats.movementSpeed.current
         val nextPosition = position + velocity
         val positionToNextPositionDistance = getDistance(position, nextPosition)
-        if (positionToCheckpointDistance <= positionToNextPositionDistance) {
+        val targetPosition = if (positionToCheckpointDistance <= positionToNextPositionDistance) {
             movement.removeCurrentCheckpoint()
-            physics.body.setTransform(nextCheckpoint, position.angleRadTo(nextCheckpoint))
+            nextCheckpoint
         } else {
-            physics.body.setTransform(nextPosition, position.angleRadTo(nextPosition))
+            nextPosition
         }
+        physics.body.setTransform(targetPosition, position.angleRadTo(targetPosition))
 
 
         // update tiles in grid
