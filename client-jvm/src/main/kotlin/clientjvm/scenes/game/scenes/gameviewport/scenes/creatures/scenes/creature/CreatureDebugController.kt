@@ -1,7 +1,6 @@
 package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creature
 
 import clientjvm.exts.convert
-import clientjvm.exts.print
 import clientjvm.exts.surfaceArray
 import clientjvm.exts.to3D
 import godot.*
@@ -33,11 +32,8 @@ class CreatureDebugController : Spatial() {
             stats.remove(name)
         }
 
-        logger.info { "$name,$radius" }
-        logger.info { GameMaths.generateCircle(radius).contentToString() }
         val chain = GameMaths.generateCircle(radius).map { it.convert().to3D() }.toTypedArray()
         val variantChain = variantArrayOf(*chain)
-        logger.info { variantChain.print() }
 
         val arrayMesh = ArrayMesh().also {
             it.addSurfaceFromArrays(
