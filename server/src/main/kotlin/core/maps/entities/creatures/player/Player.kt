@@ -7,7 +7,6 @@ import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureSeed
 import core.types.SpriteId
 import pl.humberd.models.Milliseconds
-import pl.humberd.models.PID
 import pl.humberd.models.SID
 
 data class Spell(
@@ -37,11 +36,6 @@ class SpellsContainer(
         }
     }
 }
-
-data class PlayerSeed(
-    val pid: PID,
-    val spellsContainer: SpellsContainer
-)
 
 class Player(
     creatureSeed: CreatureSeed,

@@ -4,6 +4,7 @@ import core.StateChangeNotifier
 import core.maps.entities.GameMap
 import core.maps.entities.Tile
 import core.maps.entities.creatures.CreatureSeed
+import core.maps.entities.creatures.StatsSeed
 import core.maps.entities.creatures.monster.Monster
 import core.maps.entities.creatures.monster.MonsterSeed
 import core.maps.obstacles.Obstacle
@@ -96,14 +97,17 @@ object GameMapGenerator {
                     position = WorldPosition(6f, 2f),
                     tilesViewRadius = TileRadius(3),
                     bodyRadius = 0.5f,
+                    stats = StatsSeed(
+                        movementSpeed = 0.8f
+                    ),
                     equipment = emptyMap(),
                     backpack = emptyArray()
                 ),
                 gameMap = gameMap,
                 notifier = notifier,
                 monsterSeed = MonsterSeed(
-                    detectionRadius = 2f,
-                    chaseRadius = 3f
+                    detectionRadius = 3f,
+                    chaseRadius = 4f
                 )
             )
         )

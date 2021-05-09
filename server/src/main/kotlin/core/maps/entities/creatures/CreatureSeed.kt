@@ -12,6 +12,11 @@ data class CreatureSeed(
     val position: WorldPosition,
     val tilesViewRadius: TileRadius,
     val bodyRadius: Float,
+    val stats: StatsSeed,
     val equipment: Map<EquipmentSlotType, Item>,
     val backpack: Array<Item?>
+)
+
+data class StatsSeed(
+    val movementSpeed: Float
 )

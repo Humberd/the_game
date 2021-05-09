@@ -15,7 +15,7 @@ class Database {
              PID(1u) to PlayerCharacterDAO(
                  pid = PID(1u),
                  name = CreatureName("Alice"),
-                 experience = Experience(1532L),
+                 experience = Experience(3232L),
                  spriteId = SpriteId(5u),
                  position = WorldPosition(3f, 3f),
                  tilesViewRadius = TileRadius(3),
@@ -24,7 +24,7 @@ class Database {
              PID(2u) to PlayerCharacterDAO(
                  pid = PID(2u),
                  name = CreatureName("Bob"),
-                 experience = Experience(1511L),
+                 experience = Experience(3511L),
                  spriteId = SpriteId(5u),
                  position = WorldPosition(5f, 4.5f),
                  tilesViewRadius = TileRadius(2),

@@ -69,7 +69,7 @@ abstract class Creature(
     abstract val hooks: CreatureHooks
     abstract val collisionCategory: CollisionCategory
 
-    fun afterPhysicsUpdate(deltaTime: Float) {
+    open fun afterPhysicsUpdate(deltaTime: Float) {
         if (!movement.isMoving()) {
             return
         }
