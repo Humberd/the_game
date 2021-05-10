@@ -3,6 +3,9 @@ package core.maps.entities
 import kotlin.experimental.or
 
 enum class CollisionCategory(val value: Short) {
+    NOTHING(0x0000) {
+        override fun collidesWith() = NOTHING.value
+    },
     PLAYER(0x0001) {
         override fun collidesWith() = DETECTION.value
     },

@@ -29,7 +29,7 @@ class StateChangeNotifier(
                 rotation = creature.rotation,
                 bodyRadius = creature.bodyRadius,
                 monsterData = if (creature !is Monster) null else CreatureUpdate.MonsterData(
-                    detectionRadius = creature.detection.radius,
+                    detectionRadius = creature.detectionRadius,
                     chaseRadius = creature.chaseRadius
                 )
             )
