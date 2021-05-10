@@ -1,6 +1,3 @@
-[gd_resource type="DynamicFont" load_steps=2 format=2]
-
-[ext_resource path="res://assets/fonts/montserrat/Montserrat-Medium.ttf" type="DynamicFontData" id=1]
-
-[resource]
-font_data = ExtResource( 1 )
+version https://git-lfs.github.com/spec/v1
+oid sha256:4588d1bbdfdfb545ec058d494a5d29998614be4ccb2949c8bb19251f001b1eff
+size 205
