@@ -35,6 +35,7 @@ class MonsterAiMovement(private val monster: Monster) {
             return
         }
 
+        updateSensorRadius(monster.chaseRadius)
         currentlyFollowing = creature
         logger.info { "Start following $creature" }
     }
@@ -47,6 +48,8 @@ class MonsterAiMovement(private val monster: Monster) {
         if (currentlyFollowing == null) {
             return
         }
+
+        updateSensorRadius(monster.detectionRadius)
         currentlyFollowing = null
         logger.info { "Stop following $creature" }
     }

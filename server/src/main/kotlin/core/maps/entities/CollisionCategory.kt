@@ -16,7 +16,7 @@ enum class CollisionCategory(val value: Short) {
         override fun collidesWith() = MONSTER.value
     },
     DETECTION(0x0008) {
-        override fun collidesWith() = NOTHING.value
+        override fun collidesWith() = MONSTER or PLAYER
     };
 
     abstract fun collidesWith(): Short
