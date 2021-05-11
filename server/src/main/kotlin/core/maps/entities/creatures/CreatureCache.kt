@@ -7,7 +7,7 @@ class CreatureCache(
     val creaturesISee = VisibleCreatures()
 
     fun onInit() {
-
+        // nothing
     }
 
     inner class VisibleCreatures {

@@ -42,8 +42,7 @@ abstract class Creature(
     var tilesViewRadius: TileRadius = creatureSeed.tilesViewRadius
         private set
 
-    val bodyRadius: Float
-        get() = physics.fixture.shape.radius
+    val bodyRadius: Float = creatureSeed.bodyRadius
     //endregion
 
     val lastUpdate = CreatureLastUpdate(this)
@@ -58,7 +57,7 @@ abstract class Creature(
 
     open fun onInit() {
         lastUpdate.onInit(creatureSeed.position)
-        physics.onInit(creatureSeed.position, creatureSeed.bodyRadius)
+        physics.onInit(creatureSeed.position)
         cache.onInit()
         stats.onInit()
         movement.onInit()
