@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/projectiles/scenes/projectile/ProjectileScene.kt" type="Script" id=1]
+
+[node name="ProjectileScene" type="Spatial"]
+script = ExtResource( 1 )

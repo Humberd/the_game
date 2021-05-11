@@ -1,5 +1,6 @@
 package clientjvm.exts
 
+import godot.Node
 import godot.PackedScene
 import godot.global.GD
 
@@ -12,3 +13,5 @@ fun Any.packedScene(): Lazy<PackedScene> = godotLazy {
 
     GD.load(resourcePath)!!
 }
+
+fun PackedScene.new(): Node = instance()!!

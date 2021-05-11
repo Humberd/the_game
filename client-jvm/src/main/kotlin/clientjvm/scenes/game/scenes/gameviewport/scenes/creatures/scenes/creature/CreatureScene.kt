@@ -77,7 +77,7 @@ class CreatureScene : Spatial() {
             .takeUntil(unsub)
             .subscribe { body.stopWalking() }
 
-        val instance = AssetLoader.load3dModel("sword01").instance()!!
+        val instance = AssetLoader.load3dModel("sword01").new()
         addChild(instance)
     }
 
