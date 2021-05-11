@@ -2,7 +2,6 @@ package clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.creatu
 
 import clientjvm.exts.*
 import clientjvm.global.AccountState
-import clientjvm.global.AssetLoader
 import clientjvm.global.ClientDataReceiver
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.body.CreatureBodyScene
 import clientjvm.scenes.game.scenes.gameviewport.scenes.creatures.scenes.info.CreatureInfoScene
@@ -76,9 +75,6 @@ class CreatureScene : Spatial() {
             .debounce(100, TimeUnit.MILLISECONDS)
             .takeUntil(unsub)
             .subscribe { body.stopWalking() }
-
-        val instance = AssetLoader.load3dModel("sword01").new()
-        addChild(instance)
     }
 
     @RegisterFunction
