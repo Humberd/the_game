@@ -2,16 +2,20 @@ package core.maps.entities.creatures
 
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
+import core.maps.entities.Collider
 import core.maps.entities.CollisionCategory
 import core.types.WorldPosition
 import ktx.box2d.body
 import ktx.box2d.box
 import ktx.box2d.circle
 import ktx.box2d.weldJointWith
+import mu.KLogging
 
 class CreaturePhysics(
     private val thisCreature: Creature
-) {
+) : Collider.WithCreature {
+    companion object : KLogging()
+
     private lateinit var bodySensor: Body
     private lateinit var tileViewSensor: Body
     lateinit var body: Body
@@ -36,7 +40,7 @@ class CreaturePhysics(
                 filter.categoryBits = CollisionCategory.DETECTION.value
                 filter.maskBits = CollisionCategory.DETECTION.collidesWith()
                 isSensor = true
-                userData = thisCreature
+                userData = this@CreaturePhysics
             }
         }.also { body.weldJointWith(it) }
 
@@ -60,5 +64,16 @@ class CreaturePhysics(
             it.destroyBody(bodySensor)
             it.destroyBody(tileViewSensor)
         }
+    }
+
+    override fun onCollisionStart(entity: Creature) {
+        if (entity === thisCreature) {
+            return
+        }
+        logger.info { "Collision start with $entity" }
+    }
+
+    override fun onCollisionEnd(entity: Creature) {
+        logger.info { "Collision end with $entity" }
     }
 }
