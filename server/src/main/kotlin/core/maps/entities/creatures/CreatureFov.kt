@@ -39,7 +39,7 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
         thisCreature.gameMap.physics.destroyBody(tileViewSensor)
     }
 
-    private val creatures = VisibilityStore()
+    val creatures = VisibilityStore()
 
     inner class VisibilityStore : Collider.WithCreature {
         private val iSeeThem = HashSet<Creature>()
@@ -68,6 +68,9 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
             entity.fov.creatures.theySeeMe.remove(thisCreature)
             logger.info { "Collision end with $entity" }
         }
+
+        fun canISeeThem(entity: Creature) = iSeeThem.contains(entity)
+        fun canTheySeeMe(entity: Creature) = theySeeMe.contains(entity)
     }
 
     override fun onCollisionStart(entity: Any) {
