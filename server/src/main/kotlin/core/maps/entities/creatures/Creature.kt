@@ -48,7 +48,6 @@ abstract class Creature(
     val lastUpdate = CreatureLastUpdate(this)
     val physics = CreaturePhysics(this)
     val fov = CreatureFov(this)
-    val cache = CreatureCache(this)
     val stats = CreatureStats(this)
     val movement = CreatureMovement(this)
     val combat = CreatureCombat(this)
@@ -60,7 +59,6 @@ abstract class Creature(
         lastUpdate.onInit(creatureSeed.position)
         physics.onInit(creatureSeed.position)
         fov.onInit()
-        cache.onInit()
         stats.onInit()
         movement.onInit()
         equipment.onInit(creatureSeed.equipment)
@@ -102,63 +100,15 @@ abstract class Creature(
         if (tileChanged) {
             lastUpdate.gridPosition = newGridCoords
             lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
-            gameMap.getTileAt(oldGridCoords).creatures.transferTo(cid, this, gameMap.getTileAt(newGridCoords).creatures)
-
-            /*
-            [1,2,3,4] -> [3,4,5,6]
-
-            [1, 2] -> Creature Disappear
-            [3, 4] -> Creature Position Update
-            [5, 6] -> Creature Appear
-             */
-
-            // Creature Disappear
-            ArrayList(cache.creaturesThatSeeMe).forEach {
-                if (!it.canSee(this)) {
-                    it.cache.creaturesISee.unregister(this)
-                }
-            }
-            cache.creaturesISee.getAll().forEach {
-                if (!canSee(it)) {
-                    cache.creaturesISee.unregister(it)
-                }
-            }
-
-            // Creature Appear
-            gameMap.creatures.getAllCreatures()
-                .filter { it.cid != cid }
-                .filter { it.canSee(this) }
-                .subtract(cache.creaturesThatSeeMe)
-                .forEach {
-                    it.cache.creaturesISee.register(this)
-                }
-            getGreedyVisibleCreatures()
-                .subtract(cache.creaturesISee.getAll())
-                .forEach {
-                    cache.creaturesISee.register(it)
-                }
-
         }
 
         hooks.onMoved(tileChanged)
-        cache.creaturesThatSeeMe.forEach {
+        fov.creatures.theySeeMe().forEach {
             it.hooks.onOtherCreaturePositionChange(this)
         }
     }
 
-    fun getGreedyVisibleCreatures(): List<Creature> {
-        val buffer = arrayListOf<Creature>()
-
-        lastUpdate.tileSlice.forEach {
-            it.forEach {
-                it.creatures.writeTo(buffer)
-            }
-        }
-
-        return buffer.filter { it.cid != cid }
-    }
-
     fun canSee(otherCreature: Creature): Boolean {
-        return getGreedyVisibleCreatures().contains(otherCreature)
+        return fov.creatures.canISeeThem(otherCreature)
     }
 }

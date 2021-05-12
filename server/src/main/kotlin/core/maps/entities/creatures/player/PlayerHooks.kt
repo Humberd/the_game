@@ -22,20 +22,6 @@ class PlayerHooks(
         notifier.notifyPlayerDetails(player.pid, player)
         notifier.notifyCreatureUpdate(player, player)
         notifier.notifyTerrainUpdate(player)
-
-        // Make aware other creatures that can see me
-        gameMap.creatures.getAllCreatures()
-            .filter { it.cid != player.cid }
-            .filter { it.canSee(player) }
-            .forEach {
-                it.cache.creaturesISee.register(player)
-            }
-
-        // Tell me about other creatures that I can see
-        player.getGreedyVisibleCreatures()
-            .forEach {
-                player.cache.creaturesISee.register(it)
-            }
     }
 
     override fun onRemovedFromMap(gameMap: GameMap) {
@@ -44,14 +30,6 @@ class PlayerHooks(
         }
 
         notifier.notifyCreatureDisappear(player.pid, player)
-
-        player.cache.creaturesThatSeeMe.toTypedArray().forEach {
-            it.cache.creaturesISee.unregister(player)
-        }
-
-        player.cache.creaturesISee.getAll().forEach {
-            player.cache.creaturesISee.unregister(it)
-        }
     }
 
     override fun onMoved(tileChanged: Boolean) {

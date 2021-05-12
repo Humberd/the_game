@@ -59,6 +59,16 @@ _global_script_classes=[ {
 "language": "Kotlin",
 "path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/scenes/info/scenes/bar/CreatureInfoBarScene.kt"
 }, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_projectiles_ProjectilesScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/projectiles/ProjectilesScene.kt"
+}, {
+"base": "Spatial",
+"class": "clientjvm_scenes_game_scenes_gameviewport_scenes_projectiles_scenes_projectile_ProjectileScene",
+"language": "Kotlin",
+"path": "res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/projectiles/scenes/projectile/ProjectileScene.kt"
+}, {
 "base": "Control",
 "class": "clientjvm_scenes_game_scenes_gameviewport_scenes_stats_GameStatsScene",
 "language": "Kotlin",
@@ -95,6 +105,8 @@ _global_script_class_icons={
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_creature_PlayerController": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_CreatureInfoScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_creatures_scenes_info_scenes_bar_CreatureInfoBarScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_projectiles_ProjectilesScene": "",
+"clientjvm_scenes_game_scenes_gameviewport_scenes_projectiles_scenes_projectile_ProjectileScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_stats_GameStatsScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_TerrainScene": "",
 "clientjvm_scenes_game_scenes_gameviewport_scenes_terrain_scenes_ground_tile_GroundTileScene": "",

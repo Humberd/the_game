@@ -49,28 +49,34 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
             if (entity === thisCreature) {
                 return
             }
+            logger.info { "Collision start with $entity" }
 
             check(!iSeeThem.contains(entity)) { "$thisCreature already sees $entity" }
             iSeeThem.add(entity)
             check(!entity.fov.creatures.theySeeMe.contains(thisCreature)) { "$entity is already seen by $thisCreature" }
             entity.fov.creatures.theySeeMe.add(thisCreature)
-            logger.info { "Collision start with $entity" }
+
+            thisCreature.hooks.onOtherCreatureAppearInViewRange(entity)
         }
 
         override fun onCollisionEnd(entity: Creature) {
             if (entity === thisCreature) {
                 return
             }
+            logger.info { "Collision end with $entity" }
 
             check(iSeeThem.contains(entity)) { "$thisCreature doesn't already see $entity" }
             iSeeThem.remove(entity)
             check(entity.fov.creatures.theySeeMe.contains(thisCreature)) { "$entity is not already seen by $thisCreature" }
             entity.fov.creatures.theySeeMe.remove(thisCreature)
-            logger.info { "Collision end with $entity" }
+
+            thisCreature.hooks.onOtherCreatureDisappearFromViewRange(entity)
         }
 
         fun canISeeThem(entity: Creature) = iSeeThem.contains(entity)
         fun canTheySeeMe(entity: Creature) = theySeeMe.contains(entity)
+        fun iSeeThem(): Set<Creature> = iSeeThem
+        fun theySeeMe(): Set<Creature> = theySeeMe
     }
 
     override fun onCollisionStart(entity: Any) {

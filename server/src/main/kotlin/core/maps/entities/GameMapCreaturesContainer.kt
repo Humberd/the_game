@@ -38,8 +38,7 @@ class GameMapCreaturesContainer(private val map: GameMap) {
         }
 
         remove(players[pid]!!.cid)
-        val player = players.remove(pid)
-        map.getTileAt(player!!.lastUpdate.gridPosition).creatures.remove(player!!.cid)
+        players.remove(pid)
     }
 
     fun remove(cid: CID) {

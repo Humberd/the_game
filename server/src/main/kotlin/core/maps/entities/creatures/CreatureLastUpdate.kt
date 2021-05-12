@@ -14,6 +14,5 @@ class CreatureLastUpdate(
     fun onInit(position: WorldPosition) {
         gridPosition = toGridPosition(position)
         tileSlice = creature.gameMap.getTilesAround(gridPosition, creature.tilesViewRadius.value)
-        creature.gameMap.getTileAt(gridPosition).creatures.put(creature.cid, creature)
     }
 }
