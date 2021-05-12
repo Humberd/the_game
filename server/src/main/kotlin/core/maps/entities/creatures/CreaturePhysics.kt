@@ -2,22 +2,18 @@ package core.maps.entities.creatures
 
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import core.maps.entities.Collider
-import core.maps.entities.CollisionCategory
 import core.types.WorldPosition
 import ktx.box2d.body
-import ktx.box2d.box
 import ktx.box2d.circle
 import ktx.box2d.weldJointWith
 import mu.KLogging
 
 class CreaturePhysics(
     private val thisCreature: Creature
-) : Collider.WithCreature {
+) {
     companion object : KLogging()
 
     private lateinit var bodySensor: Body
-    private lateinit var tileViewSensor: Body
     lateinit var body: Body
         private set
 
@@ -26,23 +22,6 @@ class CreaturePhysics(
         body = thisCreature.gameMap.physics.body(BodyDef.BodyType.KinematicBody) {
             this.position.set(position)
         }
-
-        tileViewSensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
-            this.position.set(position)
-
-            box(
-                width = thisCreature.tilesViewRadius.value.toFloat() * 2,
-                height = thisCreature.tilesViewRadius.value.toFloat() * 2
-            ) {
-                density = 0f
-                friction = 0f
-                restitution = 0f
-                filter.categoryBits = CollisionCategory.DETECTION.value
-                filter.maskBits = CollisionCategory.DETECTION.collidesWith()
-                isSensor = true
-                userData = this@CreaturePhysics
-            }
-        }.also { body.weldJointWith(it) }
 
         bodySensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
             this.position.set(position)
@@ -62,18 +41,10 @@ class CreaturePhysics(
         thisCreature.gameMap.physics.also {
             it.destroyBody(body)
             it.destroyBody(bodySensor)
-            it.destroyBody(tileViewSensor)
         }
     }
 
-    override fun onCollisionStart(entity: Creature) {
-        if (entity === thisCreature) {
-            return
-        }
-        logger.info { "Collision start with $entity" }
-    }
-
-    override fun onCollisionEnd(entity: Creature) {
-        logger.info { "Collision end with $entity" }
+    fun joinWithMainBody(body: Body) {
+        this.body.weldJointWith(body)
     }
 }

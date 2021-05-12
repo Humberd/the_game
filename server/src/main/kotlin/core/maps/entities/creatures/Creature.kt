@@ -47,6 +47,7 @@ abstract class Creature(
 
     val lastUpdate = CreatureLastUpdate(this)
     val physics = CreaturePhysics(this)
+    val fovSensor = CreatureFovSensor(this)
     val cache = CreatureCache(this)
     val stats = CreatureStats(this)
     val movement = CreatureMovement(this)
@@ -58,6 +59,7 @@ abstract class Creature(
     open fun onInit() {
         lastUpdate.onInit(creatureSeed.position)
         physics.onInit(creatureSeed.position)
+        fovSensor.onInit()
         cache.onInit()
         stats.onInit()
         movement.onInit()
