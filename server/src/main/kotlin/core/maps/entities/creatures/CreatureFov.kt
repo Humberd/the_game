@@ -6,14 +6,13 @@ import core.maps.entities.Collider
 import core.maps.entities.CollisionCategory
 import ktx.box2d.body
 import ktx.box2d.box
+import ktx.box2d.filter
 
-class CreatureFovSensor(private val thisCreature: Creature) : Collider.WithCreature {
+class CreatureFov(private val thisCreature: Creature) : Collider.WithCreature {
     private lateinit var tileViewSensor: Body
 
     fun onInit() {
         tileViewSensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
-            this.position.set(position)
-
             box(
                 width = thisCreature.tilesViewRadius.value.toFloat() * 2,
                 height = thisCreature.tilesViewRadius.value.toFloat() * 2
@@ -21,11 +20,14 @@ class CreatureFovSensor(private val thisCreature: Creature) : Collider.WithCreat
                 density = 0f
                 friction = 0f
                 restitution = 0f
-                filter.categoryBits = CollisionCategory.DETECTION.value
-                filter.maskBits = CollisionCategory.DETECTION.collidesWith()
+                filter {
+                    categoryBits = CollisionCategory.DETECTION.value
+                    maskBits = CollisionCategory.DETECTION.collidesWith()
+                }
                 isSensor = true
-                userData = this@CreatureFovSensor
+                userData = this@CreatureFov
             }
+
         }.also { thisCreature.physics.joinWithMainBody(it) }
     }
 
