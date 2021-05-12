@@ -12,6 +12,8 @@ import ktx.box2d.weldJointWith
 class CreaturePhysics(
     private val thisCreature: Creature
 ) {
+    private lateinit var bodySensor: Body
+    private lateinit var tileViewSensor: Body
     lateinit var body: Body
         private set
 
@@ -19,16 +21,14 @@ class CreaturePhysics(
         // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
         body = thisCreature.gameMap.physics.body(BodyDef.BodyType.KinematicBody) {
             this.position.set(position)
-            userData = thisCreature
         }
 
-        val sensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
+        tileViewSensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
             this.position.set(position)
-            userData = thisCreature
 
             box(
-                width = thisCreature.tilesViewRadius.value.toFloat(),
-                height = thisCreature.tilesViewRadius.value.toFloat()
+                width = thisCreature.tilesViewRadius.value.toFloat() * 2,
+                height = thisCreature.tilesViewRadius.value.toFloat() * 2
             ) {
                 density = 0f
                 friction = 0f
@@ -38,11 +38,10 @@ class CreaturePhysics(
                 isSensor = true
                 userData = thisCreature
             }
-        }
+        }.also { body.weldJointWith(it) }
 
-        val sensor2 = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
+        bodySensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
             this.position.set(position)
-            userData = thisCreature
 
             circle(radius = thisCreature.bodyRadius) {
                 density = 0f
@@ -52,20 +51,14 @@ class CreaturePhysics(
                 filter.maskBits = thisCreature.collisionCategory.collidesWith()
                 userData = thisCreature
             }
-        }
-
-        body.weldJointWith(sensor) {
-
-        }
-
-        body.weldJointWith(sensor2) {
-
-        }
-
-
+        }.also { body.weldJointWith(it) }
     }
 
     fun onDestroy() {
-        thisCreature.gameMap.physics.destroyBody(body)
+        thisCreature.gameMap.physics.also {
+            it.destroyBody(body)
+            it.destroyBody(bodySensor)
+            it.destroyBody(tileViewSensor)
+        }
     }
 }
