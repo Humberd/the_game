@@ -3,10 +3,13 @@ package core.maps.entities
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.player.Player
 import core.types.WorldPosition
+import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.PID
 
 class GameMapCreaturesContainer(private val map: GameMap) {
+    companion object : KLogging()
+
     private val players = HashMap<PID, Player>()
     private val creatures = HashMap<CID, Creature>()
 
@@ -45,7 +48,8 @@ class GameMapCreaturesContainer(private val map: GameMap) {
         }
         val removedCreature = creatures.remove(cid)
         removedCreature!!.hooks.onRemovedFromMap(map)
-        removedCreature.physics.onDestroy()
+        removedCreature.onDestroy()
+        logger.info { "Creature removed $removedCreature" }
     }
 
     fun get(pid: PID): Player {

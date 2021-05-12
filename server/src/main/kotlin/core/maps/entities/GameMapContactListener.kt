@@ -19,12 +19,13 @@ class GameMapContactListener : ContactListener {
         handleBeginContacts(contact.fixtureB.userData, contact.fixtureA.userData)
     }
 
-    private fun handleBeginContacts(aaa: Any?, bbb: Any?) {
+    private fun handleBeginContacts(aaa: Any, bbb: Any) {
         when (aaa) {
             is Creature -> when (bbb) {
                 is Wall -> aaa.hooks.onCollideWith(bbb)
                 is Obstacle -> aaa.hooks.onCollideWith(bbb)
             }
+            is Collider.WithAnything -> aaa.onCollisionStart(bbb)
             is Collider.WithCreature -> when (bbb) {
                 is Creature -> aaa.onCollisionStart(bbb)
             }
@@ -37,8 +38,9 @@ class GameMapContactListener : ContactListener {
         handleEndContacts(contact.fixtureB.userData, contact.fixtureA.userData)
     }
 
-    private fun handleEndContacts(aaa: Any?, bbb: Any?) {
+    private fun handleEndContacts(aaa: Any, bbb: Any) {
         when (aaa) {
+            is Collider.WithAnything -> aaa.onCollisionEnd(bbb)
             is Collider.WithCreature -> when (bbb) {
                 is Creature -> aaa.onCollisionEnd(bbb)
             }
