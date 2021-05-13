@@ -5,8 +5,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import core.maps.entities.creatures.Creature
-import core.maps.obstacles.Obstacle
-import core.maps.shapes.Wall
 import mu.KLogging
 
 
@@ -21,10 +19,6 @@ class GameMapContactListener : ContactListener {
 
     private fun handleBeginContacts(aaa: Any, bbb: Any) {
         when (aaa) {
-            is Creature -> when (bbb) {
-                is Wall -> aaa.hooks.onCollideWith(bbb)
-                is Obstacle -> aaa.hooks.onCollideWith(bbb)
-            }
             is Collider.WithAnything -> aaa.onCollisionStart(bbb)
             is Collider.WithCreature -> when (bbb) {
                 is Creature -> aaa.onCollisionStart(bbb)
