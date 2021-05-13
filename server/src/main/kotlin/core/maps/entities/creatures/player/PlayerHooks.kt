@@ -1,7 +1,6 @@
 package core.maps.entities.creatures.player
 
 import core.StateChangeNotifier
-import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
 import core.maps.entities.items.Item
@@ -16,13 +15,13 @@ class PlayerHooks(
     private val player: Player,
     private val notifier: StateChangeNotifier
 ) : CreatureHooks {
-    override fun onAddedToMap(gameMap: GameMap) {
+    override fun onAddedToMap() {
         notifier.notifyPlayerDetails(player.pid, player)
         notifier.notifyCreatureUpdate(player, player)
         notifier.notifyTerrainUpdate(player)
     }
 
-    override fun onRemovedFromMap(gameMap: GameMap) {
+    override fun onRemovedFromMap() {
         if (player.combat.isCurrentlyAttacking()) {
             player.combat.stopAttacking()
         }

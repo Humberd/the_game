@@ -16,10 +16,14 @@ enum class CollisionCategory(val value: Short) {
         override fun collidesWith() = NOTHING.value
     },
     DETECTION(0x0008) {
-        override fun collidesWith() = MONSTER or PLAYER
+        override fun collidesWith() = MONSTER or PLAYER or PROJECTILE
+    },
+    PROJECTILE(0x0010) {
+        override fun collidesWith() = DETECTION or PLAYER or MONSTER
     };
 
     abstract fun collidesWith(): Short
 
     private infix fun or(other: CollisionCategory): Short = this.value or other.value
+    infix fun Short.or(other: CollisionCategory): Short = this or other.value
 }

@@ -19,12 +19,11 @@ class GameMap(
     val gridHeight: Int,
     private val grid: Array<Array<Tile>>,
     navigationProvider: InputGeomProvider
-) {
-    val creatures = GameMapCreaturesContainer(this)
-    val navigation = GameMapNavigation(this)
+) : GameContext() {
+    val navigation = GameMapNavigation()
 
     //region Physics Initialization
-    val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = false)
+    override val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = false)
 
     init {
         physics.setContactListener(GameMapContactListener())
@@ -63,6 +62,7 @@ class GameMap(
         val positionIterations = 2
         physics.step(deltaTime, velocityIterations, positionIterations)
 
+        projectiles.forEach { it.onUpdate(deltaTime) }
         creatures.getAllCreatures().forEach {
             it.afterPhysicsUpdate(deltaTime)
         }

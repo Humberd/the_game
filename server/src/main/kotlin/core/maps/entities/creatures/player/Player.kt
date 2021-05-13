@@ -4,7 +4,6 @@ import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
-import core.maps.entities.creatures.CreatureSeed
 import core.types.SpriteId
 import pl.humberd.models.Milliseconds
 import pl.humberd.models.SID
@@ -38,11 +37,10 @@ class SpellsContainer(
 }
 
 class Player(
-    creatureSeed: CreatureSeed,
     gameMap: GameMap,
     notifier: StateChangeNotifier,
     playerSeed: PlayerSeed
-) : Creature(creatureSeed, gameMap, notifier) {
+) : Creature(playerSeed.creatureSeed, gameMap, notifier) {
     val pid = playerSeed.pid
     val spellsContainer = playerSeed.spellsContainer
 

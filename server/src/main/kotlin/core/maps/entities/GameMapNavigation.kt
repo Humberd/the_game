@@ -25,7 +25,7 @@ private const val m_vertsPerPoly = 6
 private const val m_detailSampleDist = 6.0f
 private const val m_detailSampleMaxError = 1.0f
 
-class GameMapNavigation(private val gameMap: GameMap) {
+class GameMapNavigation {
     lateinit var navMesh: NavMesh
     lateinit var query: NavMeshQuery
 

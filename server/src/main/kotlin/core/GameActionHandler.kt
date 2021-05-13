@@ -26,10 +26,9 @@ class GameActionHandler(
         savePid.invoke(pid)
         val dbPlayer = database.getPlayer(pid)
 
-        val creatureSeed = dbPlayer.toCreatureSeed()
         val playerSeed = dbPlayer.toPlayerSeed()
 
-        gamesManager.addPlayer(creatureSeed, playerSeed)
+        gamesManager.addPlayer(playerSeed)
     }
 
     fun handle(packet: PositionChange, pid: PID) {

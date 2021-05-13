@@ -91,23 +91,23 @@ object GameMapGenerator {
 
         val monsters = listOf(
             Monster(
-                creatureSeed = CreatureSeed(
-                    name = CreatureName("Ghost"),
-                    experience = Experience(1074L),
-                    position = WorldPosition(7f, 2f),
-                    tilesViewRadius = TileRadius(3),
-                    bodyRadius = 0.5f,
-                    stats = StatsSeed(
-                        movementSpeed = 0.8f
-                    ),
-                    equipment = emptyMap(),
-                    backpack = emptyArray()
-                ),
                 gameMap = gameMap,
                 notifier = notifier,
                 monsterSeed = MonsterSeed(
                     detectionRadius = 3f,
-                    chaseRadius = 4f
+                    chaseRadius = 4f,
+                    creatureSeed = CreatureSeed(
+                        name = CreatureName("Ghost"),
+                        experience = Experience(1074L),
+                        position = WorldPosition(7f, 2f),
+                        tilesViewRadius = TileRadius(3),
+                        bodyRadius = 0.5f,
+                        stats = StatsSeed(
+                            movementSpeed = 0.8f
+                        ),
+                        equipment = emptyMap(),
+                        backpack = emptyArray()
+                    )
                 )
             )
         )

@@ -39,9 +39,13 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
         thisCreature.gameMap.physics.destroyBody(tileViewSensor)
     }
 
-    val creatures = VisibilityStore()
+    val projectiles = ProjectileVisibilityStore()
 
-    inner class VisibilityStore : Collider.WithCreature {
+    inner class ProjectileVisibilityStore
+
+    val creatures = CreatureVisibilityStore()
+
+    inner class CreatureVisibilityStore : Collider.WithCreature {
         private val iSeeThem = HashSet<Creature>()
         private val theySeeMe = HashSet<Creature>()
 

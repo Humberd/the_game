@@ -21,7 +21,6 @@ abstract class Creature(
     val gameMap: GameMap,
     val notifier: StateChangeNotifier
 ) {
-
     companion object : KLogging()
 
     //region Properties

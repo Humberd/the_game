@@ -7,7 +7,7 @@ import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.PID
 
-class GameMapCreaturesContainer(private val map: GameMap) {
+class GameMapCreaturesContainer {
     companion object : KLogging()
 
     private val players = HashMap<PID, Player>()
@@ -29,7 +29,7 @@ class GameMapCreaturesContainer(private val map: GameMap) {
         creatures[creature.cid] = creature
 
         creature.onInit()
-        creature.hooks.onAddedToMap(map)
+        creature.hooks.onAddedToMap()
     }
 
     fun remove(pid: PID) {
@@ -46,7 +46,7 @@ class GameMapCreaturesContainer(private val map: GameMap) {
             throw Error("Creature doesn't exist")
         }
         val removedCreature = creatures.remove(cid)
-        removedCreature!!.hooks.onRemovedFromMap(map)
+        removedCreature!!.hooks.onRemovedFromMap()
         removedCreature.onDestroy()
         logger.info { "Creature removed $removedCreature" }
     }

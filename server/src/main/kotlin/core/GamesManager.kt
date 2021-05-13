@@ -2,7 +2,6 @@ package core
 
 import core.maps.GameMapGenerator
 import core.maps.entities.GameMap
-import core.maps.entities.creatures.CreatureSeed
 import core.maps.entities.creatures.player.Player
 import core.maps.entities.creatures.player.PlayerSeed
 import core.types.GameMapId
@@ -26,7 +25,7 @@ class GamesManager(
         }
     }
 
-    fun addPlayer(creatureSeed: CreatureSeed, playerSeed: PlayerSeed) {
+    fun addPlayer(playerSeed: PlayerSeed) {
         //fixme: hardcoded gameMapId
         val gameMapId = GameMapId(1u)
         val map = getMap(gameMapId)
@@ -37,7 +36,7 @@ class GamesManager(
 
         playerLUT[playerSeed.pid] = gameMapId
 
-        val player = Player(creatureSeed, map, notifier, playerSeed)
+        val player = Player(map, notifier, playerSeed)
         logger.info { "Created new player with ${player.cid}" }
         map.creatures.add(player)
     }

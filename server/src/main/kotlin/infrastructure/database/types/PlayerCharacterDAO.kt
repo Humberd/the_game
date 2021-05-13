@@ -74,6 +74,7 @@ data class PlayerCharacterDAO(
 
     fun toPlayerSeed() = PlayerSeed(
         pid = pid,
-        spellsContainer = SpellsContainer()
+        spellsContainer = SpellsContainer(),
+        creatureSeed = toCreatureSeed()
     )
 }

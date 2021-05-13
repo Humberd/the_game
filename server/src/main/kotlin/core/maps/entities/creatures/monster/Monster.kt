@@ -4,15 +4,13 @@ import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
 import core.maps.entities.GameMap
 import core.maps.entities.creatures.Creature
-import core.maps.entities.creatures.CreatureSeed
 import mu.KLogging
 
 class Monster(
-    creatureSeed: CreatureSeed,
     gameMap: GameMap,
     notifier: StateChangeNotifier,
     monsterSeed: MonsterSeed
-) : Creature(creatureSeed, gameMap, notifier) {
+) : Creature(monsterSeed.creatureSeed, gameMap, notifier) {
     companion object : KLogging()
 
     val detectionRadius = monsterSeed.detectionRadius

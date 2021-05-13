@@ -1,11 +1,10 @@
 package core.maps.entities.creatures
 
-import core.maps.entities.GameMap
 import core.maps.entities.items.Item
 
 interface CreatureHooks {
-    fun onAddedToMap(gameMap: GameMap) {}
-    fun onRemovedFromMap(gameMap: GameMap) {}
+    fun onAddedToMap() {}
+    fun onRemovedFromMap() {}
     fun onMoved(tileChanged: Boolean) {}
     fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {}
     fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {}
