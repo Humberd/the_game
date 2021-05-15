@@ -1,90 +1,26 @@
 package core.maps.entities
 
-import com.badlogic.gdx.math.Vector2
 import core.maps.entities.creatures.Creature
-import core.maps.shapes.Wall
-import core.types.GameMapId
 import core.types.GridPosition
-import ktx.box2d.body
-import ktx.box2d.createWorld
-import ktx.box2d.loop
-import org.recast4j.recast.geom.InputGeomProvider
-import pl.humberd.models.CID
-import pl.humberd.models.PID
 import utils.toGridPosition
 
 class GameMap(
-    val id: GameMapId,
-    val gridWidth: Int,
-    val gridHeight: Int,
-    private val grid: Array<Array<Tile>>,
-    navigationProvider: InputGeomProvider
-) : GameContext() {
-    val navigation = GameMapNavigation()
+    seed: GameMapSeed,
+    private val context: GameContext
+) : Entity {
+    val grid = seed.grid
+    val gridWidth = grid.size
+    val gridHeight = grid[0].size
+    val navigation = NavigationBuilder.buildMapNavigation(seed.geometryProvider)
 
-    //region Physics Initialization
-    override val physics = createWorld(gravity = Vector2(0f, 0f), allowSleep = false)
-
-    init {
-        physics.setContactListener(GameMapContactListener())
-        grid.forEach { it.forEach { it.onInit(physics) } }
-        initMapBounds()
-        navigation.onInit(navigationProvider)
-        GameMapDebugRenderer(this)
+    override fun onInit() {
+        grid.forEach { it.forEach { it.onInit(context) } }
     }
 
-    private fun initMapBounds() {
-        val vertices = arrayOf(
-            Vector2(0f, 0f),
-            Vector2(gridWidth.toFloat(), 0f),
-            Vector2(gridWidth.toFloat(), gridHeight.toFloat()),
-            Vector2(0f, gridHeight.toFloat())
-        )
-
-        physics.body {
-            val wall = Wall()
-            userData = wall
-            loop(*vertices) {
-                userData = wall
-                density = 0f
-                friction = 0f
-                restitution = 0f
-                filter.categoryBits = CollisionCategory.TERRAIN.value
-                filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
-            }
-        }
+    override fun onDestroy() {
+        grid.forEach { it.forEach { it.onDestroy(context) } }
     }
 
-    //endregion
-
-    fun onPhysicsStep(deltaTime: Float) {
-        val velocityIterations = 6
-        val positionIterations = 2
-        physics.step(deltaTime, velocityIterations, positionIterations)
-
-        projectiles.forEach { it.onUpdate(deltaTime) }
-        creatures.getAllCreatures().forEach {
-            it.afterPhysicsUpdate(deltaTime)
-        }
-    }
-
-    //region Combat
-    fun startAttacking(pid: PID, targetCID: CID) {
-        val sourceCreature = creatures.get(pid)
-        val targetCreature = creatures.get(targetCID)
-
-        sourceCreature.combat.startAttacking(targetCreature)
-    }
-
-
-    fun stopAttacking(pid: PID) {
-        val sourceCreature = creatures.get(pid)
-
-        sourceCreature.combat.stopAttacking()
-    }
-    //endregion
-
-    //region Tile Utils
     fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>> {
         require(radius >= 0)
         val locX = position.x.value
@@ -115,8 +51,6 @@ class GameMap(
             }
         }
 
-//        println("$startX, $startY -> $endX, $endY")
-
         for (x in startX..endX) {
             for (y in startY..endY) {
                 result[x - startX][y - startY] = grid[x][y]
@@ -143,5 +77,4 @@ class GameMap(
     fun getTileFor(gameMapObject: GameMapObject): Tile {
         return getTileAt(toGridPosition(gameMapObject.position))
     }
-    //endregion
 }

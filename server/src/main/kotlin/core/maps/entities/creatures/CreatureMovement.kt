@@ -32,7 +32,7 @@ class CreatureMovement(
     }
 
     fun startMovingTo(targetPosition: WorldPosition) {
-        checkpoints = creature.gameMap.navigation.findPath(creature.position, targetPosition).reversed().let {
+        checkpoints = creature.context.findPath(creature.position, targetPosition).reversed().let {
             if (it.size > 1) {
                 it.dropLast(1)
             } else {

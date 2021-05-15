@@ -1,6 +1,6 @@
 package core.maps.entities.creatures.player
 
-import core.StateChangeNotifier
+import core.PlayerNotifier
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
 import core.maps.entities.items.Item
@@ -13,7 +13,7 @@ private val logger = KotlinLogging.logger {}
 
 class PlayerHooks(
     private val player: Player,
-    private val notifier: StateChangeNotifier
+    private val notifier: PlayerNotifier
 ) : CreatureHooks {
     override fun onAddedToMap() {
         notifier.notifyPlayerDetails(player.pid, player)

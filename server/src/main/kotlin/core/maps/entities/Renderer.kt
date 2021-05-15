@@ -46,14 +46,14 @@ class Renderer(private val navMesh: NavMesh) : Box2DDebugRenderer() {
     }
 }
 
-fun FloatArray.getX(i: Int): Float {
+private fun FloatArray.getX(i: Int): Float {
     return this[i * 3]
 }
 
-fun FloatArray.getY(i: Int): Float {
+private fun FloatArray.getY(i: Int): Float {
     return this[i * 3 + 1]
 }
 
-fun FloatArray.getZ(i: Int): Float {
+private fun FloatArray.getZ(i: Int): Float {
     return this[i * 3 + 2]
 }

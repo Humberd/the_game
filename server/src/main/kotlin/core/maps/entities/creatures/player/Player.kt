@@ -1,8 +1,8 @@
 package core.maps.entities.creatures.player
 
-import core.StateChangeNotifier
+import core.PlayerNotifier
 import core.maps.entities.CollisionCategory
-import core.maps.entities.GameMap
+import core.maps.entities.GameContext
 import core.maps.entities.creatures.Creature
 import core.types.SpriteId
 import pl.humberd.models.Milliseconds
@@ -37,10 +37,10 @@ class SpellsContainer(
 }
 
 class Player(
-    gameMap: GameMap,
-    notifier: StateChangeNotifier,
-    playerSeed: PlayerSeed
-) : Creature(playerSeed.creatureSeed, gameMap, notifier) {
+    playerSeed: PlayerSeed,
+    context: GameContext,
+    notifier: PlayerNotifier
+) : Creature(playerSeed.creatureSeed, context) {
     val pid = playerSeed.pid
     val spellsContainer = playerSeed.spellsContainer
 
@@ -48,6 +48,6 @@ class Player(
     override val collisionCategory = CollisionCategory.PLAYER
 
     override fun toString(): String {
-        return "Player(${pid})"
+        return "Player($pid, $cid)"
     }
 }

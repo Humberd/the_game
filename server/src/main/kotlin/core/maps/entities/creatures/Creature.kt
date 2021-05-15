@@ -1,8 +1,8 @@
 package core.maps.entities.creatures
 
-import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
-import core.maps.entities.GameMap
+import core.maps.entities.Entity
+import core.maps.entities.GameContext
 import core.types.CreatureName
 import core.types.TileRadius
 import core.types.WorldPosition
@@ -18,9 +18,8 @@ import utils.toGridPosition
 
 abstract class Creature(
     private val creatureSeed: CreatureSeed,
-    val gameMap: GameMap,
-    val notifier: StateChangeNotifier
-) {
+    val context: GameContext,
+) : Entity {
     companion object : KLogging()
 
     //region Properties
@@ -54,7 +53,7 @@ abstract class Creature(
     val backpack = CreatureBackpack(this)
 
 
-    open fun onInit() {
+    override fun onInit() {
         lastUpdate.onInit(creatureSeed.position)
         physics.onInit(creatureSeed.position)
         fov.onInit()
@@ -64,15 +63,7 @@ abstract class Creature(
         backpack.onInit(creatureSeed.backpack)
     }
 
-    open fun onDestroy() {
-        physics.onDestroy()
-        fov.onDestroy()
-    }
-
-    abstract val hooks: CreatureHooks
-    abstract val collisionCategory: CollisionCategory
-
-    open fun afterPhysicsUpdate(deltaTime: Float) {
+    override fun onUpdate(deltaTime: Float) {
         if (!movement.isMoving()) {
             return
         }
@@ -98,7 +89,7 @@ abstract class Creature(
         val tileChanged = oldGridCoords != newGridCoords
         if (tileChanged) {
             lastUpdate.gridPosition = newGridCoords
-            lastUpdate.tileSlice = gameMap.getTilesAround(newGridCoords, tilesViewRadius.value)
+            lastUpdate.tileSlice = context.getTilesAround(newGridCoords, tilesViewRadius.value)
         }
 
         hooks.onMoved(tileChanged)
@@ -106,6 +97,14 @@ abstract class Creature(
             it.hooks.onOtherCreaturePositionChange(this)
         }
     }
+
+    override fun onDestroy() {
+        physics.onDestroy()
+        fov.onDestroy()
+    }
+
+    abstract val hooks: CreatureHooks
+    abstract val collisionCategory: CollisionCategory
 
     fun canSee(otherCreature: Creature): Boolean {
         return fov.creatures.canISeeThem(otherCreature)

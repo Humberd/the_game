@@ -1,11 +1,11 @@
 package core.maps.entities.projectiles
 
 import core.maps.entities.Entity
-import core.maps.entities.GameContext
+import core.maps.entities.GameContextImpl
 
 class Projectile(
     val seed: ProjectileSeed,
-    val context: GameContext
+    val context: GameContextImpl
 ) : Entity {
     private val physics = ProjectilePhysics(this)
 

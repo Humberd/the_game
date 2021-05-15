@@ -1,16 +1,14 @@
 package core.maps.entities.creatures.monster
 
-import core.StateChangeNotifier
 import core.maps.entities.CollisionCategory
-import core.maps.entities.GameMap
+import core.maps.entities.GameContext
 import core.maps.entities.creatures.Creature
 import mu.KLogging
 
 class Monster(
-    gameMap: GameMap,
-    notifier: StateChangeNotifier,
-    monsterSeed: MonsterSeed
-) : Creature(monsterSeed.creatureSeed, gameMap, notifier) {
+    monsterSeed: MonsterSeed,
+    context: GameContext
+) : Creature(monsterSeed.creatureSeed, context) {
     companion object : KLogging()
 
     val detectionRadius = monsterSeed.detectionRadius
@@ -23,11 +21,12 @@ class Monster(
 
     override fun onInit() {
         super.onInit()
+        logger.info { "Invoked" }
         aiMovement.onInit()
     }
 
-    override fun afterPhysicsUpdate(deltaTime: Float) {
-        super.afterPhysicsUpdate(deltaTime)
+    override fun onUpdate(deltaTime: Float) {
+        super.onUpdate(deltaTime)
 
         aiMovement.afterPhysicsUpdate(deltaTime)
     }

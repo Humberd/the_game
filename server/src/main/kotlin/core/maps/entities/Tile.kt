@@ -1,6 +1,5 @@
 package core.maps.entities
 
-import com.badlogic.gdx.physics.box2d.World
 import core.maps.obstacles.Obstacle
 import core.types.GridPosition
 import core.types.SpriteId
@@ -10,7 +9,11 @@ data class Tile(
     val gridPosition: GridPosition,
     val obstacles: List<Obstacle> = emptyList()
 ) {
-    fun onInit(physics: World) {
-        obstacles.forEach { it.onInit(physics) }
+    fun onInit(context: GameContext) {
+        obstacles.forEach { it.onInit(context) }
+    }
+
+    fun onDestroy(context: GameContext) {
+        obstacles.forEach { it.onDestroy(context) }
     }
 }

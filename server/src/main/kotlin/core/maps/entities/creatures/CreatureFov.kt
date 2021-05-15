@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import core.maps.entities.Collider
 import core.maps.entities.CollisionCategory
-import ktx.box2d.body
 import ktx.box2d.box
 import ktx.box2d.filter
 import mu.KLogging
@@ -16,7 +15,7 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
     private lateinit var tileViewSensor: Body
 
     fun onInit() {
-        tileViewSensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
+        tileViewSensor = thisCreature.context.create(BodyDef.BodyType.DynamicBody) {
             box(
                 width = thisCreature.tilesViewRadius.value.toFloat() * 2,
                 height = thisCreature.tilesViewRadius.value.toFloat() * 2
@@ -36,7 +35,7 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
     }
 
     fun onDestroy() {
-        thisCreature.gameMap.physics.destroyBody(tileViewSensor)
+        thisCreature.context.destroy(tileViewSensor)
     }
 
     val projectiles = ProjectileVisibilityStore()

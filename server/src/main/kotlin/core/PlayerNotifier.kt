@@ -12,7 +12,7 @@ import pl.humberd.models.ApiVector2
 import pl.humberd.models.PID
 import pl.humberd.udp.packets.serverclient.*
 
-class StateChangeNotifier(
+class PlayerNotifier(
     private val queue: ServerUdpSendQueue
 ) {
     fun notifyCreatureUpdate(to: Player, creature: Creature) {

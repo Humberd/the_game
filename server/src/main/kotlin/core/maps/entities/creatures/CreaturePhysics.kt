@@ -3,7 +3,6 @@ package core.maps.entities.creatures
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import core.types.WorldPosition
-import ktx.box2d.body
 import ktx.box2d.circle
 import ktx.box2d.weldJointWith
 import mu.KLogging
@@ -14,16 +13,17 @@ class CreaturePhysics(
     companion object : KLogging()
 
     private lateinit var bodySensor: Body
+
     lateinit var body: Body
         private set
 
     fun onInit(position: WorldPosition) {
         // https://www.aurelienribon.com/post/2011-07-box2d-tutorial-collision-filtering
-        body = thisCreature.gameMap.physics.body(BodyDef.BodyType.KinematicBody) {
+        body = thisCreature.context.create(BodyDef.BodyType.KinematicBody) {
             this.position.set(position)
         }
 
-        bodySensor = thisCreature.gameMap.physics.body(BodyDef.BodyType.DynamicBody) {
+        bodySensor = thisCreature.context.create(BodyDef.BodyType.DynamicBody) {
             this.position.set(position)
 
             circle(radius = thisCreature.bodyRadius) {
@@ -38,9 +38,9 @@ class CreaturePhysics(
     }
 
     fun onDestroy() {
-        thisCreature.gameMap.physics.also {
-            it.destroyBody(body)
-            it.destroyBody(bodySensor)
+        thisCreature.context.also {
+            it.destroy(body)
+            it.destroy(bodySensor)
         }
     }
 
