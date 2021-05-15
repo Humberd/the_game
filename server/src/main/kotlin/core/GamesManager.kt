@@ -78,7 +78,7 @@ class GamesManager(
     }
 
     fun ping(pid: PID) {
-//        notifier.notifyPingResponse(pid)
+        playerNotifier.notifyPingResponse(pid)
     }
 
 
