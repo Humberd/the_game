@@ -73,8 +73,4 @@ class GameMap(
     fun getTileFor(creature: Creature): Tile {
         return getTileAt(toGridPosition(creature.position))
     }
-
-    fun getTileFor(gameMapObject: GameMapObject): Tile {
-        return getTileAt(toGridPosition(gameMapObject.position))
-    }
 }
