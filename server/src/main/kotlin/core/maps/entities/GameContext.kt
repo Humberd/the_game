@@ -17,6 +17,7 @@ interface GameContext {
     fun create(seed: ProjectileSeed): Projectile
     fun destroy(body: Body)
     fun destroy(pid: PID)
+    fun destroy(entity: Projectile)
     fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>>
     fun findPath(start: Vector2, end: Vector2): List<Vector2>
 }

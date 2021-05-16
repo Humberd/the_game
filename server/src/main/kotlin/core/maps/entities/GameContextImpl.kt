@@ -89,6 +89,12 @@ class GameContextImpl(
         creatures.remove(pid)
     }
 
+    override fun destroy(entity: Projectile) {
+        require(projectiles.contains(entity))
+        projectiles.remove(entity)
+        entity.onDestroy()
+    }
+
     override fun getTilesAround(position: GridPosition, radius: Int): Array<Array<Tile>> {
         return gameMap.getTilesAround(position, radius)
     }

@@ -2,6 +2,8 @@ package core.maps.entities.spells.handlers
 
 import core.maps.entities.GameContext
 import core.maps.entities.creatures.Creature
+import core.maps.entities.projectiles.Projectile
+import core.maps.entities.projectiles.ProjectileSeed
 import core.maps.entities.spells.SpellHandler
 import core.types.WorldPosition
 import mu.KLogging
@@ -15,6 +17,7 @@ class SpearThrowHandler(
 ) : SpellHandler() {
     companion object : KLogging()
 
+    private var projectile: Projectile? = null
     private val fullChargeDuration = Duration.Companion.milliseconds(1000)
 
     private var castStartTime: TimeMark? = null
@@ -23,6 +26,7 @@ class SpearThrowHandler(
         check(castStartTime == null)
         castStartTime = TimeSource.Monotonic.markNow()
         logger.info { "Spear throw start" }
+        projectile = context.create(ProjectileSeed(caster.position, caster.rotation))
     }
 
     override fun onCastEnd(targetPosition: WorldPosition) {
@@ -32,5 +36,7 @@ class SpearThrowHandler(
         val elapsedRatio = minOf(elapsedTime / fullChargeDuration, 1.0)
         logger.info { "Spear throw end after $elapsedTime with ratio $elapsedRatio" }
         castStartTime = null
+        context.destroy(projectile!!)
+        projectile = null
     }
 }
