@@ -7,10 +7,10 @@ enum class CollisionCategory(val value: Short) {
         override fun collidesWith() = NOTHING.value
     },
     PLAYER(0x0001) {
-        override fun collidesWith() = DETECTION or PROJECTILE
+        override fun collidesWith() = DETECTION.value
     },
     MONSTER(0x0002) {
-        override fun collidesWith() = DETECTION or PROJECTILE
+        override fun collidesWith() = DETECTION.value
     },
     TERRAIN(0x0004) {
         override fun collidesWith() = NOTHING.value
