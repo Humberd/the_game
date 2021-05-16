@@ -33,6 +33,7 @@ class CreaturePhysics(
                 filter.categoryBits = thisCreature.collisionCategory.value
                 filter.maskBits = thisCreature.collisionCategory.collidesWith()
                 userData = thisCreature
+                isSensor = false
             }
         }.also { body.weldJointWith(it) }
     }
