@@ -18,7 +18,9 @@ sealed class ClientServerUdpPacket(type: Type) : UdpPacket<Type>(type) {
         SPELL_USAGE(0x12, { SpellUsage(it) }),
         BASIC_ATTACK_START(0x13, { BasicAttackStart(it) }),
         BASIC_ATTACK_END(0x14, { BasicAttackEnd(it) }),
-        PLAYER_STATS_UPDATE_REQUEST(0x15, { PlayerStatsUpdateRequest(it) });
+        PLAYER_STATS_UPDATE_REQUEST(0x15, { PlayerStatsUpdateRequest(it) }),
+        SPELL_CAST_START(0x16, { SpellCastStart(it) }),
+        SPELL_CAST_END(0x17, { SpellCastEnd(it) });
 
         companion object {
             private val map = HashMap<Int, Type>()

@@ -98,39 +98,6 @@ class PlayerNotifier(
         )
     }
 
-
-    fun notifyEquippedSpellsChange(player: Player) {
-        queue.put(
-            player.pid,
-            EquippedSpellsUpdate(
-                spells = listOf(
-                    player.spellsContainer.spell1,
-                    player.spellsContainer.spell2,
-                    player.spellsContainer.spell3,
-                    player.spellsContainer.spell4
-                ).map {
-                    return@map if (it == null) {
-                        null
-                    } else {
-                        EquippedSpellsUpdate.SpellUpdate(
-                            sid = it.sid,
-                            name = it.name,
-                            spriteId = it.spriteId.value,
-                            cooldown = it.cooldown
-                        )
-                    }
-                }.toTypedArray()
-            )
-        )
-    }
-
-    fun notifySpellUse(to: PID, spellUse: SpellUse) {
-        queue.put(
-            to,
-            spellUse
-        )
-    }
-
     fun notifyDamageTaken(to: PID, damages: Array<DamageTaken.Damage>) {
         queue.put(
             to,

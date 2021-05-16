@@ -104,6 +104,8 @@ class GameLoop(
                 }
                 gameActionHandler.handle(packet, pid)
             }
+            is SpellCastStart -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is SpellCastEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
         }.exhaustive
     }
 

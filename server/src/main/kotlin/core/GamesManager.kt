@@ -81,6 +81,18 @@ class GamesManager(
         playerNotifier.notifyPingResponse(pid)
     }
 
+    fun spellCastStart(pid: PID, spellSlot: UByte, targetPosition: WorldPosition) {
+        val context = getContext(pid)
+        val player = context.creatures.get(pid)
+        player.spells.spellCastStart(spellSlot, targetPosition)
+    }
+
+    fun spellCastEnd(pid: PID, spellSlot: UByte, targetPosition: WorldPosition) {
+        val context = getContext(pid)
+        val player = context.creatures.get(pid)
+        player.spells.spellCastEnd(spellSlot, targetPosition)
+    }
+
 
     //region Utilities
     private fun getContext(pid: PID): GameContextImpl {

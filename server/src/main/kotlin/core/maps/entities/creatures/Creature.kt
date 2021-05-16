@@ -6,15 +6,9 @@ import core.maps.entities.GameContext
 import core.types.CreatureName
 import core.types.TileRadius
 import core.types.WorldPosition
-import ktx.math.minus
-import ktx.math.plus
-import ktx.math.times
 import mu.KLogging
 import pl.humberd.models.CID
 import pl.humberd.models.Experience
-import utils.angleRadTo
-import utils.getDistance
-import utils.toGridPosition
 
 abstract class Creature(
     private val creatureSeed: CreatureSeed,
@@ -51,6 +45,7 @@ abstract class Creature(
     val combat = CreatureCombat(this)
     val equipment = CreatureEquipment(this)
     val backpack = CreatureBackpack(this)
+    val spells = CreatureSpells(this)
 
 
     override fun onInit() {
@@ -61,46 +56,19 @@ abstract class Creature(
         movement.onInit()
         equipment.onInit(creatureSeed.equipment)
         backpack.onInit(creatureSeed.backpack)
+        spells.onInit()
     }
 
     override fun onUpdate(deltaTime: Float) {
-        if (!movement.isMoving()) {
-            return
-        }
-
-        val nextCheckpoint = movement.currentCheckpoint()
-        val positionToCheckpointDistance = getDistance(position, nextCheckpoint)
-
-        val velocity = (nextCheckpoint - position).nor() * deltaTime * stats.movementSpeed.current
-        val nextPosition = position + velocity
-        val positionToNextPositionDistance = getDistance(position, nextPosition)
-        val targetPosition = if (positionToCheckpointDistance <= positionToNextPositionDistance) {
-            movement.removeCurrentCheckpoint()
-            nextCheckpoint
-        } else {
-            nextPosition
-        }
-        physics.body.setTransform(targetPosition, position.angleRadTo(targetPosition))
-
-
-        // update tiles in grid
-        val oldGridCoords = lastUpdate.gridPosition
-        val newGridCoords = toGridPosition(position)
-        val tileChanged = oldGridCoords != newGridCoords
-        if (tileChanged) {
-            lastUpdate.gridPosition = newGridCoords
-            lastUpdate.tileSlice = context.getTilesAround(newGridCoords, tilesViewRadius.value)
-        }
-
-        hooks.onMoved(tileChanged)
-        fov.creatures.theySeeMe().forEach {
-            it.hooks.onOtherCreaturePositionChange(this)
-        }
+        movement.onUpdate(deltaTime)
+        fov.onUpdate(deltaTime)
+        spells.onUpdate(deltaTime)
     }
 
     override fun onDestroy() {
         physics.onDestroy()
         fov.onDestroy()
+        spells.onDestroy()
     }
 
     abstract val hooks: CreatureHooks

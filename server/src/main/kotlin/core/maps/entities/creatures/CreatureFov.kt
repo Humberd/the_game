@@ -4,17 +4,18 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import core.maps.entities.Collider
 import core.maps.entities.CollisionCategory
+import core.maps.entities.Lifecycle
 import ktx.box2d.box
 import ktx.box2d.filter
 import mu.KLogging
 import pl.humberd.misc.exhaustive
 
-class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
+class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything, Lifecycle {
     companion object : KLogging()
 
     private lateinit var tileViewSensor: Body
 
-    fun onInit() {
+    override fun onInit() {
         tileViewSensor = thisCreature.context.create(BodyDef.BodyType.DynamicBody) {
             box(
                 width = thisCreature.tilesViewRadius.value.toFloat() * 2,
@@ -34,7 +35,7 @@ class CreatureFov(private val thisCreature: Creature) : Collider.WithAnything {
         }.also { thisCreature.physics.joinWithMainBody(it) }
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
         thisCreature.context.destroy(tileViewSensor)
     }
 

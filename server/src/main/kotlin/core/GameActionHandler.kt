@@ -58,4 +58,13 @@ class GameActionHandler(
     fun onPhysicsStep(deltaTime: Float) {
         gamesManager.onPhysicsStep(deltaTime)
     }
+
+    fun handle(packet: SpellCastStart, pid: PID) {
+        gamesManager.spellCastStart(pid, packet.spellSlot, packet.targetPosition.convert())
+    }
+
+    fun handle(packet: SpellCastEnd, pid: PID) {
+        gamesManager.spellCastEnd(pid, packet.spellSlot, packet.targetPosition.convert())
+
+    }
 }
