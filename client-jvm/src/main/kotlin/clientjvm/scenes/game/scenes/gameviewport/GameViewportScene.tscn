@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/GameViewportScene.kt" type="Script" id=1]
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/terrain/TerrainScene.tscn" type="PackedScene" id=2]
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/projectiles/ProjectilesScene.tscn" type="PackedScene" id=3]
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/creatures/CreaturesScene.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/stats/GameStatsScene.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/main/kotlin/clientjvm/scenes/game/scenes/gameviewport/scenes/ui_spells/GameUiSpellsScene.tscn" type="PackedScene" id=6]
 
 [node name="GameViewportScene" type="ViewportContainer"]
 margin_right = 600.0
@@ -12,6 +13,8 @@ margin_bottom = 600.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="GameUiSpellsScene" parent="." instance=ExtResource( 6 )]
 
 [node name="GameStatsScene" parent="." instance=ExtResource( 5 )]
 

@@ -14,7 +14,7 @@ class CreatureSpells(private val thisCreature: Creature) : Lifecycle {
 
     fun spellCastStart(spellSlot: UByte, targetPosition: WorldPosition) {
         val slotIndex = spellSlot.toInt()
-        require(slots.size <= slotIndex)
+        require(slots.size > slotIndex)
 
         val spellHandler = slots[slotIndex]
         require(spellHandler != null)
@@ -23,7 +23,7 @@ class CreatureSpells(private val thisCreature: Creature) : Lifecycle {
 
     fun spellCastEnd(spellSlot: UByte, targetPosition: WorldPosition) {
         val slotIndex = spellSlot.toInt()
-        require(slots.size <= slotIndex)
+        require(slots.size > slotIndex)
 
         val spellHandler = slots[slotIndex]
         require(spellHandler != null)

@@ -49,7 +49,11 @@ class GameLoop(
 
         while (true) {
             while (serverUdpReceiveQueue.hasNext()) {
-                handleAction(serverUdpReceiveQueue.popNext())
+                try {
+                    handleAction(serverUdpReceiveQueue.popNext())
+                } catch (e: Error) {
+                    logger.error(e) {}
+                }
             }
 
             asyncGameTasks.forEach { task ->
