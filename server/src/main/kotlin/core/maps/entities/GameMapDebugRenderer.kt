@@ -7,9 +7,13 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.physics.box2d.World
 import kotlin.concurrent.thread
 
-class GameMapDebugRenderer(private val gameMap: GameMap) : ApplicationAdapter() {
+class GameMapDebugRenderer(
+    private val navigation: GameMapNavigation,
+    private val physics: World
+) : ApplicationAdapter() {
     lateinit var camera: OrthographicCamera
     lateinit var debugRenderer: Renderer
 
@@ -31,13 +35,13 @@ class GameMapDebugRenderer(private val gameMap: GameMap) : ApplicationAdapter() 
         camera.projection.mul(Matrix4().scale(1f, -1f, 1f))
         camera.combined.set(camera.projection)
         Matrix4.mul(camera.combined.`val`, camera.view.`val`)
-        debugRenderer = Renderer(gameMap.navigation.navMesh)
+        debugRenderer = Renderer(navigation.navMesh)
     }
 
     override fun render() {
         Gdx.gl.glClearColor(.125f, .125f, .125f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        debugRenderer.render(gameMap.physics, camera.combined)
+        debugRenderer.render(physics, camera.combined)
     }
 
     override fun dispose() {

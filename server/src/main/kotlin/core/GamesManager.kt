@@ -1,11 +1,9 @@
 package core
 
-import core.maps.GameMapGenerator
-import core.maps.entities.GameMap
-import core.maps.entities.creatures.CreatureSeed
-import core.maps.entities.creatures.player.Player
+import core.maps.entities.GameContextImpl
+import core.maps.entities.GameMapSeed
 import core.maps.entities.creatures.player.PlayerSeed
-import core.types.GameMapId
+import core.types.GameId
 import core.types.WorldPosition
 import mu.KLogging
 import pl.humberd.models.CID
@@ -13,82 +11,96 @@ import pl.humberd.models.PID
 import pl.humberd.models.SID
 
 class GamesManager(
-    private val notifier: StateChangeNotifier,
+    private val playerNotifier: PlayerNotifier
 ) {
     companion object : KLogging()
 
-    private val maps = HashMap<GameMapId, GameMap>()
-    private val playerLUT = HashMap<PID, GameMapId>()
+    private val contexts = HashMap<GameId, GameContextImpl>()
+    private val playerLUT = HashMap<PID, GameId>()
 
-    init {
-        GameMapGenerator.generateObjMap(notifier).also { map ->
-            maps[map.id] = map
+    fun newGame(gameMapSeed: GameMapSeed) {
+        val context = GameContextImpl(
+            playerNotifier,
+            gameMapSeed,
+            GameId(1u)
+        )
+
+        context.onInit()
+
+        this.contexts[context.gameId] = context
+    }
+
+    fun onPhysicsStep(deltaTime: Float) {
+        contexts.values.forEach {
+            it.onUpdate(deltaTime)
         }
     }
 
-    fun addPlayer(creatureSeed: CreatureSeed, playerSeed: PlayerSeed) {
+    fun addPlayer(playerSeed: PlayerSeed) {
         //fixme: hardcoded gameMapId
-        val gameMapId = GameMapId(1u)
-        val map = getMap(gameMapId)
+        val gameId = GameId(1u)
+        val context = getContext(gameId)
 
         if (playerLUT[playerSeed.pid] != null) {
             removePlayer(playerSeed.pid)
         }
 
-        playerLUT[playerSeed.pid] = gameMapId
-
-        val player = Player(creatureSeed, map, notifier, playerSeed)
+        playerLUT[playerSeed.pid] = gameId
+        val player = context.create(playerSeed)
         logger.info { "Created new player with ${player.cid}" }
-        map.creatures.add(player)
     }
 
     fun removePlayer(pid: PID) {
-        val map = getMap(pid)
+        val map = getContext(pid)
         playerLUT.remove(pid)
-        map.creatures.remove(pid)
+        map.destroy(pid)
     }
 
     fun movePlayerTo(pid: PID, targetPosition: WorldPosition) {
-        getMap(pid).creatures.moveTo(pid, targetPosition)
+        getContext(pid).creatures.moveTo(pid, targetPosition)
     }
 
     fun useSpell(pid: PID, sid: SID) {
-        val map = getMap(pid)
-//        map.useSpell(pid, sid)
-    }
-
-    fun onPhysicsStep(deltaTime: Float) {
-        maps.values.forEach {
-            it.onPhysicsStep(deltaTime)
-        }
     }
 
     fun startBasicAttacking(pid: PID, targetCid: CID) {
-        getMap(pid).startAttacking(pid, targetCid)
+//        getContext(pid).startAttacking(pid, targetCid)
     }
 
     fun stopBasicAttacking(pid: PID) {
-        getMap(pid).stopAttacking(pid)
+//        getContext(pid).stopAttacking(pid)
     }
 
     fun requestPlayerStatsUpdate(pid: PID) {
-        val player = getMap(pid).creatures.get(pid)
-        notifier.notifyPlayerStats(player)
-        notifier.notifyBackpackUpdate(player)
+//        val player = getContext(pid).get(pid)
+//        notifier.notifyPlayerStats(player)
+//        notifier.notifyBackpackUpdate(player)
     }
 
     fun ping(pid: PID) {
-        notifier.notifyPingResponse(pid)
+        playerNotifier.notifyPingResponse(pid)
+    }
+
+    fun spellCastStart(pid: PID, spellSlot: UByte, targetPosition: WorldPosition) {
+        val context = getContext(pid)
+        val player = context.creatures.get(pid)
+        player.spells.spellCastStart(spellSlot, targetPosition)
+    }
+
+    fun spellCastEnd(pid: PID, spellSlot: UByte, targetPosition: WorldPosition) {
+        val context = getContext(pid)
+        val player = context.creatures.get(pid)
+        player.spells.spellCastEnd(spellSlot, targetPosition)
     }
 
 
     //region Utilities
-    private fun getMap(pid: PID): GameMap {
-        return maps[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
+    private fun getContext(pid: PID): GameContextImpl {
+        return contexts[playerLUT[pid]] ?: throw Error("GameMap not found for ${pid}")
     }
 
-    private fun getMap(gameMapId: GameMapId): GameMap {
-        return maps[gameMapId] ?: throw Error("GameMap not found for ${gameMapId}")
+    private fun getContext(gameId: GameId): GameContextImpl {
+        return contexts[gameId] ?: throw Error("GameMap not found for ${gameId}")
     }
     //endregion
 }

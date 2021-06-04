@@ -2,7 +2,6 @@ package infrastructure.udp
 
 import infrastructure.udp.models.ConnectionId
 import mu.KotlinLogging
-import pl.humberd.misc.isHot
 import pl.humberd.misc.toHex
 import pl.humberd.udp.packets.ReadBuffer
 import pl.humberd.udp.packets.clientserver.ClientServerUdpPacket.Type
@@ -49,7 +48,8 @@ class ServerUdpReceiveQueue : UdpReceiveQueue {
 
             val packet = packetType.serialize.invoke(readBuffer)
 
-            if (!packet.isHot()) {
+//            if (!packet.isHot()) {
+            if (false) {
                 logger.info { "---RECEIVE---" }
                 logger.info { "$packet" }
                 logger.info {

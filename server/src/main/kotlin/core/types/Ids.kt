@@ -18,7 +18,7 @@ inline class IID(val value: UInt) {
     }
 }
 
-inline class GameMapId(val value: UInt)
+inline class GameId(val value: UInt)
 inline class SpriteId(val value: UShort)
 inline class Coordinate(val value: Int)
 inline class CreatureName(val value: String) {

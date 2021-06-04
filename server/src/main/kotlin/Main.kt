@@ -1,7 +1,9 @@
+
 import core.GameActionHandler
 import core.GameLoop
 import core.GamesManager
-import core.StateChangeNotifier
+import core.PlayerNotifier
+import core.maps.GameMapGenerator
 import core.maps.ItemSchemaStore
 import infrastructure.database.Database
 import infrastructure.udp.ServerUdpReceiveQueue
@@ -20,15 +22,15 @@ fun main() {
 
     ItemSchemaStore.readItemsFromJson();
     val database = Database()
-
     val udpClientStore = UdpClientStore()
-
     val serverUdpReceiveQueue = ServerUdpReceiveQueue()
     val serverUdpSendQueue = ServerUdpSendQueue(udpClientStore)
 
 
-    val stateChangeNotifier = StateChangeNotifier(serverUdpSendQueue)
-    val gameState = GamesManager(stateChangeNotifier)
+    val playerNotifier = PlayerNotifier(serverUdpSendQueue)
+    val gameState = GamesManager(playerNotifier).also {
+        it.newGame(GameMapGenerator.generateMapSeed())
+    }
     val gameActionHandler = GameActionHandler(gameState, database)
 
     val udpConnectionPersistor = UdpConnectionPersistor()

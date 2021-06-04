@@ -3,10 +3,8 @@ package core.maps.entities.creatures
 import core.AsyncGameTask
 import core.GameLoop
 import core.maps.entities.creatures.player.Player
-import infrastructure.udp.models.convert
 import pl.humberd.models.Milliseconds
 import pl.humberd.models.sec
-import pl.humberd.udp.packets.serverclient.ProjectileSend
 import utils.getDistance
 
 class CreatureCombat(private val creature: Creature) {
@@ -26,7 +24,8 @@ class CreatureCombat(private val creature: Creature) {
         }
 
         creature.hooks.onSelfDamageTaken(damage)
-        creature.cache.creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(creature, damage) }
+        // fixme
+//        creature.cache.creaturesThatSeeMe.forEach { it.hooks.onOtherCreatureDamageTaken(creature, damage) }
     }
 
     private fun die() {
@@ -59,28 +58,29 @@ class CreatureCombat(private val creature: Creature) {
 
             // FIXME: 16.03.2021 Should be item hook: `onItemUsed` or something like that
             if (creature is Player) {
-                creature.notifier.sendProjectile(
-                    creature.pid, ProjectileSend(
-                        spriteId = 13u,
-                        sourcePosition = creature.position.convert(),
-                        targetPosition = target.position.convert(),
-                        duration = projectileDelay
-                    )
-                )
+//                creature.notifier.sendProjectile(
+//                    creature.pid, ProjectileSend(
+//                        spriteId = 13u,
+//                        sourcePosition = creature.position.convert(),
+//                        targetPosition = target.position.convert(),
+//                        duration = projectileDelay
+//                    )
+//                )
             }
-            creature.cache.creaturesThatSeeMe
-                .forEach {
-                    if (it is Player) {
-                        creature.notifier.sendProjectile(
-                            it.pid, ProjectileSend(
-                                spriteId = 13u,
-                                sourcePosition = creature.position.convert(),
-                                targetPosition = target.position.convert(),
-                                duration = projectileDelay
-                            )
-                        )
-                    }
-                }
+            // fixme
+//            creature.cache.creaturesThatSeeMe
+//                .forEach {
+//                    if (it is Player) {
+//                        creature.notifier.sendProjectile(
+//                            it.pid, ProjectileSend(
+//                                spriteId = 13u,
+//                                sourcePosition = creature.position.convert(),
+//                                targetPosition = target.position.convert(),
+//                                duration = projectileDelay
+//                            )
+//                        )
+//                    }
+//                }
 
             GameLoop.instance.requestAsyncTaskOnce(projectileDelay) {
                 target.combat.takeDamage(creature.stats.attack.current.toUInt())

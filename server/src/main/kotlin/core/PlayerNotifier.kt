@@ -12,7 +12,7 @@ import pl.humberd.models.ApiVector2
 import pl.humberd.models.PID
 import pl.humberd.udp.packets.serverclient.*
 
-class StateChangeNotifier(
+class PlayerNotifier(
     private val queue: ServerUdpSendQueue
 ) {
     fun notifyCreatureUpdate(to: Player, creature: Creature) {
@@ -95,39 +95,6 @@ class StateChangeNotifier(
                     .map { it.obstacles.map { it.path.map { it.convert() }.toTypedArray() }.toTypedArray() }
                     .toTypedArray()
             )
-        )
-    }
-
-
-    fun notifyEquippedSpellsChange(player: Player) {
-        queue.put(
-            player.pid,
-            EquippedSpellsUpdate(
-                spells = listOf(
-                    player.spellsContainer.spell1,
-                    player.spellsContainer.spell2,
-                    player.spellsContainer.spell3,
-                    player.spellsContainer.spell4
-                ).map {
-                    return@map if (it == null) {
-                        null
-                    } else {
-                        EquippedSpellsUpdate.SpellUpdate(
-                            sid = it.sid,
-                            name = it.name,
-                            spriteId = it.spriteId.value,
-                            cooldown = it.cooldown
-                        )
-                    }
-                }.toTypedArray()
-            )
-        )
-    }
-
-    fun notifySpellUse(to: PID, spellUse: SpellUse) {
-        queue.put(
-            to,
-            spellUse
         )
     }
 

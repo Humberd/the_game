@@ -6,7 +6,6 @@ import core.maps.entities.creatures.EquipmentSlotType
 import core.maps.entities.creatures.StatType
 import core.maps.entities.creatures.StatsSeed
 import core.maps.entities.creatures.player.PlayerSeed
-import core.maps.entities.creatures.player.SpellsContainer
 import core.maps.entities.items.*
 import core.types.*
 import pl.humberd.models.Experience
@@ -74,6 +73,6 @@ data class PlayerCharacterDAO(
 
     fun toPlayerSeed() = PlayerSeed(
         pid = pid,
-        spellsContainer = SpellsContainer()
+        creatureSeed = toCreatureSeed()
     )
 }

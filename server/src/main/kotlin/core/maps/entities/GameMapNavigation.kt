@@ -25,21 +25,14 @@ private const val m_vertsPerPoly = 6
 private const val m_detailSampleDist = 6.0f
 private const val m_detailSampleMaxError = 1.0f
 
-class GameMapNavigation(private val gameMap: GameMap) {
-    lateinit var navMesh: NavMesh
-    lateinit var query: NavMeshQuery
+object NavigationBuilder {
+    fun buildMapNavigation(provider: InputGeomProvider): GameMapNavigation {
+        val navMesh = NavMesh(buildNavMesh(provider), 6, 0)
 
-    fun onInit(provider: InputGeomProvider) {
-        navMesh = NavMesh(buildNavMesh(provider), 6, 0)
-        query = NavMeshQuery(navMesh)
-    }
-
-    fun findPath(start: Vector2, end: Vector2): List<Vector2> {
-        val finder = Finder(query, navMesh)
-        val result: List<FloatArray> =
-            finder.findPos(floatArrayOf(start.x, 0.16f, start.y), floatArrayOf(end.x, 0.16f, end.y))
-
-        return result.map { Vector2(it[0], it[2]) }
+        return GameMapNavigation(
+            navMesh = navMesh,
+            query = NavMeshQuery(navMesh)
+        )
     }
 
     private fun buildNavMesh(provider: InputGeomProvider): MeshData {
@@ -84,5 +77,17 @@ class GameMapNavigation(private val gameMap: GameMap) {
         val builderConfig = RecastBuilderConfig(cfg, provider.meshBoundsMin, provider.meshBoundsMax)
         return RecastBuilder().build(provider, builderConfig)
     }
+}
 
+class GameMapNavigation(
+    val navMesh: NavMesh,
+    val query: NavMeshQuery
+) {
+    fun findPath(start: Vector2, end: Vector2): List<Vector2> {
+        val finder = Finder(query, navMesh)
+        val result: List<FloatArray> =
+            finder.findPos(floatArrayOf(start.x, 0.16f, start.y), floatArrayOf(end.x, 0.16f, end.y))
+
+        return result.map { Vector2(it[0], it[2]) }
+    }
 }

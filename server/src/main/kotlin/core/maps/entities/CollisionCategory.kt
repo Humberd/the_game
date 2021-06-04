@@ -10,17 +10,20 @@ enum class CollisionCategory(val value: Short) {
         override fun collidesWith() = DETECTION.value
     },
     MONSTER(0x0002) {
-        override fun collidesWith() = TERRAIN.value
+        override fun collidesWith() = DETECTION.value
     },
     TERRAIN(0x0004) {
-        override fun collidesWith() = MONSTER.value
+        override fun collidesWith() = NOTHING.value
     },
     DETECTION(0x0008) {
-        override fun collidesWith() = MONSTER or PLAYER
+        override fun collidesWith() = PLAYER or MONSTER or PROJECTILE
+    },
+    PROJECTILE(0x0010) {
+        override fun collidesWith() = PLAYER or MONSTER or DETECTION
     };
 
     abstract fun collidesWith(): Short
 
-    infix fun or(other: CollisionCategory): Short = this.value or other.value
+    private infix fun or(other: CollisionCategory): Short = this.value or other.value
     infix fun Short.or(other: CollisionCategory): Short = this or other.value
 }

@@ -56,6 +56,8 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += listOf()
+    kotlinOptions.freeCompilerArgs += listOf(
+        "-Xopt-in=kotlin.time.ExperimentalTime"
+    )
     kotlinOptions.useIR = true
 }

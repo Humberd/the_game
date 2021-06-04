@@ -2,13 +2,14 @@ package core.maps.entities.creatures.monster
 
 import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.Fixture
+import core.maps.entities.Collider
 import core.maps.entities.CollisionCategory
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.player.Player
 import ktx.box2d.circle
 import mu.KLogging
 
-class MonsterAiMovement(private val monster: Monster) {
+class MonsterAiMovement(private val monster: Monster) : Collider.WithCreature {
     companion object : KLogging()
 
     lateinit var sensorArea: Fixture
@@ -26,8 +27,8 @@ class MonsterAiMovement(private val monster: Monster) {
         }
     }
 
-    fun onCollisionStartWith(creature: Creature) {
-        if (creature !is Player) {
+    override fun onCollisionStart(entity: Creature) {
+        if (entity !is Player) {
             return
         }
 
@@ -36,12 +37,12 @@ class MonsterAiMovement(private val monster: Monster) {
         }
 
         updateSensorRadius(monster.chaseRadius)
-        currentlyFollowing = creature
-        logger.info { "Start following $creature" }
+        currentlyFollowing = entity
+        logger.info { "Start following $entity" }
     }
 
-    fun onCollisionEndWith(creature: Creature) {
-        if (creature !is Player) {
+    override fun onCollisionEnd(entity: Creature) {
+        if (entity !is Player) {
             return
         }
 
@@ -51,7 +52,7 @@ class MonsterAiMovement(private val monster: Monster) {
 
         updateSensorRadius(monster.detectionRadius)
         currentlyFollowing = null
-        logger.info { "Stop following $creature" }
+        logger.info { "Stop following $entity" }
     }
 
     fun afterPhysicsUpdate(deltaTime: Float) {

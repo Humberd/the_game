@@ -1,16 +1,18 @@
 package core.maps.obstacles
 
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.physics.box2d.Body
 import core.maps.entities.CollisionCategory
-import ktx.box2d.body
+import core.maps.entities.GameContext
 import ktx.box2d.loop
 
 class Obstacle(
     val path: List<Vector2>
 ) {
-    fun onInit(physics: World) {
-        physics.body {
+    private lateinit var body: Body
+
+    fun onInit(context: GameContext) {
+        body = context.create {
             userData = this@Obstacle
 
             loop(*path.toTypedArray()) {
@@ -22,5 +24,9 @@ class Obstacle(
                 filter.maskBits = CollisionCategory.TERRAIN.collidesWith()
             }
         }
+    }
+
+    fun onDestroy(context: GameContext) {
+        context.destroy(body)
     }
 }

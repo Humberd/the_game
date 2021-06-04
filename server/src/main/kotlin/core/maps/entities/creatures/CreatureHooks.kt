@@ -1,16 +1,11 @@
 package core.maps.entities.creatures
 
-import core.maps.entities.GameMap
 import core.maps.entities.items.Item
-import core.maps.obstacles.Obstacle
-import core.maps.shapes.Wall
 
 interface CreatureHooks {
-    fun onAddedToMap(gameMap: GameMap) {}
-    fun onRemovedFromMap(gameMap: GameMap) {}
+    fun onAddedToMap() {}
+    fun onRemovedFromMap() {}
     fun onMoved(tileChanged: Boolean) {}
-    fun onCollideWith(wall: Wall) {}
-    fun onCollideWith(wall: Obstacle) {}
     fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {}
     fun onOtherCreatureDisappearFromViewRange(otherCreature: Creature) {}
     fun onOtherCreaturePositionChange(otherCreature: Creature) {}

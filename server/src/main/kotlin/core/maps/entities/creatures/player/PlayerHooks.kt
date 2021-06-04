@@ -1,12 +1,9 @@
 package core.maps.entities.creatures.player
 
-import core.StateChangeNotifier
-import core.maps.entities.GameMap
+import core.PlayerNotifier
 import core.maps.entities.creatures.Creature
 import core.maps.entities.creatures.CreatureHooks
 import core.maps.entities.items.Item
-import core.maps.obstacles.Obstacle
-import core.maps.shapes.Wall
 import infrastructure.udp.models.convert
 import mu.KotlinLogging
 import pl.humberd.udp.packets.serverclient.DamageTaken
@@ -16,42 +13,20 @@ private val logger = KotlinLogging.logger {}
 
 class PlayerHooks(
     private val player: Player,
-    private val notifier: StateChangeNotifier
+    private val notifier: PlayerNotifier
 ) : CreatureHooks {
-    override fun onAddedToMap(gameMap: GameMap) {
+    override fun onAddedToMap() {
         notifier.notifyPlayerDetails(player.pid, player)
         notifier.notifyCreatureUpdate(player, player)
         notifier.notifyTerrainUpdate(player)
-
-        // Make aware other creatures that can see me
-        gameMap.creatures.getAllCreatures()
-            .filter { it.cid != player.cid }
-            .filter { it.canSee(player) }
-            .forEach {
-                it.cache.creaturesISee.register(player)
-            }
-
-        // Tell me about other creatures that I can see
-        player.getGreedyVisibleCreatures()
-            .forEach {
-                player.cache.creaturesISee.register(it)
-            }
     }
 
-    override fun onRemovedFromMap(gameMap: GameMap) {
+    override fun onRemovedFromMap() {
         if (player.combat.isCurrentlyAttacking()) {
             player.combat.stopAttacking()
         }
 
         notifier.notifyCreatureDisappear(player.pid, player)
-
-        player.cache.creaturesThatSeeMe.toTypedArray().forEach {
-            it.cache.creaturesISee.unregister(player)
-        }
-
-        player.cache.creaturesISee.getAll().forEach {
-            player.cache.creaturesISee.unregister(it)
-        }
     }
 
     override fun onMoved(tileChanged: Boolean) {
@@ -59,16 +34,6 @@ class PlayerHooks(
         if (tileChanged) {
             notifier.notifyTerrainUpdate(player)
         }
-    }
-
-    override fun onCollideWith(wall: Wall) {
-        logger.debug { "Colliding with Wall" }
-        player.movement.stopMoving()
-    }
-
-    override fun onCollideWith(wall: Obstacle) {
-//        logger.debug { "Colliding with Obstacle" }
-//        player.movement.stopMoving()
     }
 
     override fun onOtherCreatureAppearInViewRange(otherCreature: Creature) {

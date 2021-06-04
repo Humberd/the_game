@@ -49,7 +49,11 @@ class GameLoop(
 
         while (true) {
             while (serverUdpReceiveQueue.hasNext()) {
-                handleAction(serverUdpReceiveQueue.popNext())
+                try {
+                    handleAction(serverUdpReceiveQueue.popNext())
+                } catch (e: Error) {
+                    logger.error(e) {}
+                }
             }
 
             asyncGameTasks.forEach { task ->
@@ -104,6 +108,8 @@ class GameLoop(
                 }
                 gameActionHandler.handle(packet, pid)
             }
+            is SpellCastStart -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
+            is SpellCastEnd -> gameActionHandler.handle(packet, udpClientStore.getPid(connectionId))
         }.exhaustive
     }
 

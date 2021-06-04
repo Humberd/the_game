@@ -27,8 +27,12 @@ class RootScene : Spatial() {
         ClientDataSender.send(ConnectionHello())
     }
 
-    override fun _onDestroy() {
+    @RegisterFunction
+    override fun _exitTree() {
         ClientDataSender.send(Disconnect())
+    }
+
+    override fun _onDestroy() {
         socket.close()
         ClientDataSender.kill()
         ClientDataReceiver._kill()
